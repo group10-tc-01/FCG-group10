@@ -1,0 +1,24 @@
+name: Check Branch Name
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  branch-name-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          echo "Checking branch name: ${GITHUB_HEAD_REF}"
+          if [[ ! "${GITHUB_HEAD_REF}" =~ ^(feature|release|hotfix)\/.+ ]]; then
+            echo "❌ Branch name '${GITHUB_HEAD_REF}' does not follow Git Flow naming convention"
+            echo "✅ Valid patterns: feature/*, release/*, hotfix/*"
+            echo "Examples:"
+            echo "  - feature/add-new-component"
+            echo "  - release/v1.0.0"
+            echo "  - hotfix/critical-bug-fix"
+            exit 1
+          else
+            echo "✅ Branch name '${GITHUB_HEAD_REF}' follows Git Flow naming convention"
+          fi
