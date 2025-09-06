@@ -97,7 +97,7 @@ jobs:
           cat > comment.md << EOF
         ## ⚠️ Cobertura de Testes Abaixo do Esperado
         
-        ![Alert GIF](https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif)
+        ![Alert GIF](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWxqNTE4aGU3ZWk1NGVldTQ0eGcxMjlzN2NneGlpYzY1MjBmcHl0dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L8yQ0RQBItqso/giphy.gif)
         
         **Cobertura atual:** ${coverage_percent}%  
         **Cobertura mínima esperada:** ${threshold}%  
