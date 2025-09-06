@@ -1,0 +1,141 @@
+﻿name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ "main", "develop" ]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Cache .NET packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    
+    - name: Install SonarCloud scanner
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-coverage
+    
+    - name: Begin SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        dotnet sonarscanner begin \
+          /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
+          /o:"${{ secrets.SONAR_ORGANIZATION }}" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Run tests with coverage
+      run: |
+        dotnet coverage collect "dotnet test --no-build --configuration Release --verbosity normal" -f xml -o "coverage.xml"
+    
+    - name: Parse coverage results
+      id: coverage
+      run: |
+        # Extract coverage percentage from the XML file
+        if [ -f "coverage.xml" ]; then
+          coverage=$(grep -o 'line-rate="[^"]*"' coverage.xml | head -1 | cut -d'"' -f2)
+          if [ ! -z "$coverage" ]; then
+            coverage_percent=$(echo "$coverage * 100" | bc -l | cut -d'.' -f1)
+            echo "coverage_percent=$coverage_percent" >> $GITHUB_OUTPUT
+            echo "Coverage: $coverage_percent%"
+          else
+            echo "coverage_percent=0" >> $GITHUB_OUTPUT
+            echo "Could not parse coverage from XML"
+          fi
+        else
+          echo "coverage_percent=0" >> $GITHUB_OUTPUT
+          echo "Coverage file not found"
+        fi
+    
+    - name: Check coverage threshold and comment
+      if: github.event_name == 'pull_request'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERAGE_THRESHOLD: 80  # Set your desired threshold here
+      run: |
+        coverage_percent=${{ steps.coverage.outputs.coverage_percent }}
+        threshold=${COVERAGE_THRESHOLD:-80}
+        
+        if [ "$coverage_percent" -lt "$threshold" ]; then
+          cat > comment.md << EOF
+        ## ⚠️ Cobertura de Testes Abaixo do Esperado
+        
+        ![Alert GIF](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWxqNTE4aGU3ZWk1NGVldTQ0eGcxMjlzN2NneGlpYzY1MjBmcHl0dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L8yQ0RQBItqso/giphy.gif)
+        
+        **Cobertura atual:** ${coverage_percent}%  
+        **Cobertura mínima esperada:** ${threshold}%  
+        **Diferença:** -$((threshold - coverage_percent))%
+        
+        Por favor, adicione mais testes para atingir a cobertura mínima antes de fazer o merge deste PR.
+        
+        ---
+        *Este comentário foi gerado automaticamente pelo workflow de CI/CD*
+        EOF
+        
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md
+        else
+          cat > comment.md << EOF
+        ## ✅ Cobertura de Testes Aprovada
+        
+        ![Success GIF](https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif)
+        
+        **Cobertura atual:** ${coverage_percent}%  
+        **Cobertura mínima esperada:** ${threshold}%  
+        
+        Excelente trabalho! A cobertura de testes está acima do threshold esperado.
+        
+        ---
+        *Este comentário foi gerado automaticamente pelo workflow de CI/CD*
+        EOF
+        
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md
+        fi
+    
+    - name: End SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+    
+    - name: Fail if coverage is below threshold
+      if: steps.coverage.outputs.coverage_percent < 80
+      run: |
+        echo "Coverage ${{ steps.coverage.outputs.coverage_percent }}% is below the required threshold of 80%"
+        exit 1
