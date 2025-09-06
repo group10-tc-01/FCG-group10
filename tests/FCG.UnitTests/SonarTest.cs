@@ -4,11 +4,13 @@ namespace FCG.UnitTests
 {
     public class SonarTest
     {
-        [Fact]
-        public void Sonar_Should_Have_Correct_Name()
+        [Theory]
+        [InlineData("name1")]
+        [InlineData("name2")]
+        public void Sonar_Should_Have_Correct_Name(string name)
         {
             // Arrange
-            var expectedName = "TestSonar";
+            var expectedName = name;
             var sonar = new Sonar(expectedName);
 
             // Act
