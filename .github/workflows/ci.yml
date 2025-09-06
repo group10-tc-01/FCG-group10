@@ -38,22 +38,25 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
     
-    - name: Install SonarCloud scanner
+    - name: Install tools
       run: |
         dotnet tool install --global dotnet-sonarscanner
-        dotnet tool install --global dotnet-coverage
+        dotnet tool install --global dotnet-reportgenerator-globaltool
     
     - name: Begin SonarCloud analysis
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+        SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
       run: |
         dotnet sonarscanner begin \
-          /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
-          /o:"${{ secrets.SONAR_ORGANIZATION }}" \
+          /k:"$SONAR_PROJECT_KEY" \
+          /o:"$SONAR_ORGANIZATION" \
           /d:sonar.host.url="https://sonarcloud.io" \
-          /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-          /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
+          /d:sonar.token="$SONAR_TOKEN" \
+          /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/Startup.cs"
     
     - name: Restore dependencies
       run: dotnet restore
@@ -63,16 +66,30 @@ jobs:
     
     - name: Run tests with coverage
       run: |
-        dotnet coverage collect "dotnet test --no-build --configuration Release --verbosity normal" -f xml -o "coverage.xml"
+        dotnet test \
+          --no-build \
+          --configuration Release \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults \
+          --logger trx \
+          --verbosity normal \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+    
+    - name: Generate coverage reports
+      run: |
+        reportgenerator \
+          -reports:"./TestResults/**/coverage.opencover.xml" \
+          -targetdir:"./CoverageReports" \
+          -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines"
     
     - name: Parse coverage results
       id: coverage
       run: |
-        # Extract coverage percentage from the XML file
-        if [ -f "coverage.xml" ]; then
-          coverage=$(grep -o 'line-rate="[^"]*"' coverage.xml | head -1 | cut -d'"' -f2)
+        if [ -f "./CoverageReports/Cobertura.xml" ]; then
+          # Extract line coverage from Cobertura XML
+          coverage=$(grep -o 'line-rate="[^"]*"' ./CoverageReports/Cobertura.xml | head -1 | cut -d'"' -f2)
           if [ ! -z "$coverage" ]; then
-            coverage_percent=$(echo "$coverage * 100" | bc -l | cut -d'.' -f1)
+            coverage_percent=$(echo "$coverage * 100" | bc -l | printf "%.0f" $(cat))
             echo "coverage_percent=$coverage_percent" >> $GITHUB_OUTPUT
             echo "Coverage: $coverage_percent%"
           else
@@ -82,13 +99,14 @@ jobs:
         else
           echo "coverage_percent=0" >> $GITHUB_OUTPUT
           echo "Coverage file not found"
+          find . -name "*.xml" -type f | head -10
         fi
     
     - name: Check coverage threshold and comment
       if: github.event_name == 'pull_request'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERAGE_THRESHOLD: 80  # Set your desired threshold here
+        COVERAGE_THRESHOLD: 80
       run: |
         coverage_percent=${{ steps.coverage.outputs.coverage_percent }}
         threshold=${COVERAGE_THRESHOLD:-80}
@@ -130,9 +148,14 @@ jobs:
     
     - name: End SonarCloud analysis
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+    
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports
+        path: ./CoverageReports/
     
     - name: Fail if coverage is below threshold
       if: steps.coverage.outputs.coverage_percent < 80
