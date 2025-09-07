@@ -32,7 +32,7 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Preparar variáveis
+    - name: Preparar variáveis e encontrar Dockerfile
       id: vars
       run: |
         # Converter APP_NAME para lowercase para Docker
@@ -40,13 +40,27 @@ jobs:
         echo "image_name_lower=$image_name_lower" >> $GITHUB_OUTPUT
         echo "📦 Nome da imagem Docker: $image_name_lower"
         
-        # Verificar se Dockerfile existe
+        # Procurar Dockerfile em locais comuns
+        dockerfile_path=""
+        
         if [ -f "Dockerfile" ]; then
-          echo "✅ Dockerfile encontrado!"
+          dockerfile_path="."
+          dockerfile_file="Dockerfile"
+          echo "✅ Dockerfile encontrado na raiz!"
+        elif [ -f "src/FCG.WebApi/Dockerfile" ]; then
+          dockerfile_path="src/FCG.WebApi"
+          dockerfile_file="Dockerfile"
+          echo "✅ Dockerfile encontrado em: src/FCG.WebApi/"
         else
           echo "❌ Dockerfile não encontrado!"
+          echo "📁 Estrutura do repositório:"
+          find . -name "Dockerfile" -o -name "*.csproj" | head -10
           exit 1
         fi
+        
+        echo "dockerfile_path=$dockerfile_path" >> $GITHUB_OUTPUT
+        echo "dockerfile_file=$dockerfile_file" >> $GITHUB_OUTPUT
+        echo "📄 Usando Dockerfile em: $dockerfile_path/$dockerfile_file"
     
     - name: Gerar versão
       id: version
@@ -107,15 +121,21 @@ jobs:
       run: |
         # Usar nome em lowercase para Docker
         IMAGE_LOWER="${{ env.REGISTRY }}/${{ steps.vars.outputs.image_name_lower }}"
+        DOCKERFILE_PATH="${{ steps.vars.outputs.dockerfile_path }}"
+        DOCKERFILE_FILE="${{ steps.vars.outputs.dockerfile_file }}"
         
         echo "🔨 Fazendo build da imagem: ${IMAGE_LOWER}:${{ steps.version.outputs.version }}"
-        echo "📄 Usando Dockerfile existente:"
-        echo "---"
-        head -10 Dockerfile
+        echo "📄 Usando Dockerfile: $DOCKERFILE_PATH/$DOCKERFILE_FILE"
+        echo "📁 Context: ."
+        echo ""
+        echo "--- Primeiras linhas do Dockerfile ---"
+        head -10 "$DOCKERFILE_PATH/$DOCKERFILE_FILE"
         echo "---"
         
-        # Build com cache e build args se necessário
+        # Build com o Dockerfile correto
+        # O context sempre será a raiz (.) para que os COPY funcionem corretamente
         docker build \
+          --file "$DOCKERFILE_PATH/$DOCKERFILE_FILE" \
           --build-arg BUILD_CONFIGURATION=Release \
           -t ${IMAGE_LOWER}:${{ steps.version.outputs.version }} \
           -t ${IMAGE_LOWER}:latest \
