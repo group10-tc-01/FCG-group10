@@ -1,0 +1,198 @@
+﻿name: Pipeline CD
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Tipo de release'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io
+  IMAGE_NAME: ${{ secrets.APP_NAME }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Gerar versão
+      id: version
+      run: |
+        # Obter última tag
+        latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        echo "Última tag: $latest_tag"
+        
+        # Remover 'v' prefix
+        version_without_v=${latest_tag#v}
+        
+        # Parse da versão semântica
+        IFS='.' read -r major minor patch <<< "$version_without_v"
+        
+        # Determinar tipo de incremento
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          release_type="${{ github.event.inputs.release_type }}"
+        else
+          release_type="patch"
+        fi
+        
+        # Incrementar versão
+        case $release_type in
+          "major")
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+          "minor")
+            minor=$((minor + 1))
+            patch=0
+            ;;
+          "patch")
+            patch=$((patch + 1))
+            ;;
+        esac
+        
+        new_version="$major.$minor.$patch"
+        tag="v$new_version"
+        
+        echo "Nova versão: $new_version"
+        echo "Nova tag: $tag"
+        
+        echo "version=$new_version" >> $GITHUB_OUTPUT
+        echo "tag=$tag" >> $GITHUB_OUTPUT
+    
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Login no Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.REGISTRY }}
+        username: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
+        password: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
+    
+    - name: Criar Dockerfile otimizado
+      run: |
+        cat > Dockerfile << 'EOF'
+        # Build stage
+        FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+        WORKDIR /src
+        
+        # Copy e restore
+        COPY *.csproj .
+        RUN dotnet restore
+        
+        # Copy código e build
+        COPY . .
+        RUN dotnet publish -c Release -o /app/publish
+        
+        # Runtime stage
+        FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+        WORKDIR /app
+        COPY --from=build /app/publish .
+        
+        EXPOSE 8080
+        ENTRYPOINT ["dotnet", "FCG.WebApi.dll"]
+        EOF
+    
+    - name: Build e push da imagem Docker
+      run: |
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+        
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+    
+    - name: Deploy no Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
+    
+    - name: Aguardar deploy e testar
+      run: |
+        echo "⏳ Aguardando deploy..."
+        sleep 90
+        
+        app_url="https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+        
+        # Teste básico de saúde
+        echo "🔍 Testando aplicação..."
+        for i in {1..30}; do
+          echo "Tentativa $i/30..."
+          
+          response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url" || echo "000")
+          if [ "$response" = "200" ] || [ "$response" = "404" ] || [ "$response" = "403" ]; then
+            echo "✅ Aplicação está respondendo! Status: $response"
+            break
+          fi
+          
+          if [ $i -eq 30 ]; then
+            echo "❌ Aplicação não respondeu após 5 minutos"
+            exit 1
+          fi
+          
+          sleep 10
+        done
+    
+    - name: Criar release
+      run: |
+        # Criar tag
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a ${{ steps.version.outputs.tag }} -m "Release ${{ steps.version.outputs.version }}"
+        git push origin ${{ steps.version.outputs.tag }}
+        
+        # Gerar changelog
+        echo "## 🚀 Release ${{ steps.version.outputs.version }}" > changelog.md
+        echo "" >> changelog.md
+        
+        # Adicionar tipo de trigger
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "📋 **Tipo**: Release Manual (${{ github.event.inputs.release_type }})" >> changelog.md
+        else
+          echo "📋 **Tipo**: Release Automático (patch)" >> changelog.md
+        fi
+        
+        echo "" >> changelog.md
+        echo "## 📋 Informações Técnicas" >> changelog.md
+        echo "- **Versão**: ${{ steps.version.outputs.version }}" >> changelog.md
+        echo "- **Commit**: ${{ github.sha }}" >> changelog.md
+        echo "- **Imagem Docker**: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}" >> changelog.md
+        echo "- **Deploy**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> changelog.md
+        echo "- **URL**: https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net" >> changelog.md
+        
+        # Adicionar commits desde última tag (se houver)
+        latest_tag=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+        if [ -n "$latest_tag" ] && [ "$latest_tag" != "${{ steps.version.outputs.tag }}" ]; then
+          echo "" >> changelog.md
+          echo "## 📝 Mudanças" >> changelog.md
+          git log $latest_tag..HEAD --pretty=format:"- %s" --no-merges >> changelog.md
+        fi
+    
+    - name: Criar GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: "Release ${{ steps.version.outputs.version }}"
+        body_path: changelog.md
+        draft: false
+        generate_release_notes: true
