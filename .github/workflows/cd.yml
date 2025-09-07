@@ -21,8 +21,6 @@ permissions:
 
 env:
   REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io
-  # Converter APP_NAME para lowercase para Docker
-  IMAGE_NAME: ${{ secrets.APP_NAME }}
 
 jobs:
   build-and-deploy:
@@ -37,10 +35,18 @@ jobs:
     - name: Preparar variáveis
       id: vars
       run: |
-        # Converter IMAGE_NAME para lowercase para Docker
+        # Converter APP_NAME para lowercase para Docker
         image_name_lower=$(echo "${{ secrets.APP_NAME }}" | tr '[:upper:]' '[:lower:]')
         echo "image_name_lower=$image_name_lower" >> $GITHUB_OUTPUT
         echo "📦 Nome da imagem Docker: $image_name_lower"
+        
+        # Verificar se Dockerfile existe
+        if [ -f "Dockerfile" ]; then
+          echo "✅ Dockerfile encontrado!"
+        else
+          echo "❌ Dockerfile não encontrado!"
+          exit 1
+        fi
     
     - name: Gerar versão
       id: version
@@ -97,39 +103,23 @@ jobs:
         username: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
         password: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
     
-    - name: Criar Dockerfile otimizado
-      run: |
-        cat > Dockerfile << 'EOF'
-        # Build stage
-        FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-        WORKDIR /src
-        
-        # Copy e restore
-        COPY *.csproj .
-        RUN dotnet restore
-        
-        # Copy código e build
-        COPY . .
-        RUN dotnet publish -c Release -o /app/publish
-        
-        # Runtime stage
-        FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-        WORKDIR /app
-        COPY --from=build /app/publish .
-        
-        EXPOSE 8080
-        ENTRYPOINT ["dotnet", "${{ secrets.APP_NAME }}.dll"]
-        EOF
-    
     - name: Build e push da imagem Docker
       run: |
         # Usar nome em lowercase para Docker
         IMAGE_LOWER="${{ env.REGISTRY }}/${{ steps.vars.outputs.image_name_lower }}"
         
         echo "🔨 Fazendo build da imagem: ${IMAGE_LOWER}:${{ steps.version.outputs.version }}"
+        echo "📄 Usando Dockerfile existente:"
+        echo "---"
+        head -10 Dockerfile
+        echo "---"
         
-        docker build -t ${IMAGE_LOWER}:${{ steps.version.outputs.version }} .
-        docker build -t ${IMAGE_LOWER}:latest .
+        # Build com cache e build args se necessário
+        docker build \
+          --build-arg BUILD_CONFIGURATION=Release \
+          -t ${IMAGE_LOWER}:${{ steps.version.outputs.version }} \
+          -t ${IMAGE_LOWER}:latest \
+          .
         
         echo "📤 Fazendo push das imagens..."
         docker push ${IMAGE_LOWER}:${{ steps.version.outputs.version }}
