@@ -10,7 +10,6 @@ namespace FCG.WebApi.DependencyInjection
         {
             services.AddVersioning();
             services.AddHealthChecks();
-
             return services;
         }
 
