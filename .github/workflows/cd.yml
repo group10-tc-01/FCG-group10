@@ -207,7 +207,6 @@ jobs:
         echo "- **Commit**: ${{ github.sha }}" >> changelog.md
         echo "- **Imagem Docker**: ${{ steps.docker.outputs.full_image_name }}" >> changelog.md
         echo "- **Deploy**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> changelog.md
-        echo "- **URL**: https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net" >> changelog.md
         
         # Adicionar commits desde última tag (se houver)
         latest_tag=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
