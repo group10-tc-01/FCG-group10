@@ -1,8 +1,9 @@
 ﻿using Asp.Versioning;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.WebApi.DependencyInjection
 {
-
+    [ExcludeFromCodeCoverage]
     public static class DependencyInjection
     {
         public static IServiceCollection AddWebApi(this IServiceCollection services)
