@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FCG.WebApi\FCG.WebApi.csproj" />
+    <ProjectReference Include="..\FCG.CommomTestsUtilities\FCG.CommomTestsUtilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
