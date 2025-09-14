@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FCG.Infrastructure.ContextDb
 {
-    public class FGCDbContext : DbContext
+    public class FCGDbContext : DbContext
     {
-        public FGCDbContext(DbContextOptions<FGCDbContext> options) : base(options)
+        public FCGDbContext(DbContextOptions<FCGDbContext> options) : base(options)
         {
         }
 
