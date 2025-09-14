@@ -21,7 +21,7 @@ namespace FCG.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FCG - V1", Version = "v1.0" });
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "FCG - V2", Version = "v2.0" });
             });
-            builder.Services.AddWebApi();
+            builder.Services.AddWebApi(builder.Configuration);
 
             var app = builder.Build();
 

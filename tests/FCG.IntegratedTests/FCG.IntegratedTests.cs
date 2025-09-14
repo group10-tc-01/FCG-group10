@@ -1,18 +1,23 @@
-﻿using FCG.Domain.EntityGame;
-using FCG.Domain.EntityUser;
-using FCG.Infrastructure.ContextDb;
+﻿using Xunit;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
+using FCG.Infrastructure.ContextDb;
+using FCG.Domain.EntityUser;
+using FCG.Domain.EntityGame;
+using Microsoft.EntityFrameworkCore.InMemory; // Importante!
 
 namespace FCG.IntegratedTests
 {
-    public class FGCDBContextTests
+    public class FCGDBContextTests
     {
         private DbContextOptions<FCGDbContext> _dbContextOptions;
 
-        public FGCDBContextTests()
+        public FCGDBContextTests()
         {
+            // Usa um banco de dados em memória com um nome único para cada teste
             _dbContextOptions = new DbContextOptionsBuilder<FCGDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
         }
 
@@ -24,7 +29,6 @@ namespace FCG.IntegratedTests
             var user = new EntityUser("Player One", "player.one@email.com", "password123");
 
             // ACT
-            // Usa um novo contexto para adicionar e salvar os dados
             using (var context = new FCGDbContext(_dbContextOptions))
             {
                 context.Users.Add(user);
@@ -32,7 +36,6 @@ namespace FCG.IntegratedTests
             }
 
             // ASSERT
-            // Usa um segundo contexto para garantir que os dados foram persistidos
             using (var assertContext = new FCGDbContext(_dbContextOptions))
             {
                 var savedUser = assertContext.Users.FirstOrDefault(u => u.Id == user.Id);
