@@ -22,12 +22,7 @@ namespace FCG.IntegratedTests.Configurations
         {
             builder.UseEnvironment("Test").ConfigureServices(services =>
             {
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<FcgDbContext>));
-
-                if (descriptor != null)
-                {
-                    services.Remove(descriptor);
-                }
+                RemoveEntityFrameworkServices(services);
 
                 _connection?.Dispose();
                 _connection = new SqliteConnection("Data Source=:memory:");
@@ -42,6 +37,20 @@ namespace FCG.IntegratedTests.Configurations
 
                 EnsureDatabaseSeeded(services);
             });
+        }
+
+        private static void RemoveEntityFrameworkServices(IServiceCollection services)
+        {
+            var descriptorsToRemove = services.Where(d =>
+                d.ServiceType == typeof(DbContextOptions<FcgDbContext>) ||
+                d.ServiceType == typeof(FcgDbContext) ||
+                d.ServiceType.Namespace?.StartsWith("Microsoft.EntityFrameworkCore") == true)
+                .ToList();
+
+            foreach (var descriptor in descriptorsToRemove)
+            {
+                services.Remove(descriptor);
+            }
         }
 
         private static void EnsureDatabaseSeeded(IServiceCollection services)
@@ -91,6 +100,15 @@ namespace FCG.IntegratedTests.Configurations
             Log.Information("Created {Count} examples", examples.Count);
 
             return examples;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _connection?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
