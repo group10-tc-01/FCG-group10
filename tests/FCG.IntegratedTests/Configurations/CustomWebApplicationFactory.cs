@@ -44,7 +44,7 @@ namespace FCG.IntegratedTests.Configurations
             });
         }
 
-        private void EnsureDatabaseSeeded(IServiceCollection services)
+        private static void EnsureDatabaseSeeded(IServiceCollection services)
         {
             using var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
