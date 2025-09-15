@@ -1,19 +1,10 @@
-﻿using FCG.Domain.Exceptions;
-using System.Diagnostics.CodeAnalysis;
-
-namespace FCG.Application.UseCases.Example.CreateExample
+﻿namespace FCG.Application.UseCases.Example.CreateExample
 {
-    [ExcludeFromCodeCoverage(Justification = "Example code, will be removed")]
     public class CreateExampleUseCase : ICreateExampleUseCase
     {
         public async Task<CreateExampleOutput> Handle(CreateExampleInput request, CancellationToken cancellationToken)
         {
             await Task.FromResult(0);
-
-            if (request.Name == "not-found")
-            {
-                throw new NotFoundException("Example not found.");
-            }
 
             var output = MapToOutput(request);
 

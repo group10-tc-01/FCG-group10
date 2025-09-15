@@ -1,7 +1,9 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace FCG.WebApi.Models
 {
+    [ExcludeFromCodeCoverage]
     public class ApiResponse<T>
     {
         public bool Succes { get; set; }

@@ -3,6 +3,7 @@
     public abstract class BaseEntity
     {
         protected BaseEntity() { }
-        public int Id { get; protected set; }
+
+        public Guid Id { get; protected set; } = Guid.NewGuid();
     }
 }

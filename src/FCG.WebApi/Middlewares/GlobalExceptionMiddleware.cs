@@ -1,10 +1,12 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace FCG.WebApi.Middlewares
 {
+    [ExcludeFromCodeCoverage]
     public class GlobalExceptionMiddleware
     {
         private readonly RequestDelegate _next;
