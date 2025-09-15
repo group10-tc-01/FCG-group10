@@ -8,13 +8,11 @@ namespace FCG.WebApi.Middlewares
     public class GlobalExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<GlobalExceptionMiddleware> _logger;
         private readonly IHostEnvironment _env;
 
-        public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger, IHostEnvironment env)
+        public GlobalExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         {
             _next = next;
-            _logger = logger;
             _env = env;
         }
 

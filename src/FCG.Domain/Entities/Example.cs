@@ -1,5 +1,8 @@
-﻿namespace FCG.Domain.Entities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace FCG.Domain.Entities
 {
+    [ExcludeFromCodeCoverage(Justification = "Example code, will be removed")]
     public class Example : BaseEntity
     {
         private Example(string name)

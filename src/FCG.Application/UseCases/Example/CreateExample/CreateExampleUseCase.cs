@@ -1,7 +1,9 @@
 ﻿using FCG.Domain.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Application.UseCases.Example.CreateExample
 {
+    [ExcludeFromCodeCoverage(Justification = "Example code, will be removed")]
     public class CreateExampleUseCase : ICreateExampleUseCase
     {
         public async Task<CreateExampleOutput> Handle(CreateExampleInput request, CancellationToken cancellationToken)

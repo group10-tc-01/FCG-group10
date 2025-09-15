@@ -2,9 +2,11 @@
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.WebApi.Controllers.v1
 {
+    [ExcludeFromCodeCoverage(Justification = "Example code, will be removed")]
     public class ExampleController : FcgBaseController
     {
         public ExampleController(IMediator mediator) : base(mediator) { }
