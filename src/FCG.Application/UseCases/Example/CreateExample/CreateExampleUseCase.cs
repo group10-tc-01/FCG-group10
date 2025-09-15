@@ -1,24 +1,35 @@
-﻿namespace FCG.Application.UseCases.Example.CreateExample
+﻿using FCG.Domain.Repositories.ExampleRepository;
+using ExampleEntity = FCG.Domain.Entities.Example;
+
+namespace FCG.Application.UseCases.Example.CreateExample
 {
     public class CreateExampleUseCase : ICreateExampleUseCase
     {
+        private readonly IWriteOnlyExampleRepository _writeOnlyExampleRepository;
+        public CreateExampleUseCase(IWriteOnlyExampleRepository writeOnlyExampleRepository)
+        {
+            _writeOnlyExampleRepository = writeOnlyExampleRepository;
+        }
+
         public async Task<CreateExampleOutput> Handle(CreateExampleInput request, CancellationToken cancellationToken)
         {
-            await Task.FromResult(0);
+            var example = ExampleEntity.Create(request.Name, request.Description);
 
-            var output = MapToOutput(request);
+            await _writeOnlyExampleRepository.AddAsync(example);
+
+            var output = MapToOutput(example);
 
             return output;
         }
 
-        private static CreateExampleOutput MapToOutput(CreateExampleInput request)
+        private static CreateExampleOutput MapToOutput(ExampleEntity example)
         {
             return new CreateExampleOutput
             {
                 Example = new CreateExampleDto
                 {
-                    Name = request.Name,
-                    Description = request.Description
+                    Name = example.Name,
+                    Description = example.Description
                 }
             };
         }

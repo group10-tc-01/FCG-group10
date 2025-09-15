@@ -7,7 +7,7 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
     {
         public static Example Build()
         {
-            return new Faker<Example>().CustomInstantiator(f => Example.Create(f.Name.FullName())).Generate();
+            return new Faker<Example>().CustomInstantiator(f => Example.Create(f.Name.FullName(), f.Commerce.ProductDescription())).Generate();
         }
     }
 }

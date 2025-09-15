@@ -19,6 +19,7 @@ namespace FCG.WebApi.DependencyInjection
             services.AddHealthChecks();
             services.AddValidation();
             services.AddFilters();
+            services.AddLowerCaseUrl();
 
             return services;
         }
@@ -70,6 +71,11 @@ namespace FCG.WebApi.DependencyInjection
                 options.Filters.Add<TrimStringsActionFilter>();
             });
 
+        }
+
+        public static void AddLowerCaseUrl(this IServiceCollection services)
+        {
+            services.AddRouting(options => options.LowercaseUrls = true);
         }
     }
 }

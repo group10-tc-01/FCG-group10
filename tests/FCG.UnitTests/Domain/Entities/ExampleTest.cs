@@ -13,7 +13,7 @@ namespace FCG.UnitTests.Domain.Entities
             var exampleBuilder = ExampleBuilder.Build();
 
             // Act
-            var example = Example.Create(exampleBuilder.Name);
+            var example = Example.Create(exampleBuilder.Name, exampleBuilder.Description);
 
             // Assert
             example.Should().NotBeNull();

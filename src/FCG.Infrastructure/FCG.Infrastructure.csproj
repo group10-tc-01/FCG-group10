@@ -15,12 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
-    <Folder Include="Persistance\Configuration\" />
-    <Folder Include="Persistance\Repositories\Example\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FCG.Domain\FCG.Domain.csproj" />
   </ItemGroup>
 

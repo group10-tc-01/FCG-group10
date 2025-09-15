@@ -1,5 +1,7 @@
 ﻿using FCG.Application.UseCases.Example.CreateExample;
 using FCG.CommomTestsUtilities.Builders.Inputs.Example;
+using FCG.CommomTestsUtilities.Builders.Repositories.ExampleRepository;
+using FCG.Domain.Repositories.ExampleRepository;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.UseCases.Example.CreateExample
@@ -7,10 +9,12 @@ namespace FCG.UnitTests.Application.UseCases.Example.CreateExample
     public class CreateExampleUseCaseTest
     {
         private readonly ICreateExampleUseCase _useCase;
+        private readonly IWriteOnlyExampleRepository _writeOnlyExampleRepository;
 
         public CreateExampleUseCaseTest()
         {
-            _useCase = new CreateExampleUseCase();
+            _writeOnlyExampleRepository = WriteOnlyExampleRepositoryBuilder.Build();
+            _useCase = new CreateExampleUseCase(_writeOnlyExampleRepository);
         }
 
         [Fact]
