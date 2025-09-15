@@ -8,11 +8,11 @@ namespace FCG.Infrastructure.Persistance.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly FcgDbContext _dbContext;
-        private IDbContextTransaction _transaction;
-        public UnitOfWork(FcgDbContext dbContext, IDbContextTransaction transaction)
+        private IDbContextTransaction? _transaction;
+
+        public UnitOfWork(FcgDbContext dbContext)
         {
             _dbContext = dbContext;
-            _transaction = transaction;
         }
 
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
@@ -23,9 +23,12 @@ namespace FCG.Infrastructure.Persistance.Repositories
         public async Task<int> CommitAsync(CancellationToken cancellationToken = default)
         {
             var result = await _dbContext.SaveChangesAsync(cancellationToken);
+
             if (_transaction != null)
             {
                 await _transaction.CommitAsync(cancellationToken);
+                await _transaction.DisposeAsync();
+                _transaction = null;
             }
 
             return result;
@@ -33,7 +36,12 @@ namespace FCG.Infrastructure.Persistance.Repositories
 
         public async Task RollbackAsync(CancellationToken cancellationToken = default)
         {
-            await _transaction.RollbackAsync(cancellationToken);
+            if (_transaction != null)
+            {
+                await _transaction.RollbackAsync(cancellationToken);
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

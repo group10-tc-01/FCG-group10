@@ -1,6 +1,8 @@
 ﻿using FCG.Application.UseCases.Example.CreateExample;
 using FCG.CommomTestsUtilities.Builders.Inputs.Example;
+using FCG.CommomTestsUtilities.Builders.Repositories;
 using FCG.CommomTestsUtilities.Builders.Repositories.ExampleRepository;
+using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.ExampleRepository;
 using FluentAssertions;
 
@@ -10,11 +12,13 @@ namespace FCG.UnitTests.Application.UseCases.Example.CreateExample
     {
         private readonly ICreateExampleUseCase _useCase;
         private readonly IWriteOnlyExampleRepository _writeOnlyExampleRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CreateExampleUseCaseTest()
         {
+            _unitOfWork = UnitOfWorkBuilder.Build();
             _writeOnlyExampleRepository = WriteOnlyExampleRepositoryBuilder.Build();
-            _useCase = new CreateExampleUseCase(_writeOnlyExampleRepository);
+            _useCase = new CreateExampleUseCase(_writeOnlyExampleRepository, _unitOfWork);
         }
 
         [Fact]
@@ -22,6 +26,8 @@ namespace FCG.UnitTests.Application.UseCases.Example.CreateExample
         {
             // Arrange
             var input = CreateExampleInputBuilder.Build();
+            UnitOfWorkBuilder.SetupSaveChangesAsync();
+            UnitOfWorkBuilder.SetupCommitAsync();
 
             // Act
             var result = await _useCase.Handle(input, CancellationToken.None);

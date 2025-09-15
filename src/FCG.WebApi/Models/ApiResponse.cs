@@ -8,7 +8,6 @@ namespace FCG.WebApi.Models
     {
         public bool Succes { get; set; }
         public T Data { get; set; } = default!;
-        public string Type { get; private set; } = default!;
         public List<string> ErrorMessages { get; set; } = default!;
 
         public static ApiResponse<T> SuccesResponse(T data)
@@ -22,7 +21,6 @@ namespace FCG.WebApi.Models
             {
                 Succes = false,
                 ErrorMessages = errorMessages,
-                Type = $"https://httpstatuses.com/{(int)statusCode}"
             };
         }
     }

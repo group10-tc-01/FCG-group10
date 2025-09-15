@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FCG.Application.UseCases.Example.CreateExample;
 using FCG.CommomTestsUtilities.Builders.Inputs.Example;
+using FCG.CommomTestsUtilities.Builders.Repositories;
 using FCG.CommomTestsUtilities.Builders.Repositories.ExampleRepository;
 
 namespace FCG.FunctionalTests.Fixtures.Example
@@ -10,7 +11,11 @@ namespace FCG.FunctionalTests.Fixtures.Example
         public CreateExampleFixture()
         {
             var writeOnlyExampleRepository = WriteOnlyExampleRepositoryBuilder.Build();
-            CreateExampleUseCase = new CreateExampleUseCase(writeOnlyExampleRepository);
+            var unitOfWork = UnitOfWorkBuilder.Build();
+            UnitOfWorkBuilder.SetupSaveChangesAsync(1);
+            UnitOfWorkBuilder.SetupCommitAsync(1);
+
+            CreateExampleUseCase = new CreateExampleUseCase(writeOnlyExampleRepository, unitOfWork);
             CreateExampleInput = CreateExampleInputBuilder.Build();
         }
 

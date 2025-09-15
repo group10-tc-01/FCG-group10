@@ -1,5 +1,7 @@
-﻿using FCG.Domain.Repositories.ExampleRepository;
+﻿using FCG.Domain.Repositories;
+using FCG.Domain.Repositories.ExampleRepository;
 using FCG.Infrastructure.Persistance;
+using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Persistance.Repositories.ExampleRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +31,8 @@ namespace FCG.Infrastructure.DependencyInjection
 
         public static void AddRepositories(this IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddScoped<IWriteOnlyExampleRepository, ExampleRepository>();
         }
 

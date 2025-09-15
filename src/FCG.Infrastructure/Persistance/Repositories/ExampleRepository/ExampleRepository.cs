@@ -12,7 +12,6 @@ namespace FCG.Infrastructure.Persistance.Repositories.ExampleRepository
         public async Task AddAsync(Example example)
         {
             await _dbContext.Examples.AddAsync(example);
-            await _dbContext.SaveChangesAsync();
         }
     }
 }
