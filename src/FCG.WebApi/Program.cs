@@ -1,4 +1,7 @@
+using FCG.Application.DependencyInjection;
+using FCG.Infrastructure.DependencyInjection;
 using FCG.WebApi.DependencyInjection;
+using FCG.WebApi.Middlewares;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics.CodeAnalysis;
 
@@ -21,10 +24,14 @@ namespace FCG.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FCG - V1", Version = "v1.0" });
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "FCG - V2", Version = "v2.0" });
             });
+
             builder.Services.AddWebApi();
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
             app.MapHealthChecks("/health");
 
             if (app.Environment.IsDevelopment())
