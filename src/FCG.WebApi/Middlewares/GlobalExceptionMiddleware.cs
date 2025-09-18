@@ -70,7 +70,7 @@ namespace FCG.WebApi.Middlewares
                 Title = "An unexpected error occurred!",
                 Status = context.Response.StatusCode,
                 Instance = context.Request.Path,
-                Detail = "Please contact support.",
+                Detail = exception.Message,
             };
 
             problemDetails.Extensions["traceId"] = traceId;

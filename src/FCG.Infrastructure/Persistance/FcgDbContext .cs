@@ -9,6 +9,7 @@ namespace FCG.Infrastructure.Persistance
     public class FcgDbContext(DbContextOptions<FcgDbContext> options) : DbContext(options)
     {
         public DbSet<Example> Examples { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

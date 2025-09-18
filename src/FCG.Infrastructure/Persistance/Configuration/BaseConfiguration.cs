@@ -15,6 +15,15 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.Property(e => e.Id)
                 .IsRequired();
 
+            builder.Property(e => e.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            builder.Property(e => e.UpdatedAt);
+
+            builder.Property(e => e.IsActive)
+                .IsRequired()
+                .HasDefaultValue(true);
         }
     }
 }
