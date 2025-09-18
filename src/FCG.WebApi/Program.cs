@@ -4,6 +4,7 @@ using FCG.WebApi.DependencyInjection;
 using FCG.WebApi.Middlewares;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics.CodeAnalysis;
+using FCG.Infrastructure.Logging;
 
 namespace FCG.WebApi
 {
@@ -28,6 +29,7 @@ namespace FCG.WebApi
             builder.Services.AddWebApi();
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
+            builder.Services.AddSerilogLogging(builder.Configuration);
 
             var app = builder.Build();
 
