@@ -14,7 +14,7 @@ namespace FCG.Domain.Entities
 
         protected Wallet() { }
 
-        public Wallet(int userId, decimal initialBalance)
+        public Wallet(Guid userId, decimal initialBalance)
         {
             UserId = userId;
             Balance = initialBalance;
