@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using FCG.Application.UseCases.Example.CreateExample;
+using FCG.Infrastructure.Persistance;
 using FCG.WebApi.Filter;
 using FCG.WebApi.Models;
 using FluentValidation;
@@ -16,7 +17,7 @@ namespace FCG.WebApi.DependencyInjection
         public static IServiceCollection AddWebApi(this IServiceCollection services)
         {
             services.AddVersioning();
-            services.AddHealthChecks();
+            services.AddHealthChecks().AddDbContextCheck<FcgDbContext>();
             services.AddValidation();
             services.AddFilters();
             services.AddLowerCaseUrl();
