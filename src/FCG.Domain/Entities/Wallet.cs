@@ -4,7 +4,7 @@ namespace FCG.Domain.Entities
 {
     public class Wallet : BaseEntity
     {
-        public int UserId { get; private set; }
+        public Guid UserId { get; private set; }
         public decimal Balance { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
