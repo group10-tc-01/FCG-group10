@@ -20,7 +20,14 @@ namespace FCG.Domain.Entities
 
         public User(string name, Email email, Password password, string role)
         {
-
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(role))
+            {
+                throw new ArgumentException("Verifique os dados.");
+            }
+            if (name.Length < 3)
+            {
+                throw new ArgumentException("O nome deve ter pelo menos 3 caracteres.");
+            }
 
             Name = name;
             Email = email;

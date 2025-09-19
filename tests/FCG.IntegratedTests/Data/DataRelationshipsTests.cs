@@ -1,7 +1,11 @@
-﻿using FCG.Domain.Entities;
+﻿using System;
+using System.Linq;
+using Xunit;
+using Microsoft.EntityFrameworkCore;
+using FCG.Domain.Entities;
 using FCG.Domain.ValueObjects;
 using FCG.Infrastructure.Persistance.Configuration;
-using Microsoft.EntityFrameworkCore;
+using FluentAssertions;
 
 public class EntityRelationshipsTests : IDisposable
 {
@@ -34,7 +38,7 @@ public class EntityRelationshipsTests : IDisposable
         var gamePrice2 = new Price(99.99m);
 
         var user = new User("Rhuan Marques", userEmail, userPassword, "Admin");
-        var library = new Library(user.Id); // Note que a Library precisa do ID do User
+        var library = new Library(user.Id);
         var game1 = new Game("Cyberpunk 2077", "A futuristic RPG game.", gamePrice1, "RPG");
         var game2 = new Game("The Witcher 3: Wild Hunt", "An epic fantasy RPG.", gamePrice2, "RPG");
 
@@ -68,5 +72,78 @@ public class EntityRelationshipsTests : IDisposable
         var gamesInLibrary = userFromDb.Library.LibraryGames.Select(lg => lg.Game).ToList();
         Assert.Contains(gamesInLibrary, g => g.Name == "Cyberpunk 2077");
         Assert.Contains(gamesInLibrary, g => g.Name == "The Witcher 3: Wild Hunt");
+    }
+
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Constructor_WhenNameIsEmptyOrNull_ShouldThrowException(string name)
+    {
+
+        var email = new Email("test@example.com");
+        var password = new Password("Password123");
+        var role = "User";
+
+        Action act = () => new User(name, email, password, role);
+        act.Should().Throw<ArgumentException>()
+           .WithMessage("Verifique os dados.");
+    }
+
+    [Fact]
+    public void Constructor_WhenRoleIsInvalid_ShouldThrowException()
+    {
+        var name = "John Doe";
+        var email = new Email("test@example.com");
+        var password = new Password("Password123");
+        var role = "";
+
+        Action act = () => new User(name, email, password, role);
+        act.Should().Throw<ArgumentException>()
+           .WithMessage("Verifique os dados.");
+    }
+    public class GameTests
+    {
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void Constructor_WhenNameIsEmptyOrNull_ShouldThrowException(string name)
+        {
+            var price = new Price(59.99m);
+            var description = "Description for a game.";
+            var category = "Action";
+
+            Action act = () => new Game(name, description, price, category);
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("Nome obrigatório!");
+        }
+
+        [Fact]
+        public void Constructor_WhenNameIsLessThan3Characters_ShouldThrowException()
+        {
+            var name = "ab";
+            var price = new Price(59.99m);
+            var description = "Description for a game.";
+            var category = "Action";
+
+            Action act = () => new Game(name, description, price, category);
+            act.Should().Throw<ArgumentException>()
+                .WithMessage("O nome deve ter pelo menos 3 caracteres.");
+        }
+
+        [Fact]
+        public void Constructor_WhenInputIsValid_ShouldNotThrowException()
+        {
+            var name = "ValidName";
+            var price = new Price(59.99m);
+            var description = "Description for a game.";
+            var category = "Action";
+
+            Action act = () => new Game(name, description, price, category);
+
+            act.Should().NotThrow<ArgumentException>();
+        }
     }
 }

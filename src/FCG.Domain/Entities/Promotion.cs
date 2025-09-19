@@ -20,6 +20,10 @@ namespace FCG.Domain.Entities
         }
         public Promotion(Guid gameId, decimal discount, DateTime startDate, DateTime endDate)
         {
+            if (discount <= 0)
+            {
+                throw new ArgumentException("Disconto deve ser maior que zero.");
+            }
             GameId = gameId;
             Discount = discount;
             StartDate = startDate;

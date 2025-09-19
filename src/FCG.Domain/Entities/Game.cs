@@ -17,6 +17,14 @@
         protected Game() { }
         public Game(string name, string description, Price price, string category)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Nome obrigatório!");
+            }
+            if (name.Length < 3)
+            {
+                throw new ArgumentException("O nome deve ter pelo menos 3 caracteres.");
+            }
             Name = name;
             Description = description;
             Price = price;
