@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+	<DataCollectionRunSettings>
+		<DataCollectors>
+			<DataCollector friendlyName="XPlat Code Coverage" uri="datacollector://Microsoft/Coverlet/1.0" assemblyQualifiedName="Coverlet.Collector.DataCollector, coverlet.collector, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null">
+				<Configuration>
+					<Format>cobertura</Format>
+				</Configuration>
+			</DataCollector>
+		</DataCollectors>
+	</DataCollectionRunSettings>
+</RunSettings>
