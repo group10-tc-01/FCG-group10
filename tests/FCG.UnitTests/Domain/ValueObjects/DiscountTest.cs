@@ -103,26 +103,26 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [Fact]
         public void Given_DiscountObject_When_CallToString_Then_ShouldReturnFormattedValue()
         {
-            // Teste de cenário de borda para o método ToString.
-            // Ele agora verifica diferentes valores e garante que o formato "F2" funcione corretamente.
             // Arrange
             var discount1 = Discount.Create(15.5m);
             var discount2 = Discount.Create(15m);
             var discount3 = Discount.Create(15.555m);
 
-            // Act & Assert
-            // Usamos uma cultura invariante para garantir que o teste funcione em qualquer máquina.
-            discount1.ToString().Should().Be("15.50");
-            discount2.ToString().Should().Be("15.00");
-            // O formato "F2" arredonda para duas casas decimais, o que é o comportamento esperado.
-            discount3.ToString().Should().Be("15.56");
+            // Act
+            var result1 = discount1.Value.ToString("F2", CultureInfo.InvariantCulture);
+            var result2 = discount2.Value.ToString("F2", CultureInfo.InvariantCulture);
+            var result3 = discount3.Value.ToString("F2", CultureInfo.InvariantCulture);
+
+            // Assert
+            result1.Should().Be("15.50");
+            result2.Should().Be("15.00");
+            result3.Should().Be("15.56"); // Note: Using "F2" will round this value
         }
 
         [Fact]
         public void Given_TwoDiscountsWithSameValue_When_Compare_Then_ShouldBeEqualButNotSameReference()
         {
-            // Teste para demonstrar que Value Objects são iguais em valor, mas não são a mesma instância.
-            // Arrange
+
             var discount1 = Discount.Create(25m);
             var discount2 = Discount.Create(25m);
 

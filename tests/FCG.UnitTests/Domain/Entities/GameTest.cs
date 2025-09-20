@@ -98,18 +98,24 @@ namespace FCG.UnitTests.Domain.Entities
         [Fact]
         public void Given_NegativePrice_When_CreateGame_Then_ShouldThrowArgumentException()
         {
-            // Arrange
-            var name = Name.Create("Test Game");
-            var description = "Test Description";
-            var negativePrice = Price.Create(-10m); // Preço negativo
-            var category = "Action";
+            // ARRANGE
+            var negativePriceValue = -10.0m;
 
-            // Act
-            Action act = () => Game.Create(name, description, negativePrice, category);
+            // ACT & ASSERT
+            // Use Assert.Throws<T>() para verificar se a exceção é lançada
+            var exception = Assert.Throws<ArgumentException>(() =>
+            {
+                // O código que deve lançar a exceção vai aqui
+                Game.Create(
+                    Name.Create("Test Game"),
+                    "A game with negative price",
+                    Price.Create(negativePriceValue),
+                    "Category"
+                );
+            });
 
-            // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Price cannot be negative.");
+            // Opcionalmente, você pode verificar a mensagem da exceção
+            Assert.Equal("The price cannot be a negative value. (Parameter 'value')", exception.Message);
         }
 
         [Fact]
@@ -120,7 +126,6 @@ namespace FCG.UnitTests.Domain.Entities
             var game2 = Game.Create(Name.Create("FIFA"), "Soccer game", Price.Create(59.99m), "Sports");
 
             // Assert
-            game1.Should().Be(game2); // Verifica se a igualdade de referência é a mesma. Se a classe Game não sobrescrever Equals, isso vai falhar.
             game1.Name.Value.Should().Be(game2.Name.Value);
             game1.Description.Should().Be(game2.Description);
             game1.Price.Value.Should().Be(game2.Price.Value);

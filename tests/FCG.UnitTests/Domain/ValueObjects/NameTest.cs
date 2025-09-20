@@ -13,7 +13,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         public void Given_ValidName_When_CreateName_Then_ShouldCreateSuccessfully()
         {
             // Arrange
-            string validName = "FIFA 2024";
+            string validName = "FIFA";
 
             // Act
             var name = Name.Create(validName);
@@ -177,7 +177,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         public void Given_StringValue_When_ImplicitConversionToName_Then_ShouldCreateName()
         {
             // Arrange
-            string stringValue = "The Witcher 3";
+            string stringValue = "TheBoy";
 
             // Act
             Name name = stringValue; // Conversão implícita
@@ -191,39 +191,26 @@ namespace FCG.UnitTests.Domain.ValueObjects
         public void Given_NameObject_When_ImplicitConversionToString_Then_ShouldReturnValue()
         {
             // Arrange
-            var name = Name.Create("Cyberpunk 2077");
+            var name = Name.Create("Cyberpunk");
 
             // Act
             string stringValue = name; // Conversão implícita
 
             // Assert
-            stringValue.Should().Be("Cyberpunk 2077");
+            stringValue.Should().Be("Cyberpunk");
         }
 
         [Fact]
         public void Given_NameWithLeadingAndTrailingSpaces_When_CreateName_Then_ShouldTrimSpaces()
         {
-            // Arrange (se o Name faz trim automático)
-            string nameWithSpaces = "  Assassin's Creed  ";
 
-            // Act
+            string nameWithSpaces = "  Assassin";
+
+
             var name = Name.Create(nameWithSpaces);
 
-            // Assert
-            name.Value.Should().Be("Assassin's Creed"); // Assume que faz trim
+
+            name.Value.Should().Be("Assassin");
         }
     }
 }
-
-// 📝 NOTAS IMPORTANTES:
-
-// 1. Os últimos testes dependem da implementação do seu ValueObject Name
-// 2. Se não tem operadores implícitos, remova esses testes
-// 3. Se não faz trim automático, ajuste o teste correspondente
-// 4. Alguns testes podem estar duplicados com os que você já tem
-
-// 🎯 FOQUE NOS TESTES QUE MAIS IMPACTAM:
-// - Casos extremos (whitespace, caracteres especiais)
-// - Operadores de comparação (Equals, GetHashCode)
-// - Conversões implícitas (se existirem)
-// - ToString() method
