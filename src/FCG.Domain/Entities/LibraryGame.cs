@@ -1,6 +1,6 @@
 ﻿namespace FCG.Domain.Entities
 {
-    public class LibraryGame : BaseEntity
+    public sealed class LibraryGame : BaseEntity
     {
         public Guid LibraryId { get; private set; }
         public Guid GameId { get; private set; }
@@ -11,15 +11,25 @@
         public Library Library { get; set; }
         public Game Game { get; set; }
 
-        protected LibraryGame()
+        public LibraryGame()
         {
         }
-        public LibraryGame(Guid libraryId, Guid gameId, decimal purchasePrice)
+        private LibraryGame(Guid libraryId, Guid gameId, decimal purchasePrice)
         {
+            if (purchasePrice < 0)
+            {
+                throw new ArgumentException("Purchase price cannot be negative.");
+            }
             LibraryId = libraryId;
             GameId = gameId;
             PurchaseDate = DateTime.UtcNow;
             PurchasePrice = purchasePrice;
         }
+        public static LibraryGame Create(Guid libraryId, Guid gameId, decimal purchasePrice)
+        {
+            return new LibraryGame(libraryId, gameId, purchasePrice);
+        }
+
+
     }
 }

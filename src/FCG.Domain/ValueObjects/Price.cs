@@ -2,18 +2,26 @@
 {
     public decimal Value { get; }
 
-    public Price(decimal value)
+    private Price(decimal value)
     {
         if (value < 0)
         {
-            throw new ArgumentException("O preço não pode ser um valor negativo.", nameof(value));
+            throw new ArgumentException("The price cannot be a negative value.", nameof(value));
         }
-
         Value = value;
     }
-    public static implicit operator decimal(Price price) => price.Value;
 
-    public Price()
+    private Price()
     {
     }
+
+    public static Price Create(decimal value)
+    {
+        return new Price(value);
+    }
+    public static implicit operator decimal(Price price) => price.Value;
+    public static implicit operator Price(decimal value) => Create(value);
+
+    public override string ToString() => Value.ToString("F2");
+
 }

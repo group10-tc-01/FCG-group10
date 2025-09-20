@@ -1,36 +1,38 @@
 ﻿using System.Dynamic;
 using System.Runtime.CompilerServices;
+using FCG.Domain.ValueObjects;
 
 namespace FCG.Domain.Entities
 {
-    public class Promotion : BaseEntity
+    public sealed class Promotion : BaseEntity
     {
         public Guid GameId { get; private set; }
-        public decimal Discount { get; private set; }
+        public Discount Discount { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime UpdatedAt { get; private set; }
-        public bool IsActive { get; private set; }
+
 
         public Game Game { get; set; }
 
-        protected Promotion()
+        public Promotion()
         {
         }
-        public Promotion(Guid gameId, decimal discount, DateTime startDate, DateTime endDate)
+        private Promotion(Guid gameId, decimal discount, DateTime startDate, DateTime endDate)
         {
-            if (discount <= 0)
+            if (endDate < startDate)
             {
-                throw new ArgumentException("Disconto deve ser maior que zero.");
+                throw new ArgumentException("End date must be on or after the start date.");
             }
+
             GameId = gameId;
             Discount = discount;
             StartDate = startDate;
             EndDate = endDate;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
-            IsActive = true;
+
+        }
+        public static Promotion Create(Guid gameId, decimal discount, DateTime startDate, DateTime endDate)
+        {
+            return new Promotion(gameId, discount, startDate, endDate);
         }
 
     }

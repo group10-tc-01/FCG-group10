@@ -2,25 +2,24 @@
 
 namespace FCG.Domain.Entities
 {
-    public class Wallet : BaseEntity
+    public sealed class Wallet : BaseEntity
     {
         public Guid UserId { get; private set; }
         public decimal Balance { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime UpdatedAt { get; private set; }
-        public bool IsActive { get; private set; }
 
         public User User { get; set; }
 
-        protected Wallet() { }
+        public Wallet() { }
 
-        public Wallet(Guid userId, decimal initialBalance)
+        private Wallet(Guid userId, decimal initialBalance)
         {
             UserId = userId;
             Balance = initialBalance;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
-            IsActive = true;
+
+        }
+        public static Wallet Create(Guid userId, decimal initialBalance)
+        {
+            return new Wallet(userId, initialBalance);
         }
     }
 }

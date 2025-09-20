@@ -1,37 +1,50 @@
-﻿namespace FCG.Domain.Entities
+﻿using FCG.Domain.ValueObjects;
+
+namespace FCG.Domain.Entities
 {
-    public class Game : BaseEntity
+    public sealed class Game : BaseEntity
     {
-        public string Name { get; private set; } = string.Empty;
-        public string Description { get; private set; } = string.Empty;
+        public Name Name { get; private set; }
+        public string Description { get; private set; }
         public Price Price { get; private set; }
-        public string Category { get; private set; } = string.Empty;
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
-        public bool IsActive { get; private set; } = true;
+        public string Category { get; private set; }
 
         public ICollection<Promotion> Promotions { get; set; }
-
         public ICollection<LibraryGame> LibraryGames { get; set; }
 
-        protected Game() { }
-        public Game(string name, string description, Price price, string category)
+        public Game()
         {
-            if (string.IsNullOrWhiteSpace(name))
+            Promotions = new List<Promotion>();
+            LibraryGames = new List<LibraryGame>();
+        }
+
+        private Game(Name name, string description, Price price, string category)
+        {
+            if (price.Value < 0)
             {
-                throw new ArgumentException("Nome obrigatório!");
+                throw new ArgumentException("Price cannot be negative.");
             }
-            if (name.Length < 3)
+            if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentException("O nome deve ter pelo menos 3 caracteres.");
+                throw new ArgumentException("Description cannot be null or empty.");
             }
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                throw new ArgumentException("Category cannot be null or empty.");
+            }
+
             Name = name;
             Description = description;
             Price = price;
             Category = category;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
-            IsActive = true;
+
+            Promotions = new List<Promotion>();
+            LibraryGames = new List<LibraryGame>();
+        }
+
+        public static Game Create(Name name, string description, Price price, string category)
+        {
+            return new Game(name, description, price, category);
         }
     }
 }

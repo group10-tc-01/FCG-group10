@@ -1,41 +1,47 @@
 ﻿namespace FCG.Domain.ValueObjects
 {
-    public sealed record Password
+    public record Password
     {
-        private const int MinimumLength = 8;
-        public string Value { get; private set; }
+        public string Value { get; }
 
-        public Password(string value)
+        private Password(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("A senha não pode ser nula ou vazia.", nameof(value));
-            }
-
-            if (value.Length < MinimumLength)
-            {
-                throw new ArgumentException($"A senha deve ter no mínimo {MinimumLength} caracteres.", nameof(value));
-            }
-
-            if (!value.Any(char.IsLetter))
-            {
-                throw new ArgumentException("A senha deve conter pelo menos uma letra.");
-            }
-
-            if (!value.Any(char.IsDigit))
-            {
-                throw new ArgumentException("A senha deve conter pelo menos um número.");
-            }
-
-            if (!value.Any(char.IsUpper))
-            {
-                throw new ArgumentException("A senha deve conter pelo menos uma letra maiúscula.");
-            }
-
             Value = value;
         }
+        private Password()
+        {
+        }
 
+        public static Password Create(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Password cannot be null or empty.");
 
-        public Password() { }
+            if (value.Length < 8)
+                throw new ArgumentException("Password must be at least 8 characters long.");
+
+            if (!ContainsLetter(value))
+                throw new ArgumentException("Password must contain at least one letter.");
+
+            if (!ContainsDigit(value))
+                throw new ArgumentException("Password must contain at least one number.");
+
+            if (!ContainsSpecialCharacter(value))
+                throw new ArgumentException("Password must contain at least one special character.");
+
+            return new Password(value);
+        }
+
+        private static bool ContainsLetter(string password) => password.Any(char.IsLetter);
+
+        private static bool ContainsDigit(string password) => password.Any(char.IsDigit);
+
+        private static bool ContainsSpecialCharacter(string password) =>
+            password.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c));
+
+        public static implicit operator string(Password password) => password.Value;
+        public static implicit operator Password(string value) => Create(value);
+
+        public override string ToString() => Value;
     }
 }
