@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using FCG.Domain.ValueObjects;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
 {
@@ -7,13 +8,12 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [Fact]
         public void Given_ValidPrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
         {
-            // Arrange
+
             decimal validPrice = 59.99m;
 
-            // Act
+
             var price = Price.Create(validPrice);
 
-            // Assert
             price.Should().NotBeNull();
             price.Value.Should().Be(validPrice);
         }
