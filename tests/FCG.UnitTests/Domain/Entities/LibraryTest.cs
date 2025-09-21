@@ -62,14 +62,11 @@ namespace FCG.UnitTests.Domain.Entities
         [Fact]
         public void Given_TwoLibrariesWithSameUserId_When_Compare_Then_ShouldHaveSameUserId()
         {
-            // Arrange
             var userId = Guid.NewGuid();
 
-            // Act
             var library1 = Library.Create(userId);
             var library2 = Library.Create(userId);
 
-            // Assert
             library1.UserId.Should().Be(library2.UserId);
         }
 

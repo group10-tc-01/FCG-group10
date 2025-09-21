@@ -98,14 +98,10 @@ namespace FCG.UnitTests.Domain.Entities
         [Fact]
         public void Given_NegativePrice_When_CreateGame_Then_ShouldThrowArgumentException()
         {
-            // ARRANGE
             var negativePriceValue = -10.0m;
 
-            // ACT & ASSERT
-            // Use Assert.Throws<T>() para verificar se a exceção é lançada
             var exception = Assert.Throws<ArgumentException>(() =>
             {
-                // O código que deve lançar a exceção vai aqui
                 Game.Create(
                     Name.Create("Test Game"),
                     "A game with negative price",
@@ -114,7 +110,6 @@ namespace FCG.UnitTests.Domain.Entities
                 );
             });
 
-            // Opcionalmente, você pode verificar a mensagem da exceção
             Assert.Equal("The price cannot be a negative value. (Parameter 'value')", exception.Message);
         }
 

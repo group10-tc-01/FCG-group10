@@ -142,10 +142,8 @@ namespace FCG.UnitTests.Domain.Entities
                 "Adventure"
             );
 
-            // Act
             promotion.Game = game;
 
-            // Assert
             promotion.Game.Should().Be(game);
         }
     }
