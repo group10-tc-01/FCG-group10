@@ -1,0 +1,45 @@
+﻿using System.Net.Mail;
+using System;
+
+namespace FCG.Domain.ValueObjects
+{
+    public record Email
+    {
+        public string Value { get; }
+
+        private Email(string value)
+        {
+            Value = value;
+        }
+
+        public static Email Create(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Email cannot be null or empty.");
+
+
+            if (value.Length > 255)
+                throw new ArgumentException("Email cannot be longer than 255 characters.");
+
+            if (!IsValidEmail(value))
+                throw new ArgumentException("Invalid email format.");
+
+            return new Email(value);
+        }
+
+        private static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            return MailAddress.TryCreate(email, out _);
+        }
+
+        public static implicit operator string(Email email) => email.Value;
+        public static implicit operator Email(string value) => Create(value);
+
+        public override string ToString() => Value;
+    }
+}
