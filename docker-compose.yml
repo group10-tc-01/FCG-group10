@@ -1,5 +1,5 @@
 services:
-  
+
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver-fcg
@@ -21,6 +21,18 @@ services:
       retries: 10
       start_period: 10s
 
+  seq:
+    image: datalust/seq
+    container_name: seq-fcg
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=YourPassword123   
+    ports:
+      - "5341:5341"  
+      - "5342:80"   
+    networks:
+      - network-fcg
+
   api-fcg:
     build:
       context: .
@@ -29,12 +41,15 @@ services:
     depends_on:
       sqlserver:
         condition: service_healthy
+      seq:
+        condition: service_started
     ports:
       - "8080:8080"
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=fcg_database;User Id=sa;Password=YourPassword123;TrustServerCertificate=True;
+      - Serilog__SeqUrl=http://seq:5341
     networks:
       - network-fcg
     restart: unless-stopped
