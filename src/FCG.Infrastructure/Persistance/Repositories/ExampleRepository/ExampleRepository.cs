@@ -1,8 +1,11 @@
 ﻿using FCG.Domain.Entities;
 using FCG.Domain.Repositories.ExampleRepository;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Infrastructure.Persistance.Repositories.ExampleRepository
 {
+    [ExcludeFromCodeCoverage]
+
     public class ExampleRepository : IWriteOnlyExampleRepository
     {
         public readonly FcgDbContext _dbContext;
@@ -13,5 +16,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.ExampleRepository
         {
             await _dbContext.Examples.AddAsync(example);
         }
+
+
     }
 }
