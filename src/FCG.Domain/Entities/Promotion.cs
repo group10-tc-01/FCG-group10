@@ -9,7 +9,7 @@ namespace FCG.Domain.Entities
         public Discount Discount { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
-        public Game? Game { get; private set; }
+        public Game? Game { get; }
 
         private Promotion(Guid gameId, Discount discount, DateTime startDate, DateTime endDate)
         {

@@ -4,7 +4,7 @@
     {
         public Guid UserId { get; private set; }
         public decimal Balance { get; private set; }
-        public User? User { get; private set; }
+        public User? User { get; }
 
         private Wallet(Guid userId)
         {
