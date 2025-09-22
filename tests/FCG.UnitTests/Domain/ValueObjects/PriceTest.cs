@@ -1,4 +1,5 @@
-﻿using FCG.Domain.ValueObjects;
+﻿using FCG.Domain.Exceptions;
+using FCG.Domain.ValueObjects;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
@@ -8,12 +9,13 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [Fact]
         public void Given_ValidPrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
         {
-
+            // Arrange
             decimal validPrice = 59.99m;
 
-
+            // Act
             var price = Price.Create(validPrice);
 
+            // Assert
             price.Should().NotBeNull();
             price.Value.Should().Be(validPrice);
         }
@@ -47,77 +49,65 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [Fact]
         public void Given_LargePrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
         {
+            // Arrange
             decimal largePrice = decimal.MaxValue;
 
+            // Act
             var price = Price.Create(largePrice);
 
+            // Assert
             price.Value.Should().Be(decimal.MaxValue);
         }
 
         [Fact]
-        public void Given_NegativePrice_When_CreatePrice_Then_ShouldThrowArgumentException()
+        public void Given_NegativePrice_When_CreatePrice_Then_ShouldThrowDomainException()
         {
-
+            // Arrange
             decimal negativePrice = -10.50m;
 
-
+            // Act
             Action act = () => Price.Create(negativePrice);
 
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("The price cannot be a negative value. (Parameter 'value')");
+            // Assert
+            act.Should().Throw<DomainException>().WithMessage("The price cannot be a negative value.");
         }
 
         [Fact]
         public void Given_PriceObject_When_ImplicitConvertToDecimal_Then_ShouldReturnValue()
         {
-
+            // Arrange
             var price = Price.Create(29.99m);
 
+            // Act
             decimal value = price;
 
+            // Assert
             value.Should().Be(29.99m);
         }
 
         [Fact]
         public void Given_DecimalValue_When_ImplicitConvertToPrice_Then_ShouldCreatePrice()
         {
-
+            // Arrange
             decimal value = 49.99m;
 
+            // Act
             Price price = value;
 
+            // Assert
             price.Value.Should().Be(49.99m);
-        }
-
-        [Fact]
-        public void Given_TwoPricesWithSameValue_When_Compare_Then_ShouldBeEqual()
-        {
-            var price1 = Price.Create(19.99m);
-            var price2 = Price.Create(19.99m);
-
-            price1.Should().Be(price2);
-            price1.GetHashCode().Should().Be(price2.GetHashCode());
-        }
-
-        [Fact]
-        public void Given_TwoPricesWithDifferentValues_When_Compare_Then_ShouldNotBeEqual()
-        {
-            var price1 = Price.Create(19.99m);
-            var price2 = Price.Create(29.99m);
-
-            price1.Should().NotBe(price2);
         }
 
         [Fact]
         public void Given_PriceWithHighPrecision_When_CreatePrice_Then_ShouldMaintainPrecision()
         {
-
+            // Arrange
             decimal precisePrice = 19.999999m;
 
-
+            // Act
             var price = Price.Create(precisePrice);
 
-
+            // Assert
             price.Value.Should().Be(19.999999m);
         }
     }

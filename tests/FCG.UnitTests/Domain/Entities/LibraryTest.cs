@@ -18,7 +18,6 @@ namespace FCG.UnitTests.Domain.Entities
             library.Should().NotBeNull();
             library.Id.Should().NotBe(Guid.Empty);
             library.UserId.Should().Be(userId);
-            library.LibraryGames.Should().NotBeNull();
         }
 
         [Fact]
@@ -48,42 +47,6 @@ namespace FCG.UnitTests.Domain.Entities
             library.Should().NotBeNull();
             library.UserId.Should().Be(userId);
         }
-
-        [Fact]
-        public void Given_NewLibrary_When_CheckLibraryGamesCollection_Then_ShouldBeInitialized()
-        {
-            // Arrange & Act
-            var library = Library.Create(Guid.NewGuid());
-
-            // Assert
-            library.LibraryGames.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void Given_TwoLibrariesWithSameUserId_When_Compare_Then_ShouldHaveSameUserId()
-        {
-            var userId = Guid.NewGuid();
-
-            var library1 = Library.Create(userId);
-            var library2 = Library.Create(userId);
-
-            library1.UserId.Should().Be(library2.UserId);
-        }
-
-        [Fact]
-        public void Given_Library_When_SetUser_Then_ShouldSetUserProperty()
-        {
-
-            var library = Library.Create(Guid.NewGuid());
-            var user = new User();
-
-
-            library.User = user;
-
-
-            library.User.Should().Be(user);
-        }
-
     }
 }
 

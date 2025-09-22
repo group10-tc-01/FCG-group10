@@ -1,5 +1,4 @@
-﻿using FCG.CommomTestsUtilities.Builders.Entities;
-using FCG.Domain.Entities;
+﻿using FCG.Domain.Entities;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
@@ -10,13 +9,14 @@ namespace FCG.UnitTests.Domain.Entities
         public void Given_ValidUserId_When_CreateWallet_Then_WalletIsInstantiatedCorrectlyWithZeroBalance()
         {
             var userId = Guid.NewGuid();
+            var initialBalance = 10;
 
-            var wallet = Wallet.Create(userId, 1);
+            var wallet = Wallet.Create(userId);
 
             wallet.Should().NotBeNull();
             wallet.Id.Should().NotBe(Guid.Empty);
             wallet.UserId.Should().Be(userId);
-            wallet.Balance.Should().Be(1);
+            wallet.Balance.Should().Be(initialBalance);
         }
     }
 }

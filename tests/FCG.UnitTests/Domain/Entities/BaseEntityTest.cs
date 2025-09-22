@@ -1,7 +1,5 @@
-﻿using FluentAssertions;
-using System;
-using FCG.Domain.Entities;
-using Xunit;
+﻿using FCG.Domain.Entities;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
 {
@@ -11,6 +9,7 @@ namespace FCG.UnitTests.Domain.Entities
         {
             public ConcreteEntity() : base() { }
         }
+
         [Fact]
         public void Given_NewEntity_When_Created_Then_IdAndDatesAreSetAndIsActiveIsTrue()
         {

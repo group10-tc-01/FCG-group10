@@ -18,31 +18,15 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.Property(e => e.CreatedAt)
                 .HasColumnType("datetime2")
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            //.HasDefaultValueSql("GETUTCDATE()"); // SQL Server
-            // .HasDefaultValueSql("NOW()"); // Para PostgreSQL
-            // .HasDefaultValueSql("CURRENT_TIMESTAMP"); // Para MySQL
+                .HasDefaultValueSql("GETUTCDATE()");
 
             builder.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime2")
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .IsRequired();
 
-
-            //.HasDefaultValueSql("GETUTCDATE()"); // SQL Server
-            // .HasDefaultValueSql("NOW()"); // Para PostgreSQL
-            // .HasDefaultValueSql("CURRENT_TIMESTAMP"); // Para MySQL
             builder.Property(e => e.IsActive)
                 .IsRequired()
                 .HasDefaultValue(true);
-
-            builder.HasIndex(e => e.IsActive)
-                .HasDatabaseName($"IX_{typeof(T).Name}_IsActive");
-
-            builder.HasIndex(e => e.CreatedAt)
-                .HasDatabaseName($"IX_{typeof(T).Name}_CreatedAt");
-
         }
     }
 }

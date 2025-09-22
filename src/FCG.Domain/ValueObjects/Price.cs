@@ -1,4 +1,6 @@
-﻿namespace FCG.Domain.ValueObjects
+﻿using FCG.Domain.Exceptions;
+
+namespace FCG.Domain.ValueObjects
 {
     public sealed record Price
     {
@@ -8,14 +10,10 @@
         {
             if (value < 0)
             {
-                throw new ArgumentException("The price cannot be a negative value.", nameof(value));
+                throw new DomainException("The price cannot be a negative value.");
             }
 
             Value = value;
-        }
-
-        private Price()
-        {
         }
 
         public static Price Create(decimal value)
@@ -27,6 +25,5 @@
         public static implicit operator Price(decimal value) => Create(value);
 
         public override string ToString() => Value.ToString("F2");
-
     }
 }

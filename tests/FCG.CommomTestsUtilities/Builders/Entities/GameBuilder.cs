@@ -1,18 +1,13 @@
-﻿public class GameBuilder
-{
-    public string Name { get; private set; } // Mudança: usar string ao invés de Name
-    public string Description { get; private set; }
-    public decimal Price { get; private set; } // Mudança: usar decimal ao invés de Price
-    public string Category { get; private set; }
+﻿using Bogus;
+using FCG.Domain.Entities;
 
-    public static GameBuilder Build()
+namespace FCG.CommomTestsUtilities.Builders.Entities
+{
+    public static class GameBuilder
     {
-        return new GameBuilder
+        public static Game Build()
         {
-            Name = "Fifa", // Mudança: usar string diretamente
-            Description = "An open-world adventure game.",
-            Price = 59.99m, // Mudança: usar decimal diretamente
-            Category = "RPG"
-        };
+            return new Faker<Game>().CustomInstantiator(f => Game.Create(f.Commerce.ProductName(), f.Commerce.ProductDescription(), f.Random.Decimal(1, 100), f.Commerce.Categories(1)[0])).Generate();
+        }
     }
 }

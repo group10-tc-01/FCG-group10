@@ -1,4 +1,6 @@
-﻿namespace FCG.Domain.ValueObjects
+﻿using FCG.Domain.Exceptions;
+
+namespace FCG.Domain.ValueObjects
 {
     public record Password
     {
@@ -8,26 +10,23 @@
         {
             Value = value;
         }
-        private Password()
-        {
-        }
 
         public static Password Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Password cannot be null or empty.");
+                throw new DomainException("Password cannot be null or empty.");
 
             if (value.Length < 8)
-                throw new ArgumentException("Password must be at least 8 characters long.");
+                throw new DomainException("Password must be at least 8 characters long.");
 
             if (!ContainsLetter(value))
-                throw new ArgumentException("Password must contain at least one letter.");
+                throw new DomainException("Password must contain at least one letter.");
 
             if (!ContainsDigit(value))
-                throw new ArgumentException("Password must contain at least one number.");
+                throw new DomainException("Password must contain at least one number.");
 
             if (!ContainsSpecialCharacter(value))
-                throw new ArgumentException("Password must contain at least one special character.");
+                throw new DomainException("Password must contain at least one special character.");
 
             return new Password(value);
         }
@@ -36,8 +35,7 @@
 
         private static bool ContainsDigit(string password) => password.Any(char.IsDigit);
 
-        private static bool ContainsSpecialCharacter(string password) =>
-            password.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c));
+        private static bool ContainsSpecialCharacter(string password) => password.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c));
 
         public static implicit operator string(Password password) => password.Value;
         public static implicit operator Password(string value) => Create(value);

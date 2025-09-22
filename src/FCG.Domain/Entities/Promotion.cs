@@ -1,5 +1,4 @@
-﻿using System.Dynamic;
-using System.Runtime.CompilerServices;
+﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
 
 namespace FCG.Domain.Entities
@@ -10,30 +9,24 @@ namespace FCG.Domain.Entities
         public Discount Discount { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
+        public Game? Game { get; private set; }
 
-
-        public Game Game { get; set; }
-
-        public Promotion()
-        {
-        }
-        private Promotion(Guid gameId, decimal discount, DateTime startDate, DateTime endDate)
+        private Promotion(Guid gameId, Discount discount, DateTime startDate, DateTime endDate)
         {
             if (endDate < startDate)
             {
-                throw new ArgumentException("End date must be on or after the start date.");
+                throw new DomainException("End date must be on or after the start date.");
             }
 
             GameId = gameId;
             Discount = discount;
             StartDate = startDate;
             EndDate = endDate;
-
         }
-        public static Promotion Create(Guid gameId, decimal discount, DateTime startDate, DateTime endDate)
+
+        public static Promotion Create(Guid gameId, Discount discount, DateTime startDate, DateTime endDate)
         {
             return new Promotion(gameId, discount, startDate, endDate);
         }
-
     }
 }
