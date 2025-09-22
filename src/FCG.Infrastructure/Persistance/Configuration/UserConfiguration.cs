@@ -16,9 +16,8 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.Property(u => u.Name)
                 .HasConversion(
                     name => name.Value,
-                    value => Name.Create(value)
-                    )
-                .HasMaxLength(100)
+                    value => Name.Create(value))
+                .HasMaxLength(255)
                 .IsRequired();
 
             builder.Property(u => u.Email)
@@ -31,22 +30,14 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.Property(u => u.Password)
                 .HasConversion(
                     password => password.Value,
-                    value => Password.Create(value));
+                    value => Password.Create(value))
+                .HasMaxLength(255)
+                .IsRequired();
 
             builder.Property(u => u.Role)
                 .HasConversion<string>()
                 .HasMaxLength(20)
                 .IsRequired();
-
-            builder.HasIndex(u => u.Email)
-                .IsUnique()
-                .HasDatabaseName("IX_Users_Email_Unique");
-
-            builder.HasIndex(u => u.Role)
-                .HasDatabaseName("IX_Users_Role");
-
-            builder.HasIndex(u => u.IsActive)
-                .HasDatabaseName("IX_Users_IsActive");
         }
     }
 }

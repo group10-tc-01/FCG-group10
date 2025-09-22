@@ -1,7 +1,6 @@
 ﻿using FCG.Domain.Entities;
 using FCG.Infrastructure.Persistance.Configuration;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace FCG.Infrastructure.Persistance
 {
@@ -18,10 +17,10 @@ namespace FCG.Infrastructure.Persistance
         public FcgDbContext(DbContextOptions<FcgDbContext> options) : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameConfiguration).Assembly);
-
         }
     }
 }

@@ -1,10 +1,12 @@
 using FCG.Application.DependencyInjection;
 using FCG.Infrastructure.DependencyInjection;
+using FCG.Infrastructure.Logging;
+using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
 using FCG.WebApi.Middlewares;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics.CodeAnalysis;
-using FCG.Infrastructure.Logging;
 
 namespace FCG.WebApi
 {
@@ -13,7 +15,7 @@ namespace FCG.WebApi
     {
         protected Program() { }
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +40,7 @@ namespace FCG.WebApi
 
             if (app.Environment.IsDevelopment())
             {
-
+                await RunMigrationsAsync(app);
             }
 
             app.UseSwagger();
@@ -51,7 +53,13 @@ namespace FCG.WebApi
             app.MapControllers();
 
             app.Run();
+        }
 
+        private static async Task RunMigrationsAsync(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+            await dbContext.Database.MigrateAsync();
         }
     }
 }

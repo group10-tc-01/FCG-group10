@@ -1,27 +1,33 @@
-﻿using FCG.Domain.Entities;
+﻿using Bogus;
+using FCG.Domain.Entities;
 using FCG.Domain.Enum;
-using FCG.Domain.ValueObjects;
 
 namespace FCG.CommomTestsUtilities.Builders.Entities
 {
-    public class UserBuilder
+    public static class UserBuilder
     {
-        // Propriedades do construtor
-        public Name Name { get; private set; }
-        public Email Email { get; private set; }
-        public Password Password { get; private set; }
-        public Role Role { get; private set; }
-
-        public static UserBuilder Build(Role role = Role.Admin)
+        public static User Build()
         {
-            // Cria um construtor com dados válidos para teste
-            return new UserBuilder
+            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.ToString()!, f.Internet.Email(), GenerateValidPassword(f), f.PickRandom<Role>())).Generate();
+        }
+
+        private static string GenerateValidPassword(Faker faker)
+        {
+            var letter = faker.Random.Char('a', 'z');
+            var digit = faker.Random.Char('0', '9');
+            var special = faker.PickRandom('!', '@', '#', '$', '%', '^', '&', '*');
+
+            var additionalChars = faker.Random.String2(5, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*");
+
+            var passwordChars = new[] { letter, digit, special }.Concat(additionalChars.ToCharArray()).ToArray();
+
+            for (int i = passwordChars.Length - 1; i > 0; i--)
             {
-                Name = Name.Create("Rhuan Oliveira"),
-                Email = Email.Create("rhuan.oliveira@gmail.com"),
-                Password = Password.Create("Password@123"),
-                Role = role // Atribuindo a role recebida como parâmetro
-            };
+                int j = faker.Random.Int(0, i);
+                (passwordChars[i], passwordChars[j]) = (passwordChars[j], passwordChars[i]);
+            }
+
+            return new string(passwordChars);
         }
     }
 }

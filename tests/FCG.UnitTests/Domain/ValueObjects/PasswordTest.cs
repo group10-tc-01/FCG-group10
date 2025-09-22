@@ -1,10 +1,6 @@
-﻿using FCG.Domain.ValueObjects;
+﻿using FCG.Domain.Exceptions;
+using FCG.Domain.ValueObjects;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FCG.UnitTests.Domain.ValueObjects
 {
@@ -29,7 +25,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         public void Given_MinimumValidPassword_When_CreatePassword_Then_ShouldCreateSuccessfully()
         {
             // Arrange
-            string minPassword = "Abcd123!"; // 8 characters
+            string minPassword = "Abcd123!";
 
             // Act
             var password = Password.Create(minPassword);
@@ -39,7 +35,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_NullPassword_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_NullPassword_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string nullPassword = null;
@@ -48,12 +44,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(nullPassword);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage("Password cannot be null or empty.");
         }
 
         [Fact]
-        public void Given_EmptyPassword_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_EmptyPassword_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string emptyPassword = string.Empty;
@@ -62,12 +57,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(emptyPassword);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage("Password cannot be null or empty.");
         }
 
         [Fact]
-        public void Given_WhitespacePassword_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_WhitespacePassword_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string whitespacePassword = "        ";
@@ -76,12 +70,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(whitespacePassword);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage("Password cannot be null or empty.");
         }
 
         [Fact]
-        public void Given_ShortPassword_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_ShortPassword_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string shortPassword = "Abc1!"; // Menos de 8 caracteres
@@ -90,12 +83,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(shortPassword);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password must be at least 8 characters long.");
+            act.Should().Throw<DomainException>().WithMessage("Password must be at least 8 characters long.");
         }
 
         [Fact]
-        public void Given_PasswordWithoutLetter_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_PasswordWithoutLetter_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string passwordWithoutLetter = "12345678!";
@@ -104,12 +96,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(passwordWithoutLetter);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password must contain at least one letter.");
+            act.Should().Throw<DomainException>().WithMessage("Password must contain at least one letter.");
         }
 
         [Fact]
-        public void Given_PasswordWithoutDigit_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_PasswordWithoutDigit_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string passwordWithoutDigit = "Password!";
@@ -118,12 +109,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(passwordWithoutDigit);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password must contain at least one number.");
+            act.Should().Throw<DomainException>().WithMessage("Password must contain at least one number.");
         }
 
         [Fact]
-        public void Given_PasswordWithoutSpecialCharacter_When_CreatePassword_Then_ShouldThrowArgumentException()
+        public void Given_PasswordWithoutSpecialCharacter_When_CreatePassword_Then_ShouldThrowDomainException()
         {
             // Arrange
             string passwordWithoutSpecial = "Password123";
@@ -132,8 +122,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Password.Create(passwordWithoutSpecial);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
-               .WithMessage("Password must contain at least one special character.");
+            act.Should().Throw<DomainException>().WithMessage("Password must contain at least one special character.");
         }
 
         [Fact]

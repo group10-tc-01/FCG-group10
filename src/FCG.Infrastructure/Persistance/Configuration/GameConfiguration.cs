@@ -16,41 +16,24 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.Property(g => g.Name)
                 .HasConversion(
                     name => name.Value,
-                    value => Name.Create(value)
-                    )
-                .HasMaxLength(200)
+                    value => Name.Create(value))
+                .HasMaxLength(255)
                 .IsRequired();
 
             builder.Property(g => g.Description)
-                .HasMaxLength(1000);
+                .HasMaxLength(500)
+                .IsRequired();
 
             builder.Property(g => g.Price)
                 .HasConversion(
                     price => price.Value,
-                    value => Price.Create(value)
-                    )
+                    value => Price.Create(value))
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();
 
             builder.Property(g => g.Category)
                 .HasMaxLength(100)
                 .IsRequired();
-
-            builder.HasIndex(g => g.Name)
-                .HasDatabaseName("IX_Games_Name");
-
-            builder.HasIndex(g => g.Category)
-                .HasDatabaseName("IX_Games_Category");
-
-            builder.HasIndex(g => g.Price)
-                .HasDatabaseName("IX_Games_Price");
-
-            builder.HasIndex(g => new { g.Category, g.Price, g.IsActive })
-                .HasDatabaseName("IX_Games_Category_Price_Active")
-                .HasFilter("IsActive = 1");
-
-            builder.HasIndex(g => new { g.Name, g.Category })
-                .HasDatabaseName("IX_Games_Name_Category");
         }
     }
 }

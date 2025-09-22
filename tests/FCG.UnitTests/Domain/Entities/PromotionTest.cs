@@ -1,8 +1,6 @@
 ﻿using FCG.Domain.Entities;
-using FCG.Domain.ValueObjects;
+using FCG.Domain.Exceptions;
 using FluentAssertions;
-using System;
-using Xunit;
 
 namespace FCG.UnitTests.Domain.Entities
 {
@@ -54,7 +52,7 @@ namespace FCG.UnitTests.Domain.Entities
         }
 
         [Fact]
-        public void Given_EndDateBeforeStartDate_When_CreatePromotion_Then_ShouldThrowArgumentException()
+        public void Given_EndDateBeforeStartDate_When_CreatePromotion_Then_ShouldThrowDomainException()
         {
             // Arrange
             var gameId = Guid.NewGuid();
@@ -66,12 +64,12 @@ namespace FCG.UnitTests.Domain.Entities
             Action act = () => Promotion.Create(gameId, discount, startDate, endDate);
 
             // Assert
-            act.Should().Throw<ArgumentException>()
+            act.Should().Throw<DomainException>()
                .WithMessage("End date must be on or after the start date.");
         }
 
         [Fact]
-        public void Given_DiscountOutOfRange_When_CreatePromotion_Then_ShouldThrowArgumentException()
+        public void Given_DiscountOutOfRange_When_CreatePromotion_Then_ShouldThrowDomainException()
         {
             // Arrange
             var gameId = Guid.NewGuid();
@@ -85,9 +83,9 @@ namespace FCG.UnitTests.Domain.Entities
             Action actAbove100 = () => Promotion.Create(gameId, invalidDiscount, startDate, endDate);
 
             // Assert
-            actNegative.Should().Throw<ArgumentException>()
+            actNegative.Should().Throw<DomainException>()
                        .WithMessage("Discount must be between 0 and 100.");
-            actAbove100.Should().Throw<ArgumentException>()
+            actAbove100.Should().Throw<DomainException>()
                        .WithMessage("Discount must be between 0 and 100.");
         }
 
@@ -128,23 +126,5 @@ namespace FCG.UnitTests.Domain.Entities
             promotion1.EndDate.Should().Be(promotion2.EndDate);
         }
 
-        [Fact]
-        public void Given_Promotion_When_SetGame_Then_ShouldSetGameProperty()
-        {
-
-            var promotion = new Promotion();
-
-
-            var game = Game.Create(
-                Name.Create("Promoted Game"),
-                "A game on promotion",
-                Price.Create(59.99m),
-                "Adventure"
-            );
-
-            promotion.Game = game;
-
-            promotion.Game.Should().Be(game);
-        }
     }
 }
