@@ -10,8 +10,8 @@ namespace FCG.Domain.Entities
         public Price Price { get; private set; }
         public string Category { get; private set; }
 
-        public ICollection<Promotion>? Promotions { get; private set; }
-        public ICollection<LibraryGame>? LibraryGames { get; private set; }
+        public ICollection<Promotion>? Promotions { get; }
+        public ICollection<LibraryGame>? LibraryGames { get; }
 
         private Game(Name name, string description, Price price, string category)
         {

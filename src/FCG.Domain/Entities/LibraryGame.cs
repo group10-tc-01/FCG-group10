@@ -8,8 +8,8 @@ namespace FCG.Domain.Entities
         public Guid GameId { get; private set; }
         public DateTime PurchaseDate { get; private set; }
         public Price PurchasePrice { get; private set; }
-        public Library? Library { get; private set; }
-        public Game? Game { get; private set; }
+        public Library? Library { get; }
+        public Game? Game { get; }
 
         private LibraryGame(Guid libraryId, Guid gameId, Price purchasePrice)
         {

@@ -10,8 +10,8 @@ namespace FCG.Domain.Entities
         public Password Password { get; private set; }
         public Role Role { get; private set; }
 
-        public Library? Library { get; private set; }
-        public Wallet? Wallet { get; private set; }
+        public Library? Library { get; }
+        public Wallet? Wallet { get; }
 
         private User(Name name, Email email, Password password, Role role)
         {
