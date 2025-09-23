@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Enum;
+using FCG.Domain.Events.User;
 using FCG.Domain.ValueObjects;
 
 namespace FCG.Domain.Entities
@@ -23,7 +24,15 @@ namespace FCG.Domain.Entities
 
         public static User Create(string name, string email, string password, Role role)
         {
-            return new User(name, email, password, role);
+            var nameObj = Name.Create(name);
+            var emailObj = Email.Create(email);
+            var passwordObj = Password.Create(password);
+
+            var user = new User(nameObj, emailObj, passwordObj, role);
+
+            user.AddDomainEvent(new UserCreatedEvent(user.Id, user.Name, user.Email));
+
+            return user;
         }
     }
 }
