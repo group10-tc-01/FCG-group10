@@ -15,12 +15,9 @@ namespace FCG.Application.EventsHandlers.Promotion
 
         public Task Handle(PromotionCreatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[PromotionCreatedEvent] Promoção criada: {PromotionId} - {GameId} - {Discount} - {StartDate} - {EndDate} - {OccurredOn}",
+            _logger.LogInformation("[PromotionCreatedEvent] Promoção criada: {PromotionId} - {GameId} - {OccurredOn}",
                 notification.PromotionId,
                 notification.GameId,
-                notification.Discount,
-                notification.StartDate,
-                notification.EndDate,
                 notification.OcurredOn);
 
             return Task.CompletedTask;

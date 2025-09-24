@@ -15,10 +15,9 @@ namespace FCG.Application.EventsHandlers.Wallet
 
         public Task Handle(WalletCreatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[WalletCreatedEvent] Carteira criada: {WalletId} - {UserId} - {InitialBalance} - {OccurredOn}",
+            _logger.LogInformation("[WalletCreatedEvent] Carteira criada: {WalletId} - {UserId} - {OccurredOn}",
                 notification.WalletId,
                 notification.UserId,
-                notification.InitialBalance,
                 notification.OcurredOn);
 
             return Task.CompletedTask;

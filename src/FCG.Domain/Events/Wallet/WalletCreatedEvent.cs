@@ -2,7 +2,6 @@
 {
     public record WalletCreatedEvent(
         Guid WalletId,
-        Guid UserId,
-        decimal InitialBalance
+        Guid UserId
     ) : DomainEvent;
 }

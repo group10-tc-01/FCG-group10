@@ -15,11 +15,10 @@ namespace FCG.Application.EventsHandlers.LibraryGames
 
         public Task Handle(LibraryGameCreatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[LibraryGameCreatedEvent] Jogo adicionado à biblioteca: {LibraryGameId} - {LibraryId} - {GameId} - {PurchasePrice} - {OccurredOn}",
+            _logger.LogInformation("[LibraryGameCreatedEvent] Jogo adicionado à biblioteca: {LibraryGameId} - {LibraryId} - {GameId} - {OccurredOn}",
                 notification.LibraryGameId,
                 notification.LibraryId,
                 notification.GameId,
-                notification.PurchasePrice,
                 notification.OcurredOn);
 
             return Task.CompletedTask;

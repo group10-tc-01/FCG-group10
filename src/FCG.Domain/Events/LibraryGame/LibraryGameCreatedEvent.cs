@@ -3,7 +3,6 @@
     public record LibraryGameCreatedEvent(
         Guid LibraryGameId,
         Guid LibraryId,
-        Guid GameId,
-        decimal PurchasePrice
+        Guid GameId
     ) : DomainEvent;
 }

@@ -6,9 +6,9 @@ namespace FCG.Application.EventsHandlers.Librarys
 {
     public class LibraryCreatedEventHandler : INotificationHandler<LibraryCreatedEvent>
     {
-        private readonly ILogger<LibraryCreatedEvent> _logger;
+        private readonly ILogger<LibraryCreatedEventHandler> _logger;
 
-        public LibraryCreatedEventHandler(ILogger<LibraryCreatedEvent> logger)
+        public LibraryCreatedEventHandler(ILogger<LibraryCreatedEventHandler> logger)
         {
             _logger = logger;
         }

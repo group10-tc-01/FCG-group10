@@ -6,19 +6,18 @@ namespace FCG.Application.EventsHandlers.Games
 {
     public class GameCreatedEventHandler : INotificationHandler<GameCreatedEvent>
     {
-        private readonly ILogger<GameCreatedEvent> _logger;
+        private readonly ILogger<GameCreatedEventHandler> _logger;
 
-        public GameCreatedEventHandler(ILogger<GameCreatedEvent> logger)
+        public GameCreatedEventHandler(ILogger<GameCreatedEventHandler> logger)
         {
             _logger = logger;
         }
 
         public Task Handle(GameCreatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[GameCreatedEvent] Jogo criado: {GameId} - {GameName} - {Price} - {Category} - {OccurredOn}",
+            _logger.LogInformation("[GameCreatedEvent] Jogo criado: {GameId} - {GameName} - {Category} - {OccurredOn}",
                 notification.GameId,
                 notification.GameName,
-                notification.Price,
                 notification.Category,
                 notification.OcurredOn);
 
