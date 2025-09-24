@@ -1,7 +1,11 @@
-﻿namespace FCG.Domain.Entities
+﻿using System.Collections.ObjectModel;
+
+namespace FCG.Domain.Entities
 {
     public abstract class BaseEntity
     {
+        private readonly List<object> _domainEvents = new();
+
         protected BaseEntity() { }
 
         public Guid Id { get; protected set; } = Guid.NewGuid();
@@ -20,5 +24,18 @@
             IsActive = false;
             UpdatedAt = DateTime.UtcNow;
         }
+
+        public IReadOnlyCollection<object> DomainEvents => new ReadOnlyCollection<object>(_domainEvents);
+
+        public void AddDomainEvent(object domainEvent)
+        {
+            _domainEvents.Add(domainEvent);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear();
+        }
+
     }
 }
