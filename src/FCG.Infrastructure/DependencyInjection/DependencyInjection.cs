@@ -1,8 +1,12 @@
 ﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.ExampleRepository;
+using FCG.Domain.Repositories.RefreshTokenRepository;
+using FCG.Domain.Repositories.UserRepository;
+using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Persistance.Repositories.ExampleRepository;
+using FCG.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +21,7 @@ namespace FCG.Infrastructure.DependencyInjection
         {
             services.AddSqlServer(configuration);
             services.AddRepositories();
+            services.AddServices();
 
             return services;
         }
@@ -34,7 +39,13 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IWriteOnlyExampleRepository, ExampleRepository>();
+            services.AddScoped<IReadOnlyUserRepository, UserRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         }
 
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<ITokenService, TokenService>();
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace FCG.Infrastructure.Persistance
         public DbSet<Game> Games { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<LibraryGame> LibraryGames { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public FcgDbContext(DbContextOptions<FcgDbContext> options) : base(options)
         {

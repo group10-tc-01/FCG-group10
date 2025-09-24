@@ -21,8 +21,7 @@ namespace FCG.Infrastructure.Persistance.Configuration
                 .HasDefaultValueSql("GETUTCDATE()");
 
             builder.Property(e => e.UpdatedAt)
-                .HasColumnType("datetime2")
-                .IsRequired();
+                .HasColumnType("datetime2");
 
             builder.Property(e => e.IsActive)
                 .IsRequired()
