@@ -1,4 +1,4 @@
-namespace FCG.Domain.ValueObjects
+namespace FCG.Domain.Models.Authenticaiton
 {
     public class JwtSettings
     {

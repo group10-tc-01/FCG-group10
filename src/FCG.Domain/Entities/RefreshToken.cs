@@ -5,10 +5,9 @@ namespace FCG.Domain.Entities
         public string Token { get; private set; } = string.Empty;
         public Guid UserId { get; private set; }
         public DateTime ExpiresAt { get; private set; }
-        public bool IsRevoked { get; private set; }
-        public string? RevokedReason { get; private set; }
+        public string RevokedReason { get; private set; } = string.Empty;
 
-        public User User { get; private set; } = null!;
+        public User? User { get; }
 
         private RefreshToken() { }
 
@@ -17,8 +16,6 @@ namespace FCG.Domain.Entities
             Token = token;
             UserId = userId;
             ExpiresAt = expiresAt;
-            CreatedAt = DateTime.UtcNow;
-            IsRevoked = false;
         }
 
         public static RefreshToken Create(string token, Guid userId, TimeSpan expiration)
@@ -26,12 +23,13 @@ namespace FCG.Domain.Entities
             return new RefreshToken(token, userId, DateTime.UtcNow.Add(expiration));
         }
 
-        public void Revoke(string reason = "Manual revocation")
+        public void Revoke(string reason = "New refresh token generated")
         {
-            IsRevoked = true;
+            IsActive = false;
             RevokedReason = reason;
+            UpdatedAt = DateTime.UtcNow;
         }
 
-        public bool IsValid => !IsRevoked && ExpiresAt > DateTime.UtcNow;
+        public bool IsValid => IsActive && ExpiresAt > DateTime.UtcNow;
     }
 }

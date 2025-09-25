@@ -1,6 +1,8 @@
 ﻿using FCG.Domain.Exceptions;
+using FCG.Domain.Models.Authenticaiton;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
+using Microsoft.Extensions.Options;
 
 namespace FCG.Application.UseCases.Auth.Login
 {
@@ -8,15 +10,18 @@ namespace FCG.Application.UseCases.Auth.Login
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly ITokenService _tokenService;
+        private readonly JwtSettings _jwtSettings;
 
-        public LoginUseCase(IReadOnlyUserRepository readOnlyUserRepository, ITokenService tokenService)
+        public LoginUseCase(IReadOnlyUserRepository readOnlyUserRepository, ITokenService tokenService, IOptions<JwtSettings> jwtSettings)
         {
-            _readOnlyUserRepository = readOnlyUserRepository;
             _tokenService = tokenService;
+            _readOnlyUserRepository = readOnlyUserRepository;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public async Task<LoginOutput> Handle(LoginInput request, CancellationToken cancellationToken)
         {
+            //TODO: Alterar chamada para fazer decrypt da password
             var user = await _readOnlyUserRepository.GetByEmailAndPasswordAsync(request.Email, request.Password);
 
             if (user is null)
@@ -30,7 +35,7 @@ namespace FCG.Application.UseCases.Auth.Login
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken.Token,
-                ExpiresIn = 3600
+                ExpiresInMinutes = _jwtSettings.AccessTokenExpirationMinutes
             };
         }
     }

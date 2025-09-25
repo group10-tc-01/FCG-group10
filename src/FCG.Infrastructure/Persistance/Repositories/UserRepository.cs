@@ -17,5 +17,12 @@ namespace FCG.Infrastructure.Persistance.Repositories
 
             return user;
         }
+
+        public async Task<User?> GetByIdAsync(Guid id)
+        {
+            var user = await _fcgDbContext.Users.FirstOrDefaultAsync(u => u.IsActive && u.Id == id);
+
+            return user;
+        }
     }
 }

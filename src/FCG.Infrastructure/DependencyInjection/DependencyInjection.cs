@@ -6,7 +6,7 @@ using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Persistance.Repositories.ExampleRepository;
-using FCG.Infrastructure.Services;
+using FCG.Infrastructure.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

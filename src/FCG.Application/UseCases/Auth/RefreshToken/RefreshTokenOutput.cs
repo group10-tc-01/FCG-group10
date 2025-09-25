@@ -1,9 +1,9 @@
-﻿namespace FCG.Application.UseCases.Auth.Login
+namespace FCG.Application.UseCases.Auth.RefreshToken
 {
-    public class LoginOutput
+    public class RefreshTokenOutput
     {
         public string AccessToken { get; init; } = string.Empty;
         public string RefreshToken { get; init; } = string.Empty;
-        public int ExpiresInMinutes { get; init; }
+        public int ExpiresInDays { get; init; }
     }
 }

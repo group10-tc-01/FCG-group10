@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FCG.Infrastructure.Migrations
 {
     [DbContext(typeof(FcgDbContext))]
-    [Migration("20250924022912_add_refresh_token")]
+    [Migration("20250924133558_add_refresh_token")]
     partial class add_refresh_token
     {
         /// <inheritdoc />
@@ -210,23 +210,27 @@ namespace FCG.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("RevokedReason")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -367,7 +371,7 @@ namespace FCG.Infrastructure.Migrations
             modelBuilder.Entity("FCG.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("FCG.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -401,6 +405,8 @@ namespace FCG.Infrastructure.Migrations
             modelBuilder.Entity("FCG.Domain.Entities.User", b =>
                 {
                     b.Navigation("Library");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("Wallet");
                 });

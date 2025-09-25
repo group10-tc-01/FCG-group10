@@ -1,7 +1,7 @@
 using FCG.Domain.Entities;
+using FCG.Domain.Models.Authenticaiton;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Domain.Services;
-using FCG.Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace FCG.Infrastructure.Services
+namespace FCG.Infrastructure.Services.Authentication
 {
     public class TokenService : ITokenService
     {
@@ -69,6 +69,7 @@ namespace FCG.Infrastructure.Services
         public async Task RevokeRefreshTokenAsync(string refreshToken)
         {
             var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+
             if (token != null)
             {
                 token.Revoke();

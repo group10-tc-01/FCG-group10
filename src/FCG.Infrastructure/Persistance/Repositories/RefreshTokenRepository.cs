@@ -42,7 +42,7 @@ namespace FCG.Infrastructure.Persistance.Repositories
         {
             var tokens = await GetByUserIdAsync(userId);
 
-            foreach (var token in tokens.Where(t => !t.IsRevoked))
+            foreach (var token in tokens.Where(t => t.IsActive))
             {
                 token.Revoke("Revoked all tokens");
             }

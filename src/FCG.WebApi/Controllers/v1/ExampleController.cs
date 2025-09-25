@@ -1,6 +1,7 @@
 ﻿using FCG.Application.UseCases.Example.CreateExample;
 using FCG.WebApi.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,6 +15,7 @@ namespace FCG.WebApi.Controllers.v1
 
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<CreateExampleOutput>), StatusCodes.Status201Created)]
+        [Authorize]
         public async Task<IActionResult> CreateExample([FromBody] CreateExampleInput input)
         {
             var output = await _mediator.Send(input, CancellationToken.None).ConfigureAwait(false);
