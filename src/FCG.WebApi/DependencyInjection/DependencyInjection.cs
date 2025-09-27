@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using FCG.Application.UseCases.Example.CreateExample;
 using FCG.Domain.Models.Authenticaiton;
+using FCG.Infrastructure.Persistance;
 using FCG.WebApi.Filter;
 using FCG.WebApi.Models;
 using FluentValidation;
@@ -22,7 +23,7 @@ namespace FCG.WebApi.DependencyInjection
         {
             services.AddAuthentication(configuration);
             services.AddVersioning();
-            services.AddHealthChecks();
+            services.AddHealthChecks().AddDbContextCheck<FcgDbContext>();
             services.AddValidation();
             services.AddFilters();
             services.AddLowerCaseUrl();

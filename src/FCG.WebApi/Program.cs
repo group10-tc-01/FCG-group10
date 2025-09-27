@@ -4,7 +4,9 @@ using FCG.Infrastructure.Logging;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
 using FCG.WebApi.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.WebApi
@@ -29,7 +31,17 @@ namespace FCG.WebApi
             var app = builder.Build();
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
-            app.MapHealthChecks("/health");
+
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                AllowCachingResponses = false,
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+                }
+
+            });
 
             if (app.Environment.IsDevelopment())
             {
