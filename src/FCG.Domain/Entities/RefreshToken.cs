@@ -9,8 +9,6 @@ namespace FCG.Domain.Entities
 
         public User? User { get; }
 
-        private RefreshToken() { }
-
         private RefreshToken(string token, Guid userId, DateTime expiresAt)
         {
             Token = token;

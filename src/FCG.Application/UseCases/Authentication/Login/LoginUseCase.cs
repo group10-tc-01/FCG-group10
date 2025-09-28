@@ -4,7 +4,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using Microsoft.Extensions.Options;
 
-namespace FCG.Application.UseCases.Auth.Login
+namespace FCG.Application.UseCases.Authentication.Login
 {
     public class LoginUseCase : ILoginUseCase
     {

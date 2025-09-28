@@ -4,7 +4,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using Microsoft.Extensions.Options;
 
-namespace FCG.Application.UseCases.Auth.RefreshToken
+namespace FCG.Application.UseCases.Authentication.RefreshToken
 {
     public class RefreshTokenUseCase : IRefreshTokenUseCase
     {

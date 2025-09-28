@@ -1,4 +1,4 @@
-namespace FCG.Application.UseCases.Auth.RefreshToken
+namespace FCG.Application.UseCases.Authentication.RefreshToken
 {
     public class RefreshTokenOutput
     {

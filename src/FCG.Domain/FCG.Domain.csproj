@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FCG.Messages\FCG.Messages.csproj" />
+  </ItemGroup>
+
 </Project>

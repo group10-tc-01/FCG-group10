@@ -5,8 +5,13 @@ namespace FCG.IntegratedTests.Configurations
     public class FcgFixture : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _httpClient;
+        protected readonly CustomWebApplicationFactory Factory;
 
-        public FcgFixture(CustomWebApplicationFactory factory) => _httpClient = factory.CreateClient();
+        public FcgFixture(CustomWebApplicationFactory factory)
+        {
+            Factory = factory;
+            _httpClient = factory.CreateClient();
+        }
 
         protected async Task<HttpResponseMessage> DoPost<T>(string url, T content)
         {

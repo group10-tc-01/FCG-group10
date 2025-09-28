@@ -1,7 +1,8 @@
 ﻿using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentValidation;
 
-namespace FCG.Application.UseCases.Auth.Login
+namespace FCG.Application.UseCases.Authentication.Login
 {
     public class LoginInputValidator : AbstractValidator<LoginInput>
     {
@@ -9,13 +10,13 @@ namespace FCG.Application.UseCases.Auth.Login
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .WithMessage("Email is required")
+                .WithMessage(ResourceMessages.LoginEmalRequired)
                 .Must(BeValidEmail)
-                .WithMessage("Invalid email format.");
+                .WithMessage(ResourceMessages.LoginInvalidEmailFormat);
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .WithMessage("Password is required");
+                .WithMessage(ResourceMessages.LoginPasswordRequired);
         }
 
         private static bool BeValidEmail(string email)

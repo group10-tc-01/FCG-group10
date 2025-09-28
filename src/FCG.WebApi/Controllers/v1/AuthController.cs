@@ -1,6 +1,6 @@
-﻿using FCG.Application.UseCases.Auth.Login;
-using FCG.Application.UseCases.Auth.Logout;
-using FCG.Application.UseCases.Auth.RefreshToken;
+﻿using FCG.Application.UseCases.Authentication.Login;
+using FCG.Application.UseCases.Authentication.Logout;
+using FCG.Application.UseCases.Authentication.RefreshToken;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

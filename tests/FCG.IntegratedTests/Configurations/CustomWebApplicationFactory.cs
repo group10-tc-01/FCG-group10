@@ -17,6 +17,7 @@ namespace FCG.IntegratedTests.Configurations
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         private DbConnection? _connection;
+        public List<User> CreatedUsers { get; private set; } = [];
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -53,7 +54,7 @@ namespace FCG.IntegratedTests.Configurations
             }
         }
 
-        private static void EnsureDatabaseSeeded(IServiceCollection services)
+        private void EnsureDatabaseSeeded(IServiceCollection services)
         {
             using var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
@@ -67,22 +68,14 @@ namespace FCG.IntegratedTests.Configurations
             StartDatabase(dbContext);
         }
 
-        private static void StartDatabase(FcgDbContext context)
+        private void StartDatabase(FcgDbContext context)
         {
             var itemsQuantity = 2;
 
             Log.Information($"Creating {itemsQuantity} items for integrated test");
 
-            try
-            {
-                var example = CreateExample(context, itemsQuantity);
-
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while seeding the database with test data. Error: {Message}", ex.Message);
-                throw;
-            }
+            CreateExample(context, itemsQuantity);
+            CreatedUsers = CreateUser(context, itemsQuantity);
         }
 
         private static List<Example> CreateExample(FcgDbContext context, int itemsQuantity)
@@ -100,6 +93,23 @@ namespace FCG.IntegratedTests.Configurations
             Log.Information("Created {Count} examples", examples.Count);
 
             return examples;
+        }
+
+        private List<User> CreateUser(FcgDbContext context, int itemsQuantity)
+        {
+            var users = new List<User>();
+
+            for (int i = 1; i <= itemsQuantity; i++)
+            {
+                var user = UserBuilder.Build();
+                users.Add(user);
+            }
+
+            context.Users.AddRange(users);
+            context.SaveChanges();
+            Log.Information("Created {Count} users", users.Count);
+
+            return users;
         }
 
         protected override void Dispose(bool disposing)

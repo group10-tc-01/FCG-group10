@@ -1,6 +1,6 @@
 using FCG.Domain.Repositories.RefreshTokenRepository;
 
-namespace FCG.Application.UseCases.Auth.Logout
+namespace FCG.Application.UseCases.Authentication.Logout
 {
     public class LogoutUseCase : ILogoutUseCase
     {

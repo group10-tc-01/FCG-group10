@@ -1,4 +1,4 @@
-namespace FCG.Application.UseCases.Auth.Logout
+namespace FCG.Application.UseCases.Authentication.Logout
 {
     public class LogoutOutput
     {

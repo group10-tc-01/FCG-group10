@@ -1,4 +1,4 @@
-﻿namespace FCG.Application.UseCases.Auth.Login
+﻿namespace FCG.Application.UseCases.Authentication.Login
 {
     public class LoginOutput
     {
