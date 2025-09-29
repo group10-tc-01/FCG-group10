@@ -16,7 +16,8 @@ namespace FCG.FunctionalTests.Fixtures
 
         public CreateExampleFixture CreateExample => GetOrCreateFixture<CreateExampleFixture>();
         public LoginFixture Login => GetOrCreateFixture<LoginFixture>();
-
+        public LogoutFixture Logout => GetOrCreateFixture<LogoutFixture>();
+        public RefreshTokenFixture RefreshToken => GetOrCreateFixture<RefreshTokenFixture>();
 
         private T GetOrCreateFixture<T>() where T : new()
         {

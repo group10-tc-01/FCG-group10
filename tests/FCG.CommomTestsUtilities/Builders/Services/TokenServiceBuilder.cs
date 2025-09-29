@@ -25,6 +25,11 @@ namespace FCG.CommomTestsUtilities.Builders.Services
             _mock.Setup(service => service.ValidateRefreshTokenAsync(It.IsAny<string>())).ReturnsAsync(userId);
         }
 
+        public static void SetupValidateRefreshTokenAsyncWithInvalidToken(string? userId)
+        {
+            _mock.Setup(service => service.ValidateRefreshTokenAsync("invalid_refresh_token")).ReturnsAsync(userId);
+        }
+
         public static void SetupRevokeRefreshTokenAsync()
         {
             _mock.Setup(service => service.RevokeRefreshTokenAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
