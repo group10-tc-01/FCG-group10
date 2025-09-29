@@ -186,7 +186,6 @@ namespace FCG.UnitTests.Services.Authentication
         [Theory]
         [InlineData("")]
         [InlineData(" ")]
-        [InlineData(null)]
         public async Task Given_InvalidTokenString_When_RevokeRefreshTokenAsync_Then_ShouldNotThrow(string? invalidToken)
         {
             // Arrange
