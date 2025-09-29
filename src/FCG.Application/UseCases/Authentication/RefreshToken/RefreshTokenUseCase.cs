@@ -2,6 +2,7 @@ using FCG.Domain.Exceptions;
 using FCG.Domain.Models.Authenticaiton;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
+using FCG.Messages;
 using Microsoft.Extensions.Options;
 
 namespace FCG.Application.UseCases.Authentication.RefreshToken
@@ -24,12 +25,12 @@ namespace FCG.Application.UseCases.Authentication.RefreshToken
             var userId = await _tokenService.ValidateRefreshTokenAsync(request.RefreshToken);
 
             if (userId is null)
-                throw new UnauthorizedException("Invalid refresh token.");
+                throw new UnauthorizedException(ResourceMessages.InvalidRefreshToken);
 
             var user = await _readOnlyUserRepository.GetByIdAsync(Guid.Parse(userId));
 
             if (user is null)
-                throw new UnauthorizedException("User not found.");
+                throw new UnauthorizedException(ResourceMessages.InvalidRefreshToken);
 
             await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
 

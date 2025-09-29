@@ -61,6 +61,15 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid refresh token..
+        /// </summary>
+        public static string InvalidRefreshToken {
+            get {
+                return ResourceManager.GetString("InvalidRefreshToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is required..
         /// </summary>
         public static string LoginEmalRequired {
@@ -84,6 +93,15 @@ namespace FCG.Messages {
         public static string LoginPasswordRequired {
             get {
                 return ResourceManager.GetString("LoginPasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logout successful. All refresh tokens have been revoked..
+        /// </summary>
+        public static string LogoutSuccessFull {
+            get {
+                return ResourceManager.GetString("LogoutSuccessFull", resourceCulture);
             }
         }
         

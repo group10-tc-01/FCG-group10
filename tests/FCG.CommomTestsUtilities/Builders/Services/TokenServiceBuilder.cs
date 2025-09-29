@@ -34,5 +34,30 @@ namespace FCG.CommomTestsUtilities.Builders.Services
         {
             _mock.Setup(service => service.SaveRefreshTokenAsync(It.IsAny<string>(), It.IsAny<Guid>())).ReturnsAsync(refreshToken);
         }
+
+        public static void VerifyRevokeRefreshTokenAsyncWasCalledWith(string refreshToken)
+        {
+            _mock.Verify(service => service.RevokeRefreshTokenAsync(refreshToken), Times.Once);
+        }
+
+        public static void VerifySaveRefreshTokenAsyncWasCalled()
+        {
+            _mock.Verify(service => service.SaveRefreshTokenAsync(It.IsAny<string>(), It.IsAny<Guid>()), Times.AtLeastOnce);
+        }
+
+        public static void VerifyGenerateAccessTokenWasCalled()
+        {
+            _mock.Verify(service => service.GenerateAccessToken(It.IsAny<User>()), Times.Once);
+        }
+
+        public static void VerifyGenerateRefreshTokenWasCalled()
+        {
+            _mock.Verify(service => service.GenerateRefreshToken(), Times.Once);
+        }
+
+        public static void VerifyValidateRefreshTokenAsyncWasCalled()
+        {
+            _mock.Verify(service => service.ValidateRefreshTokenAsync(It.IsAny<string>()), Times.Once);
+        }
     }
 }

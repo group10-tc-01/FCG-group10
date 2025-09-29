@@ -34,5 +34,10 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.RefreshTokenRepository
         {
             _mock.Setup(repo => repo.RevokeAllByUserIdAsync(It.IsAny<Guid>())).Returns(Task.CompletedTask);
         }
+
+        public static void VerifyRevokeAllByUserIdAsyncWasCalledWith(Guid userId)
+        {
+            _mock.Verify(repo => repo.RevokeAllByUserIdAsync(userId), Times.Once);
+        }
     }
 }

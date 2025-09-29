@@ -1,4 +1,5 @@
 using FCG.Domain.Repositories.RefreshTokenRepository;
+using FCG.Messages;
 
 namespace FCG.Application.UseCases.Authentication.Logout
 {
@@ -17,7 +18,7 @@ namespace FCG.Application.UseCases.Authentication.Logout
 
             return new LogoutOutput
             {
-                Message = "Logout successful. All refresh tokens have been revoked.",
+                Message = ResourceMessages.LogoutSuccessFull,
                 Success = true
             };
         }

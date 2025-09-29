@@ -21,7 +21,6 @@ namespace FCG.Application.UseCases.Authentication.Login
 
         public async Task<LoginOutput> Handle(LoginInput request, CancellationToken cancellationToken)
         {
-            //TODO: Alterar chamada para fazer decrypt da password
             var user = await _readOnlyUserRepository.GetByEmailAndPasswordAsync(request.Email, request.Password);
 
             if (user is null)

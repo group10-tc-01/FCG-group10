@@ -32,9 +32,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Application\UseCases\Authentication\Logout\" />
-    <Folder Include="Application\UseCases\Authentication\RefreshToken\" />
-  </ItemGroup>
-
 </Project>

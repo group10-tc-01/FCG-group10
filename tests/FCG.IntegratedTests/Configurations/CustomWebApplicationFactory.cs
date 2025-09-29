@@ -18,6 +18,7 @@ namespace FCG.IntegratedTests.Configurations
     {
         private DbConnection? _connection;
         public List<User> CreatedUsers { get; private set; } = [];
+        public List<RefreshToken> CreatedRefreshTokens { get; private set; } = [];
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -76,6 +77,7 @@ namespace FCG.IntegratedTests.Configurations
 
             CreateExample(context, itemsQuantity);
             CreatedUsers = CreateUser(context, itemsQuantity);
+            CreatedRefreshTokens = CreateRefreshTokens(context, CreatedUsers);
         }
 
         private static List<Example> CreateExample(FcgDbContext context, int itemsQuantity)
@@ -110,6 +112,23 @@ namespace FCG.IntegratedTests.Configurations
             Log.Information("Created {Count} users", users.Count);
 
             return users;
+        }
+
+        public List<RefreshToken> CreateRefreshTokens(FcgDbContext context, List<User> users)
+        {
+            var refreshTokens = new List<RefreshToken>();
+
+            foreach (var user in users)
+            {
+                var refreshToken = RefreshTokenBuilder.BuildWithUserId(user.Id);
+                refreshTokens.Add(refreshToken);
+            }
+
+            context.RefreshTokens.AddRange(refreshTokens);
+            context.SaveChanges();
+            Log.Information("Created {Count} refresh tokens", refreshTokens.Count);
+            CreatedRefreshTokens = refreshTokens;
+            return refreshTokens;
         }
 
         protected override void Dispose(bool disposing)
