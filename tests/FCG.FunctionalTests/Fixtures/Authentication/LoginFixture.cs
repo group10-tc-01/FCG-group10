@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using FCG.Application.UseCases.Authentication.Login;
+﻿using FCG.Application.UseCases.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Models;
@@ -24,7 +23,6 @@ namespace FCG.FunctionalTests.Fixtures.Authentication
             LoginInput = LoginInputBuilder.Build();
         }
 
-        public static Fixture Fixture => new();
         public LoginUseCase LoginUseCase { get; }
         public LoginInput LoginInput { get; }
 
