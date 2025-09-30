@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FCG.Infrastructure.Migrations
 {
     /// <inheritdoc />
+    ///
+    [ExcludeFromCodeCoverage]
     public partial class UpdateUserValueObjectMappings : Migration
     {
         /// <inheritdoc />

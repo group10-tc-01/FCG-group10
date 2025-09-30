@@ -9,8 +9,9 @@
         public Library(Guid userId)
         {
             UserId = userId;
-        }
+            LibraryGames = new List<LibraryGame>();
 
+        }
         public static Library Create(Guid userId)
         {
             return new Library(userId);

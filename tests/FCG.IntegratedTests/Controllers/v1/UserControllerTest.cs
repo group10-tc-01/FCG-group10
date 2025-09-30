@@ -107,5 +107,30 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
+
+        [Fact]
+        public async Task POST_Register_GivenInvalidWeakPasswordFromBuilder_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = CreateUserInputBuilder.BuildWithWeakPassword();
+
+            // Act
+            var result = await DoPost(ValidUrl, request);
+
+            // Assert
+            result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+        [Fact]
+        public async Task POST_Register_GivenInvalidSimplePassword_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = CreateUserInputBuilder.BuildWithInvalidPassword();
+
+            // Act
+            var result = await DoPost(ValidUrl, request);
+
+            // Assert
+            result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
     }
 }
