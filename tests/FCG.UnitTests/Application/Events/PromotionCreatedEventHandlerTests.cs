@@ -1,7 +1,8 @@
 ﻿using FCG.Application.EventsHandlers.Promotion;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.Promotion;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Events
 {
@@ -10,28 +11,20 @@ namespace FCG.UnitTests.Application.Events
         [Fact]
         public async Task Handler_RegistersLog_WhenPromotionCreatedEventIsPublished()
         {
-            var loggerMock = new Mock<ILogger<PromotionCreatedEventHandler>>();
-            var handler = new PromotionCreatedEventHandler(loggerMock.Object);
+            var loggerBuilder = new LoggerMockBuilder<PromotionCreatedEventHandler>().CaptureInformationLog();
+            var handler = new PromotionCreatedEventHandler(loggerBuilder.Build().Object);
 
-            var promotionId = Guid.NewGuid();
-            var gameId = Guid.NewGuid();
+            var promotion = PromotionBuilder.Build();
 
-            var @event = new PromotionCreatedEvent(promotionId, gameId);
+            var @event = new PromotionCreatedEvent(promotion.Id, promotion.GameId);
 
             await handler.Handle(@event, CancellationToken.None);
 
-            loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Information,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) =>
-                        v.ToString()!.Contains(promotionId.ToString()) &&
-                        v.ToString()!.Contains(gameId.ToString())),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-                Times.Once
-            );
+            var loggedMessage = loggerBuilder.GetLoggedMessage();
+            loggedMessage.Should().NotBeNull("uma mensagem de log deve ter sido capturada");
+
+            loggedMessage.Should().Contain(promotion.Id.ToString());
+            loggedMessage.Should().Contain(promotion.GameId.ToString());
         }
     }
 }

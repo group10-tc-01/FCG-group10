@@ -1,7 +1,8 @@
 ﻿using FCG.Application.EventsHandlers.Librarys;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.Library;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Events
 {
@@ -10,28 +11,20 @@ namespace FCG.UnitTests.Application.Events
         [Fact]
         public async Task Handler_RegistersLog_WhenLibraryCreatedEventIsPublished()
         {
-            var loggerMock = new Mock<ILogger<LibraryCreatedEventHandler>>();
-            var handler = new LibraryCreatedEventHandler(loggerMock.Object);
+            var loggerBuilder = new LoggerMockBuilder<LibraryCreatedEventHandler>().CaptureInformationLog();
+            var handler = new LibraryCreatedEventHandler(loggerBuilder.Build().Object);
 
-            var libraryId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
+            var library = LibraryBuilder.Build();
 
-            var @event = new LibraryCreatedEvent(libraryId, userId);
+            var @event = new LibraryCreatedEvent(library.Id, library.UserId);
 
             await handler.Handle(@event, CancellationToken.None);
 
-            loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Information,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) =>
-                        v.ToString()!.Contains(libraryId.ToString()) &&
-                        v.ToString()!.Contains(userId.ToString())),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-                Times.Once
-            );
+            var loggedMessage = loggerBuilder.GetLoggedMessage();
+            loggedMessage.Should().NotBeNull("uma mensagem de log deve ter sido capturada");
+
+            loggedMessage.Should().Contain(library.Id.ToString());
+            loggedMessage.Should().Contain(library.UserId.ToString());
         }
     }
 }

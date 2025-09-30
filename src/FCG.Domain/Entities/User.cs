@@ -24,14 +24,8 @@ namespace FCG.Domain.Entities
 
         public static User Create(string name, string email, string password, Role role)
         {
-            var nameObj = Name.Create(name);
-            var emailObj = Email.Create(email);
-            var passwordObj = Password.Create(password);
-
-            var user = new User(nameObj, emailObj, passwordObj, role);
-
+            var user = new User(name, email, password, role);
             user.AddDomainEvent(new UserCreatedEvent(user.Id, user.Name, user.Email));
-
             return user;
         }
     }

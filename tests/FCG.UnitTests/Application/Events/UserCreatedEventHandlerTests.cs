@@ -1,7 +1,8 @@
 ﻿using FCG.Application.EventsHandlers.Users;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.User;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Events
 {
@@ -10,30 +11,21 @@ namespace FCG.UnitTests.Application.Events
         [Fact]
         public async Task Handler_RegistersLog_WhenEventIsPublished()
         {
-            var loggerMock = new Mock<ILogger<UserCreatedEventHandler>>();
-            var handler = new UserCreatedEventHandler(loggerMock.Object);
+            var loggerBuilder = new LoggerMockBuilder<UserCreatedEventHandler>().CaptureInformationLog();
+            var handler = new UserCreatedEventHandler(loggerBuilder.Build().Object);
 
-            var userId = Guid.NewGuid();
-            var name = "lohhan";
-            var email = "test@example.com";
-            var occurredOn = DateTime.UtcNow;
+            var user = UserBuilder.Build();
 
-            var @event = new UserCreatedEvent(userId, name, email);
+            var @event = new UserCreatedEvent(user.Id, user.Name, user.Email);
 
             await handler.Handle(@event, CancellationToken.None);
 
-            loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Information,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(userId.ToString())
-                                                  && v.ToString()!.Contains(name)
-                                                  && v.ToString()!.Contains(email)),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-                Times.Once
-            );
+            var loggedMessage = loggerBuilder.GetLoggedMessage();
+            loggedMessage.Should().NotBeNull("uma mensagem de log deve ter sido capturada");
+
+            loggedMessage.Should().Contain(user.Id.ToString());
+            loggedMessage.Should().Contain(user.Name);
+            loggedMessage.Should().Contain(user.Email);
         }
     }
 }

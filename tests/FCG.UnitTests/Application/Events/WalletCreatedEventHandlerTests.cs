@@ -1,7 +1,8 @@
 ﻿using FCG.Application.EventsHandlers.Wallet;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.Wallet;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Events
 {
@@ -10,28 +11,20 @@ namespace FCG.UnitTests.Application.Events
         [Fact]
         public async Task Handler_RegistersLog_WhenWalletCreatedEventIsPublished()
         {
-            var loggerMock = new Mock<ILogger<WalletCreatedEventHandler>>();
-            var handler = new WalletCreatedEventHandler(loggerMock.Object);
+            var loggerBuilder = new LoggerMockBuilder<WalletCreatedEventHandler>().CaptureInformationLog();
+            var handler = new WalletCreatedEventHandler(loggerBuilder.Build().Object);
 
-            var walletId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
+            var wallet = WalletBuilder.Build();
 
-            var @event = new WalletCreatedEvent(walletId, userId);
+            var @event = new WalletCreatedEvent(wallet.Id, wallet.UserId);
 
             await handler.Handle(@event, CancellationToken.None);
 
-            loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Information,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) =>
-                        v.ToString()!.Contains(walletId.ToString()) &&
-                        v.ToString()!.Contains(userId.ToString())),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-                Times.Once
-            );
+            var loggedMessage = loggerBuilder.GetLoggedMessage();
+            loggedMessage.Should().NotBeNull("uma mensagem de log deve ter sido capturada");
+
+            loggedMessage.Should().Contain(wallet.Id.ToString());
+            loggedMessage.Should().Contain(wallet.UserId.ToString());
         }
     }
 }

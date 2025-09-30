@@ -1,7 +1,8 @@
 ﻿using FCG.Application.EventsHandlers.Games;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.Game;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Events
 {
@@ -10,30 +11,21 @@ namespace FCG.UnitTests.Application.Events
         [Fact]
         public async Task Handler_RegistersLog_WhenGameCreatedEventIsPublished()
         {
-            var loggerMock = new Mock<ILogger<GameCreatedEventHandler>>();
-            var handler = new GameCreatedEventHandler(loggerMock.Object);
+            var loggerBuilder = new LoggerMockBuilder<GameCreatedEventHandler>().CaptureInformationLog();
+            var handler = new GameCreatedEventHandler(loggerBuilder.Build().Object);
 
-            var gameId = Guid.NewGuid();
-            var gameName = "The Witcher 3";
-            var category = "RPG";
+            var game = GameBuilder.Build();
 
-            var @event = new GameCreatedEvent(gameId, gameName, category);
+            var @event = new GameCreatedEvent(game.Id, game.Name, game.Category);
 
             await handler.Handle(@event, CancellationToken.None);
 
-            loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Information,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) =>
-                        v.ToString()!.Contains(gameId.ToString()) &&
-                        v.ToString()!.Contains(gameName) &&
-                        v.ToString()!.Contains(category)),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-                Times.Once
-            );
+            var loggedMessage = loggerBuilder.GetLoggedMessage();
+            loggedMessage.Should().NotBeNull("uma mensagem de log deve ter sido capturada");
+
+            loggedMessage.Should().Contain(game.Id.ToString());
+            loggedMessage.Should().Contain(game.Name);
+            loggedMessage.Should().Contain(game.Category);
         }
     }
 }

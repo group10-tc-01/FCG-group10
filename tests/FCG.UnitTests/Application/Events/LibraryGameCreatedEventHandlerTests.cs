@@ -1,7 +1,8 @@
 ﻿using FCG.Application.EventsHandlers.LibraryGames;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.LibraryGame;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Events
 {
@@ -10,34 +11,21 @@ namespace FCG.UnitTests.Application.Events
         [Fact]
         public async Task Handler_RegistersLog_WhenLibraryGameCreatedEventIsPublished()
         {
-            // Arrange
-            var loggerMock = new Mock<ILogger<LibraryGameCreatedEventHandler>>();
-            var handler = new LibraryGameCreatedEventHandler(loggerMock.Object);
+            var loggerBuilder = new LoggerMockBuilder<LibraryGameCreatedEventHandler>().CaptureInformationLog();
+            var handler = new LibraryGameCreatedEventHandler(loggerBuilder.Build().Object);
 
-            var libraryGameId = Guid.NewGuid();
-            var libraryId = Guid.NewGuid();
-            var gameId = Guid.NewGuid();
+            var libraryGame = LibraryGameBuilder.Build();
 
-            var @event = new LibraryGameCreatedEvent(libraryGameId, libraryId, gameId);
+            var @event = new LibraryGameCreatedEvent(libraryGame.Id, libraryGame.LibraryId, libraryGame.GameId);
 
-            // Act
             await handler.Handle(@event, CancellationToken.None);
 
-            // Assert
-            loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Information,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) =>
-                        v.ToString()!.Contains(libraryGameId.ToString()) &&
-                        v.ToString()!.Contains(libraryId.ToString()) &&
-                        v.ToString()!.Contains(gameId.ToString())
-                        ),
-                    It.IsAny<Exception?>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-                Times.Once
-            );
+            var loggedMessage = loggerBuilder.GetLoggedMessage();
+            loggedMessage.Should().NotBeNull("uma mensagem de log deve ter sido capturada");
+
+            loggedMessage.Should().Contain(libraryGame.Id.ToString());
+            loggedMessage.Should().Contain(libraryGame.LibraryId.ToString());
+            loggedMessage.Should().Contain(libraryGame.GameId.ToString());
         }
     }
 }

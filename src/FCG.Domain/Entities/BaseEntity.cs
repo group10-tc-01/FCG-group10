@@ -1,10 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using FCG.Domain.Events;
+using System.Collections.ObjectModel;
 
 namespace FCG.Domain.Entities
 {
     public abstract class BaseEntity
     {
-        private readonly List<object> _domainEvents = new();
+        private readonly List<IDomainEvent> _domainEvents = new();
 
         protected BaseEntity() { }
 
@@ -25,9 +26,9 @@ namespace FCG.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public IReadOnlyCollection<object> DomainEvents => new ReadOnlyCollection<object>(_domainEvents);
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => new ReadOnlyCollection<IDomainEvent>(_domainEvents);
 
-        public void AddDomainEvent(object domainEvent)
+        public void AddDomainEvent(IDomainEvent domainEvent)
         {
             _domainEvents.Add(domainEvent);
         }
