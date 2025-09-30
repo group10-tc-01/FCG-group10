@@ -30,9 +30,10 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.Property(u => u.Password)
                 .HasConversion(
                     password => password.Value,
-                    value => Password.Create(value))
+                    value => Password.FromHash(value))
                 .HasMaxLength(255)
                 .IsRequired();
+
 
             builder.Property(u => u.Role)
                 .HasConversion<string>()
