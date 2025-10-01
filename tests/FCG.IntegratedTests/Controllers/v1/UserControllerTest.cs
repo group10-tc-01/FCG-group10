@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.UsersDTO;
+﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.CommomTestsUtilities.Builders.Inputs.Users;
 using FCG.Infrastructure.Persistance;
 using FCG.IntegratedTests.Configurations;

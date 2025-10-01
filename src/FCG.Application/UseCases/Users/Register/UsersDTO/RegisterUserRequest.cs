@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace FCG.Application.UseCases.UsersDTO
+namespace FCG.Application.UseCases.Users.Register.UsersDTO
 {
     public class RegisterUserRequest : IRequest<RegisterUserResponse>
     {

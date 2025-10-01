@@ -1,5 +1,4 @@
-﻿using FCG.Application.UseCases.Users.Register;
-using FCG.Application.UseCases.UsersDTO;
+﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

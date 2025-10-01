@@ -1,10 +1,10 @@
-﻿using FCG.Application.UseCases.UsersDTO;
-using FCG.Domain.Entities;
+﻿using FCG.Domain.Entities;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using MediatR;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
+using FCG.Application.UseCases.Users.Register.UsersDTO;
 
 namespace FCG.Application.UseCases.Users.Register
 {

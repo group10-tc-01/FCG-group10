@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.UsersDTO;
+﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
 using MediatR;
 
 namespace FCG.Application.UseCases.Users.Register

@@ -1,4 +1,4 @@
-﻿namespace FCG.Application.UseCases.UsersDTO
+﻿namespace FCG.Application.UseCases.Users.Register.UsersDTO
 {
     public class RegisterUserResponse
     {
