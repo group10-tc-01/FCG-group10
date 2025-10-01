@@ -1,9 +1,11 @@
-﻿using FCG.Domain.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using FCG.Domain.Entities;
 using FCG.Domain.Repositories.ExampleRepository;
 using Moq;
 
 namespace FCG.CommomTestsUtilities.Builders.Repositories.ExampleRepository
 {
+    [ExcludeFromCodeCoverage]
     public class WriteOnlyExampleRepositoryBuilder
     {
         private static readonly Mock<IWriteOnlyExampleRepository> _mock = new Mock<IWriteOnlyExampleRepository>();

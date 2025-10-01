@@ -9,5 +9,7 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
         {
             return new Faker<Library>().CustomInstantiator(f => Library.Create(Guid.NewGuid()));
         }
+
     }
+
 }

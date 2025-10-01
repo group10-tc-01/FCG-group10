@@ -11,19 +11,22 @@ namespace FCG.UnitTests.Domain.Entities
         [Fact]
         public void Given_ValidUserParameters_When_Create_Then_UserIsInstantiatedCorrectly()
         {
-            // Arrange
+
             var userBuilder = UserBuilder.Build();
 
-            // Act
-            var user = User.Create(userBuilder.Name, userBuilder.Email, userBuilder.Password, Role.Admin);
+            var rawPassword = userBuilder.Password;
+            var user = User.Create(userBuilder.Name, userBuilder.Email, rawPassword, Role.Admin);
 
-            // Assert
+
             user.Should().NotBeNull();
             user.Id.Should().NotBe(Guid.Empty);
             user.Name.Should().Be(userBuilder.Name);
             user.Email.Should().Be(userBuilder.Email);
-            user.Password.Should().Be(userBuilder.Password);
+            user.Password.VerifyPassword(rawPassword).Should().BeTrue();
+
+            user.Password.VerifyPassword("WrongPassword!123").Should().BeFalse();
         }
+
 
         [Fact]
         public void Given_TwoUsersWithSameData_When_Created_Then_TheyHaveDifferentIds()
@@ -63,6 +66,21 @@ namespace FCG.UnitTests.Domain.Entities
 
             // Assert
             act.Should().Throw<DomainException>().WithMessage("Invalid email format.");
+        }
+
+        [Fact]
+        public void Given_WeakPassword_When_CreateUser_Then_ThrowsException()
+        {
+            // Arrange
+            var userBuilder = UserBuilder.Build();
+
+            const string weakPassword = "NoSpecialChar123";
+
+            // Act
+            Action act = () => User.Create(userBuilder.Name, userBuilder.Email, weakPassword, Role.Admin);
+
+            act.Should().Throw<DomainException>()
+                .WithMessage("Password must contain at least one special character.");
         }
     }
 }
