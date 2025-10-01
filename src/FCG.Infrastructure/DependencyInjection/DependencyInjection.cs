@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
+using FCG.Domain.Repositories.UserRepository;
 
 namespace FCG.Infrastructure.DependencyInjection
 {
@@ -35,6 +36,8 @@ namespace FCG.Infrastructure.DependencyInjection
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IReadOnlyUserRepository, UserRepository>();
+            services.AddScoped<IWriteOnlyUserRepository, UserRepository>();
 
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

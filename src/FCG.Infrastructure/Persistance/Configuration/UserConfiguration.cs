@@ -36,6 +36,7 @@ namespace FCG.Infrastructure.Persistance.Configuration
                     .IsRequired();
             });
 
+
             builder.Property(u => u.Role)
                 .HasConversion<string>()
                 .HasMaxLength(20)

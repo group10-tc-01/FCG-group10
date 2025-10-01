@@ -1,4 +1,5 @@
-﻿using FCG.Domain.Entities;
+﻿using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.Domain.Entities;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
@@ -46,6 +47,19 @@ namespace FCG.UnitTests.Domain.Entities
             // Assert
             library.Should().NotBeNull();
             library.UserId.Should().Be(userId);
+        }
+
+        [Fact]
+        public void Build_WhenCalled_ShouldReturnValidLibraryInstance()
+        {
+            // Arrange & Act
+            var library = LibraryBuilder.Build();
+
+            // Assert
+            library.Should().NotBeNull();
+            library.UserId.Should().NotBe(Guid.Empty);
+            library.LibraryGames.Should().NotBeNull("A coleção deve ser inicializada no construtor.");
+            library.LibraryGames.Should().BeEmpty();
         }
     }
 }
