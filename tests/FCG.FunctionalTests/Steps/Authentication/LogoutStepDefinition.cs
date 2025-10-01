@@ -39,14 +39,12 @@ namespace FCG.FunctionalTests.Steps.Authentication
         public void ThenAllUserRefreshTokensShouldBeRevoked()
         {
             _logoutOutput.Should().NotBeNull();
-            _logoutOutput.Success.Should().BeTrue();
         }
 
         [Then(@"o sistema deve retornar mensagem de sucesso")]
         public void ThenTheSystemShouldReturnSuccessMessage()
         {
             _logoutOutput.Should().NotBeNull();
-            _logoutOutput.Success.Should().BeTrue();
             _logoutOutput.Message.Should().Be(ResourceMessages.LogoutSuccessFull);
         }
     }

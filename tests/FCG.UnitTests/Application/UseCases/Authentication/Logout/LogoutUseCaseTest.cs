@@ -30,7 +30,6 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Logout
 
             // Assert
             result.Should().NotBeNull();
-            result.Success.Should().BeTrue();
             result.Message.Should().Be(ResourceMessages.LogoutSuccessFull);
         }
 
@@ -61,7 +60,6 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Logout
 
             // Assert
             result.Should().NotBeNull();
-            result.Success.Should().BeTrue();
             result.Message.Should().Be(ResourceMessages.LogoutSuccessFull);
         }
 

@@ -18,8 +18,7 @@ namespace FCG.Application.UseCases.Authentication.Logout
 
             return new LogoutOutput
             {
-                Message = ResourceMessages.LogoutSuccessFull,
-                Success = true
+                Message = ResourceMessages.LogoutSuccessFull
             };
         }
     }

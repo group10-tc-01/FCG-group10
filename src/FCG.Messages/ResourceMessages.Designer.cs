@@ -61,6 +61,15 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid email or password..
+        /// </summary>
+        public static string InvalidEmailOrPassword {
+            get {
+                return ResourceManager.GetString("InvalidEmailOrPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid refresh token..
         /// </summary>
         public static string InvalidRefreshToken {

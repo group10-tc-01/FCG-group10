@@ -2,6 +2,7 @@
 using FCG.Domain.Models.Authenticaiton;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
+using FCG.Messages;
 using Microsoft.Extensions.Options;
 
 namespace FCG.Application.UseCases.Authentication.Login
@@ -24,7 +25,7 @@ namespace FCG.Application.UseCases.Authentication.Login
             var user = await _readOnlyUserRepository.GetByEmailAndPasswordAsync(request.Email, request.Password);
 
             if (user is null)
-                throw new UnauthorizedException("Invalid email or password.");
+                throw new UnauthorizedException(ResourceMessages.InvalidEmailOrPassword);
 
             var accessToken = _tokenService.GenerateAccessToken(user!);
             var refreshTokenValue = _tokenService.GenerateRefreshToken();
