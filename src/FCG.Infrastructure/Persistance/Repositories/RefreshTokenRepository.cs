@@ -20,6 +20,7 @@ namespace FCG.Infrastructure.Persistance.Repositories
         public async Task<RefreshToken?> GetByTokenAsync(string token)
         {
             return await _fcgDbContext.RefreshTokens
+                .AsNoTracking()
                 .Include(rt => rt.User)
                 .FirstOrDefaultAsync(rt => rt.Token == token);
         }
@@ -27,6 +28,7 @@ namespace FCG.Infrastructure.Persistance.Repositories
         public async Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Guid userId)
         {
             return await _fcgDbContext.RefreshTokens
+                .AsNoTracking()
                 .Where(rt => rt.UserId == userId)
                 .ToListAsync();
         }
