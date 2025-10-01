@@ -1,7 +1,7 @@
 ﻿using FCG.Application.UseCases.UsersDTO;
 using FluentValidation;
 
-namespace FCG.Application.UseCases.Users.RegisterUser
+namespace FCG.Application.UseCases.Users.Register
 {
     public class RegisterUserInputValidator : AbstractValidator<RegisterUserRequest>
     {

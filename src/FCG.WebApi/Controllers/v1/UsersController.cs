@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.Users.RegisterUser;
+﻿using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.UsersDTO;
 using FCG.WebApi.Models;
 using MediatR;

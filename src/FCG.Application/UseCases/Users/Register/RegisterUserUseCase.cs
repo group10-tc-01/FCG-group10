@@ -6,7 +6,7 @@ using MediatR;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 
-namespace FCG.Application.UseCases.Users.RegisterUser
+namespace FCG.Application.UseCases.Users.Register
 {
     public class RegisterUserUseCase : IRegisterUserUseCase
     {
