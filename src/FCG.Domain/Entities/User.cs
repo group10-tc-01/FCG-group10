@@ -5,9 +5,9 @@ namespace FCG.Domain.Entities
 {
     public sealed class User : BaseEntity
     {
-        public Name Name { get; private set; }
-        public Email Email { get; private set; }
-        public Password Password { get; private set; }
+        public Name Name { get; private set; } = null!;
+        public Email Email { get; private set; } = null!;
+        public Password Password { get; private set; } = null!;
         public Role Role { get; private set; }
 
         public Library? Library { get; }
@@ -21,6 +21,8 @@ namespace FCG.Domain.Entities
             Password = password;
             Role = role;
         }
+
+        private User() { }
 
         public static User Create(string name, string email, string password, Role role)
         {

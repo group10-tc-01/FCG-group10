@@ -1,5 +1,5 @@
 ﻿using Asp.Versioning;
-using FCG.Application.UseCases.Example.CreateExample;
+using FCG.Application.UseCases.Authentication.Login;
 using FCG.Domain.Models.Authenticaiton;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.Filter;
@@ -53,7 +53,7 @@ namespace FCG.WebApi.DependencyInjection
         private static void AddValidation(this IServiceCollection services)
         {
             services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<CreateExampleInputValidator>();
+            services.AddValidatorsFromAssemblyContaining<LoginInputValidator>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

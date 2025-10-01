@@ -1,5 +1,4 @@
 ﻿using FCG.Domain.Entities;
-using FCG.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,13 +12,13 @@ namespace FCG.Infrastructure.Persistance.Configuration
 
             builder.ToTable("Promotions");
 
-            builder.Property(p => p.Discount)
-                   .HasConversion(
-                        discount => discount.Value,
-                        value => Discount.Create(value))
-                   .HasColumnName("Discount")
-                   .HasColumnType("decimal(5,2)")
-                   .IsRequired();
+            builder.OwnsOne(p => p.Discount, discountBuilder =>
+            {
+                discountBuilder.Property(d => d.Value)
+                    .HasColumnName("Discount")
+                    .HasColumnType("decimal(5,2)")
+                    .IsRequired();
+            });
 
             builder.Property(e => e.StartDate)
                 .HasColumnType("datetime2")
@@ -39,4 +38,3 @@ namespace FCG.Infrastructure.Persistance.Configuration
         }
     }
 }
-

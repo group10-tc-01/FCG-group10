@@ -1,5 +1,4 @@
 ﻿using FCG.Domain.Entities;
-using FCG.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,12 +18,13 @@ namespace FCG.Infrastructure.Persistance.Configuration
                 .HasColumnType("datetime2")
                 .IsRequired();
 
-            builder.Property(lg => lg.PurchasePrice)
-                .HasConversion(
-                    price => price.Value,
-                    value => Price.Create(value))
-                .HasColumnType("decimal(18,2)")
-                .IsRequired();
+            builder.OwnsOne(lg => lg.PurchasePrice, priceBuilder =>
+            {
+                priceBuilder.Property(p => p.Value)
+                    .HasColumnName("PurchasePrice")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+            });
 
             builder.HasOne(lg => lg.Library)
                 .WithMany(l => l.LibraryGames)
