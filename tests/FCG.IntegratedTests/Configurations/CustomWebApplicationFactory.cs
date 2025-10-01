@@ -75,26 +75,8 @@ namespace FCG.IntegratedTests.Configurations
 
             Log.Information($"Creating {itemsQuantity} items for integrated test");
 
-            CreateExample(context, itemsQuantity);
             CreatedUsers = CreateUser(context, itemsQuantity);
             CreatedRefreshTokens = CreateRefreshTokens(context, CreatedUsers);
-        }
-
-        private static List<Example> CreateExample(FcgDbContext context, int itemsQuantity)
-        {
-            var examples = new List<Example>();
-
-            for (int i = 1; i <= itemsQuantity; i++)
-            {
-                var example = ExampleBuilder.Build();
-                examples.Add(example);
-            }
-            context.Examples.AddRange(examples);
-            context.SaveChanges();
-
-            Log.Information("Created {Count} examples", examples.Count);
-
-            return examples;
         }
 
         private List<User> CreateUser(FcgDbContext context, int itemsQuantity)
