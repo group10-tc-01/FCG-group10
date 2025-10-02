@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.ExampleRepository;
+using FCG.Domain.Repositories.UserRepository;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Persistance.Repositories.ExampleRepository;
@@ -7,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
-using FCG.Domain.Repositories.UserRepository;
 
 namespace FCG.Infrastructure.DependencyInjection
 {
