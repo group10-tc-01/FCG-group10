@@ -35,7 +35,6 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IWriteOnlyUserRepository, UserRepository>();
-
             services.AddScoped<IWriteOnlyExampleRepository, ExampleRepository>();
         }
 

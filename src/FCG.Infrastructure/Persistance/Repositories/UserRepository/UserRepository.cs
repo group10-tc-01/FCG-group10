@@ -26,5 +26,10 @@ namespace FCG.Infrastructure.Persistance.Repositories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == emailObject, cancellationToken);
         }
+
+        public async Task<List<User>> GetAllUsers(CancellationToken cancellationToken)
+        {
+            return await _context.Users.AsNoTracking().ToListAsync(cancellationToken);
+        }
     }
 }

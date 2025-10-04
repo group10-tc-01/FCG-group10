@@ -3,6 +3,7 @@ using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
+using FCG.Application.UseCases.Users.GetAllUsers;
 
 namespace FCG.WebApi.Controllers.v1
 {
@@ -20,6 +21,17 @@ namespace FCG.WebApi.Controllers.v1
         {
             var output = await _mediator.Send(input, CancellationToken.None).ConfigureAwait(false);
             return Created(string.Empty, ApiResponse<RegisterUserResponse>.SuccesResponse(output));
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResponse<List<UserListResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUser()
+        {
+            var query = new GetAllUserCaseQuery();
+            var output = await _mediator.Send(query, CancellationToken.None).ConfigureAwait(false);
+            return Ok(ApiResponse<List<UserListResponse>>.SuccesResponse(output));
+
         }
     }
 }
