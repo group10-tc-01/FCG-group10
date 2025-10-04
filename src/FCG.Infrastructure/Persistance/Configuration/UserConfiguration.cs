@@ -26,6 +26,9 @@ namespace FCG.Infrastructure.Persistance.Configuration
                     .HasColumnName("Email")
                     .HasMaxLength(255)
                     .IsRequired();
+
+                emailBuilder.HasIndex(e => e.Value)
+                    .IsUnique();
             });
 
             builder.OwnsOne(u => u.Password, passwordBuilder =>

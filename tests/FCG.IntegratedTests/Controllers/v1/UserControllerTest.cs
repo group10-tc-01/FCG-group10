@@ -14,7 +14,7 @@ namespace FCG.IntegratedTests.Controllers.v1
     public class UserControllerTest : FcgFixture
     {
         private readonly CustomWebApplicationFactory _factory;
-        private const string ValidUrl = "/api/users/register";
+        private const string ValidUrl = "/api/v1/users/register";
 
         public UserControllerTest(CustomWebApplicationFactory factory) : base(factory)
         {
@@ -31,7 +31,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
             var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<RegisterUserResponse>>();
             apiResponse.Should().NotBeNull();
-            apiResponse!.Succes.Should().BeTrue();
+            apiResponse!.Success.Should().BeTrue();
 
 
             using var scope = _factory.Services.CreateScope();
@@ -70,7 +70,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             {
                 PropertyNameCaseInsensitive = true
             });
-            apiResponse!.Succes.Should().BeFalse();
+            apiResponse!.Success.Should().BeFalse();
 
             apiResponse.ErrorMessages.Should().Contain(e => e.Contains("Email já está em uso"));
 
