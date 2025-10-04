@@ -1,29 +1,40 @@
-﻿using FCG.Domain.Repositories.UserRepository;
-using FCG.Infrastructure.Persistance.Repositories;
-using MediatR;
-using System.Linq;
+﻿using FCG.Application.Shared.Models;
 using FCG.Domain.Exceptions;
+using FCG.Domain.Repositories.UserRepository;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FCG.Application.UseCases.Users.GetAllUsers
 {
-    public class GetAllUsersUseCase : IRequestHandler<GetAllUserCaseQuery, List<UserListResponse>>
+    public class GetAllUsersUseCase : IRequestHandler<GetAllUserCaseQuery, PagedListResponse<UserListResponse>>
     {
         private readonly IReadOnlyUserRepository _userRepository;
+
         public GetAllUsersUseCase(IReadOnlyUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public async Task<List<UserListResponse>> Handle(GetAllUserCaseQuery request,
+        public async Task<PagedListResponse<UserListResponse>> Handle(GetAllUserCaseQuery request,
             CancellationToken cancellationToken)
         {
-            var userEntites = await _userRepository.GetAllUsers(cancellationToken);
-            if (userEntites == null)
-            {
-                throw new NotFoundException($"Usuário não encontrado");
+            var baseQuery = await _userRepository.GetQueryableAllUsers();
 
+            var totalCount = await baseQuery.CountAsync(cancellationToken);
+
+            if (totalCount == 0)
+            {
+                throw new NotFoundException("Nenhum usuário foi encontrado na base de dados.");
             }
-            var result = userEntites
+
+            var pagedEntities = await baseQuery
+                .OrderBy(u => u.Name)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
+
+            var items = pagedEntities
                 .Select(entity => new UserListResponse
                 {
                     Id = entity.Id,
@@ -31,11 +42,14 @@ namespace FCG.Application.UseCases.Users.GetAllUsers
                     Email = entity.Email,
                     CreatedAt = entity.CreatedAt,
                     Role = entity.Role.ToString()
-
                 })
                 .ToList();
-            return result;
-
+            return new PagedListResponse<UserListResponse>(
+                items,
+                totalCount,
+                request.PageNumber,
+                request.PageSize
+            );
         }
     }
 }
