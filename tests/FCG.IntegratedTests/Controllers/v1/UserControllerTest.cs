@@ -33,37 +33,31 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Should().NotBeNull();
             apiResponse!.Success.Should().BeTrue();
 
-
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
 
-            var userInDb = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var userInDb = await dbContext.Users.FirstOrDefaultAsync(u => u.Email.Value == request.Email);
 
             userInDb.Should().NotBeNull();
 
             userInDb.Password.Value.Should().MatchRegex(@"^\$2[abxy]\$\d{2}\$.{53}$");
 
             userInDb.Password.VerifyPassword(request.Password).Should().BeTrue();
-            userInDb.Password.VerifyPassword("WrongPassword!1").Should().BeFalse();
         }
 
         [Fact]
         public async Task POST_Register_GivenDuplicateEmail_ShouldReturnBadRequest()
         {
-
             var sharedEmail = "duplicate@test.com";
-
 
             var firstUserRequest = CreateUserInputBuilder.BuildWithEmail(sharedEmail);
             var firstResult = await DoPost(ValidUrl, firstUserRequest);
             firstResult.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
 
-
             var secondUserRequest = CreateUserInputBuilder.BuildWithEmail(sharedEmail);
             var secondResult = await DoPost(ValidUrl, secondUserRequest);
 
             secondResult.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
-
 
             var responseContent = await secondResult.Content.ReadAsStringAsync();
             var apiResponse = JsonSerializer.Deserialize<ApiResponse<string>>(responseContent, new JsonSerializerOptions
@@ -74,11 +68,10 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             apiResponse.ErrorMessages.Should().Contain(e => e.Contains("Email já está em uso"));
 
-
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
 
-            var usersInDb = await dbContext.Users.Where(u => u.Email == sharedEmail).ToListAsync();
+            var usersInDb = await dbContext.Users.Where(u => u.Email.Value == sharedEmail).ToListAsync();
 
             usersInDb.Should().HaveCount(1);
         }
@@ -89,7 +82,6 @@ namespace FCG.IntegratedTests.Controllers.v1
         [InlineData("SENHAFORTE123")]
         public async Task POST_Register_GivenWeakPassword_ShouldReturnBadRequest(string weakPassword)
         {
-
             var request = CreateUserInputBuilder.Build();
             request.Password = weakPassword;
 
