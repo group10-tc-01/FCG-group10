@@ -31,7 +31,7 @@ namespace FCG.WebApi.Extensions
                                 Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        Array.Empty<string>()
                     }
                 });
 

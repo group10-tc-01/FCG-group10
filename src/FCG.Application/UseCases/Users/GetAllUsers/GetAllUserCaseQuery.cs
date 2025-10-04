@@ -7,5 +7,6 @@ namespace FCG.Application.UseCases.Users.GetAllUsers
 {
     public class GetAllUserCaseQuery : PaginationParams, IRequest<PagedListResponse<UserListResponse>>
     {
+        public string? Email { get; set; }
     }
 }

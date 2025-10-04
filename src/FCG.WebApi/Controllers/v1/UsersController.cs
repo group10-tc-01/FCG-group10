@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using FCG.Application.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FCG.WebApi.Controllers.v1
 {
@@ -26,12 +27,11 @@ namespace FCG.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        // [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<List<UserListResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUser([FromQuery] GetAllUserCaseQuery queryPagination)
         {
-
             var output = await _mediator.Send(queryPagination, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<PagedListResponse<UserListResponse>>.SuccesResponse(output));
 

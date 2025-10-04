@@ -1,10 +1,9 @@
 ﻿using FCG.Application.Shared.Models;
-using FCG.Domain.Exceptions;
+using FCG.Application.UseCases.Users.GetAllUsers.GetAllUserDTO;
+using FCG.Domain.Entities;
 using FCG.Domain.Repositories.UserRepository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using FCG.Application.UseCases.Users.GetAllUsers.GetAllUserDTO;
 
 namespace FCG.Application.UseCases.Users.GetAllUsers
 {
@@ -17,34 +16,58 @@ namespace FCG.Application.UseCases.Users.GetAllUsers
             _userRepository = userRepository;
         }
 
-        public async Task<PagedListResponse<UserListResponse>> Handle(GetAllUserCaseQuery request,
+        public async Task<PagedListResponse<UserListResponse>> Handle(
+            GetAllUserCaseQuery request,
             CancellationToken cancellationToken)
         {
             var baseQuery = await _userRepository.GetQueryableAllUsers();
 
-            var totalCount = await baseQuery.CountAsync(cancellationToken);
+            var totalCountBeforeFilter = await baseQuery.CountAsync(cancellationToken);
+            IEnumerable<User> filteredUsers;
+
+            if (!string.IsNullOrWhiteSpace(request.Email))
+            {
+                var searchEmail = request.Email.Trim().ToLower();
+
+                var allUsers = await baseQuery
+                    .OrderBy(u => u.Id)
+                    .ToListAsync(cancellationToken);
+
+                filteredUsers = allUsers
+                    .Where(u => u.Email.Value.ToLower().Contains(searchEmail));
+            }
+            else
+            {
+                filteredUsers = await baseQuery
+                    .OrderBy(u => u.Id)
+                    .ToListAsync(cancellationToken);
+            }
+            var totalCount = filteredUsers.Count();
 
             if (totalCount == 0)
             {
-                throw new NotFoundException("Nenhum usuário foi encontrado na base de dados.");
+                return new PagedListResponse<UserListResponse>(
+                    new List<UserListResponse>(),
+                    0,
+                    request.PageNumber,
+                    request.PageSize
+                );
             }
 
-            var pagedEntities = await baseQuery
-                .OrderBy(u => u.Id)
+            var pagedEntities = filteredUsers
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .ToListAsync(cancellationToken);
-
-            var items = pagedEntities
-                .Select(entity => new UserListResponse
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    Email = entity.Email,
-                    CreatedAt = entity.CreatedAt,
-                    Role = entity.Role.ToString()
-                })
                 .ToList();
+
+            var items = pagedEntities.Select(u => new UserListResponse
+            {
+                Id = u.Id,
+                Name = u.Name.Value,
+                Email = u.Email.Value,
+                CreatedAt = u.CreatedAt,
+                Role = u.Role.ToString()
+            }).ToList();
+
             return new PagedListResponse<UserListResponse>(
                 items,
                 totalCount,

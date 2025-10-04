@@ -1,16 +1,13 @@
-﻿namespace FCG.Application.Shared.Params
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FCG.Application.Shared.Params
 {
     public class PaginationParams
     {
-        private const int MaxPageSize = 50;
-
+        [Range(1, int.MaxValue, ErrorMessage = "PageNumber deve ser maior que 0")]
         public int PageNumber { get; set; } = 1;
 
-        private int _pageSize = 10;
-        public int PageSize
-        {
-            get => _pageSize;
-            set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
-        }
+        [Range(1, 50, ErrorMessage = "PageSize deve estar entre 1 e 50")]
+        public int PageSize { get; set; } = 10;
     }
 }
