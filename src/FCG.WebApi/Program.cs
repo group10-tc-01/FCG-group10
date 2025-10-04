@@ -3,6 +3,7 @@ using FCG.Infrastructure.DependencyInjection;
 using FCG.Infrastructure.Logging;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
+using FCG.WebApi.Extensions;
 using FCG.WebApi.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -22,18 +23,26 @@ namespace FCG.WebApi
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FCG - V1", Version = "v1.0" });
-                c.SwaggerDoc("v2", new OpenApiInfo { Title = "FCG - V2", Version = "v2.0" });
-            });
+
 
             builder.Services.AddWebApi();
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddSerilogLogging(builder.Configuration);
+            builder.Services.AddSwaggerWithSecurity();
+
 
             var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FCG API v1");
+                    c.EnablePersistAuthorization();
+                });
+            }
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
             app.MapHealthChecks("/health");
@@ -48,6 +57,7 @@ namespace FCG.WebApi
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

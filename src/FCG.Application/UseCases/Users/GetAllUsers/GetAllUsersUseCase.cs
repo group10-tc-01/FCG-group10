@@ -2,6 +2,7 @@
 using FCG.Infrastructure.Persistance.Repositories;
 using MediatR;
 using System.Linq;
+using FCG.Domain.Exceptions;
 
 namespace FCG.Application.UseCases.Users.GetAllUsers
 {
@@ -17,12 +18,19 @@ namespace FCG.Application.UseCases.Users.GetAllUsers
             CancellationToken cancellationToken)
         {
             var userEntites = await _userRepository.GetAllUsers(cancellationToken);
+            if (userEntites == null)
+            {
+                throw new NotFoundException($"Usuário não encontrado");
+
+            }
             var result = userEntites
                 .Select(entity => new UserListResponse
                 {
                     Id = entity.Id,
                     Name = entity.Name,
-                    Email = entity.Email
+                    Email = entity.Email,
+                    CreatedAt = entity.CreatedAt,
+                    Role = entity.Role.ToString()
 
                 })
                 .ToList();
