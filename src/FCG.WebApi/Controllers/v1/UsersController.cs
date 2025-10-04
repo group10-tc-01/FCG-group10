@@ -1,11 +1,11 @@
-﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
+﻿using FCG.Application.UseCases.Users.GetAllUsers;
+using FCG.Application.UseCases.Users.GetAllUsers.GetAllUserDTO;
+using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using FCG.Application.Shared.Models;
-using FCG.Application.UseCases.Users.GetAllUsers;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FCG.WebApi.Controllers.v1
 {
@@ -31,8 +31,8 @@ namespace FCG.WebApi.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUser([FromQuery] GetAllUserCaseQuery queryPagination)
         {
-            var query = new GetAllUserCaseQuery();
-            var output = await _mediator.Send(query, CancellationToken.None).ConfigureAwait(false);
+
+            var output = await _mediator.Send(queryPagination, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<PagedListResponse<UserListResponse>>.SuccesResponse(output));
 
         }

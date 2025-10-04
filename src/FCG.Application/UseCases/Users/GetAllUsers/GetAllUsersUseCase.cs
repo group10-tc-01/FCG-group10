@@ -4,10 +4,11 @@ using FCG.Domain.Repositories.UserRepository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using FCG.Application.UseCases.Users.GetAllUsers.GetAllUserDTO;
 
 namespace FCG.Application.UseCases.Users.GetAllUsers
 {
-    public class GetAllUsersUseCase : IRequestHandler<GetAllUserCaseQuery, PagedListResponse<UserListResponse>>
+    public sealed class GetAllUsersUseCase : IRequestHandler<GetAllUserCaseQuery, PagedListResponse<UserListResponse>>
     {
         private readonly IReadOnlyUserRepository _userRepository;
 
@@ -29,7 +30,7 @@ namespace FCG.Application.UseCases.Users.GetAllUsers
             }
 
             var pagedEntities = await baseQuery
-                .OrderBy(u => u.Name)
+                .OrderBy(u => u.Id)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
