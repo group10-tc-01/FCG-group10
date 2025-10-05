@@ -11,39 +11,26 @@ namespace FCG.Domain.ValueObjects
             Value = value;
         }
 
-        public static Password Create(string plainTextPassword)
+        public static Password Create(string value)
         {
-            if (string.IsNullOrWhiteSpace(plainTextPassword))
+            if (string.IsNullOrWhiteSpace(value))
                 throw new DomainException("Password cannot be null or empty.");
 
-            if (plainTextPassword.Length < 8)
+            if (value.Length < 8)
                 throw new DomainException("Password must be at least 8 characters long.");
 
-            if (!ContainsLetter(plainTextPassword))
+            if (!ContainsLetter(value))
                 throw new DomainException("Password must contain at least one letter.");
 
-            if (!ContainsDigit(plainTextPassword))
+            if (!ContainsDigit(value))
                 throw new DomainException("Password must contain at least one number.");
 
-            if (!ContainsSpecialCharacter(plainTextPassword))
+            if (!ContainsSpecialCharacter(value))
                 throw new DomainException("Password must contain at least one special character.");
 
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(plainTextPassword);
-            return new Password(hashedPassword);
+            return new Password(value);
         }
 
-        public static Password FromHash(string hashedValue)
-        {
-            if (string.IsNullOrWhiteSpace(hashedValue))
-                throw new DomainException("Hashed password cannot be null or empty.");
-
-            return new Password(hashedValue);
-        }
-
-        public bool VerifyPassword(string plainTextPassword)
-        {
-            return BCrypt.Net.BCrypt.Verify(plainTextPassword, this.Value);
-        }
         private static bool ContainsLetter(string password) => password.Any(char.IsLetter);
 
         private static bool ContainsDigit(string password) => password.Any(char.IsDigit);
@@ -56,5 +43,3 @@ namespace FCG.Domain.ValueObjects
         public override string ToString() => Value;
     }
 }
-
-

@@ -5,8 +5,9 @@ using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
 using FCG.WebApi.Extensions;
 using FCG.WebApi.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.WebApi
@@ -20,12 +21,14 @@ namespace FCG.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 
-            builder.Services.AddWebApi();
+            builder.Services.AddWebApi(builder.Configuration);
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddSerilogLogging(builder.Configuration);
@@ -45,7 +48,17 @@ namespace FCG.WebApi
             }
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
-            app.MapHealthChecks("/health");
+
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                AllowCachingResponses = false,
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+                }
+
+            });
 
             if (app.Environment.IsDevelopment())
             {
@@ -58,6 +71,10 @@ namespace FCG.WebApi
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop
             app.UseAuthorization();
 
             app.MapControllers();

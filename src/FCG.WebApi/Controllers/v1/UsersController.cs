@@ -4,15 +4,15 @@ using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+<<<<<<< HEAD
 using System.Diagnostics.CodeAnalysis;
 using FCG.Application.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
+=======
+>>>>>>> develop
 
 namespace FCG.WebApi.Controllers.v1
 {
-    [ExcludeFromCodeCoverage]
-    [Route("api/[controller]")]
-    [ApiController]
     public class UsersController : FcgBaseController
     {
         public UsersController(IMediator mediator) : base(mediator) { }

@@ -6,7 +6,7 @@ namespace FCG.Domain.Entities
     public sealed class Promotion : BaseEntity
     {
         public Guid GameId { get; private set; }
-        public Discount Discount { get; private set; }
+        public Discount Discount { get; private set; } = null!;
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
         public Game? Game { get; }
@@ -23,6 +23,8 @@ namespace FCG.Domain.Entities
             StartDate = startDate;
             EndDate = endDate;
         }
+
+        private Promotion() { }
 
         public static Promotion Create(Guid gameId, Discount discount, DateTime startDate, DateTime endDate)
         {

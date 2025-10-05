@@ -41,7 +41,7 @@ namespace FCG.UnitTests.Domain.Entities
                 .WithMessage("Name must be at least 2 characters long.");
 
             Action actNullName = () => Game.Create(
-                Name.Create(null),
+                Name.Create(""),
                 gameEntity.Description,
                 Price.Create(gameEntity.Price),
                 gameEntity.Category
@@ -59,7 +59,7 @@ namespace FCG.UnitTests.Domain.Entities
             var category = "Action";
 
             // Act & Assert
-            Action actNullDescription = () => Game.Create(name, null, price, category);
+            Action actNullDescription = () => Game.Create(name, "", price, category);
             actNullDescription.Should().Throw<DomainException>().WithMessage("Description cannot be null or empty.");
 
             Action actEmptyDescription = () => Game.Create(name, string.Empty, price, category);
@@ -75,7 +75,7 @@ namespace FCG.UnitTests.Domain.Entities
             var price = Price.Create(59.99m);
 
             // Act & Assert
-            Action actNullCategory = () => Game.Create(name, description, price, null);
+            Action actNullCategory = () => Game.Create(name, description, price, "");
             actNullCategory.Should().Throw<DomainException>().WithMessage("Category cannot be null or empty.");
 
             Action actEmptyCategory = () => Game.Create(name, description, price, string.Empty);

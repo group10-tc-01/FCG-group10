@@ -22,9 +22,6 @@ namespace FCG.UnitTests.Domain.Entities
             user.Id.Should().NotBe(Guid.Empty);
             user.Name.Should().Be(userBuilder.Name);
             user.Email.Should().Be(userBuilder.Email);
-            user.Password.VerifyPassword(rawPassword).Should().BeTrue();
-
-            user.Password.VerifyPassword("WrongPassword!123").Should().BeFalse();
         }
 
 
