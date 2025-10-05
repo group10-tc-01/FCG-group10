@@ -10,27 +10,28 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [Fact]
         public void Given_ValidPassword_When_CreatePassword_Then_ShouldCreateSuccessfully()
         {
-            const string plainTextPassword = "MySecure123!";
+            // Arrange
+            string validPassword = "MySecure123!";
 
-            var password = Password.Create(plainTextPassword);
+            // Act
+            var password = Password.Create(validPassword);
 
+            // Assert
             password.Should().NotBeNull();
-            password.Value.Should().NotBe(plainTextPassword, "A senha deve ser hasheada.");
-
-            password.Value.Should().MatchRegex(@"^\$2[abxy]\$\d{2}\$.{53}$");
-
-            password.VerifyPassword(plainTextPassword).Should().BeTrue("A verificação com a senha original deve ser True.");
-
-            password.VerifyPassword("WrongPassword!").Should().BeFalse("A verificação com senha errada deve ser False.");
+            password.Value.Should().Be(validPassword);
         }
 
         [Fact]
         public void Given_MinimumValidPassword_When_CreatePassword_Then_ShouldCreateSuccessfully()
         {
+            // Arrange
+            string minPassword = "Abcd123!";
 
-            const string plainTextPassword = "Abcd123!";
-            var password = Password.Create(plainTextPassword);
-            password.VerifyPassword(plainTextPassword).Should().BeTrue();
+            // Act
+            var password = Password.Create(minPassword);
+
+            // Assert
+            password.Value.Should().Be(minPassword);
         }
 
         [Fact]
@@ -107,33 +108,40 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [Fact]
         public void Given_LongValidPassword_When_CreatePassword_Then_ShouldCreateSuccessfully()
         {
-            const string plainTextPassword = "ThisIsAVeryLongAndSecurePassword123!@#$";
-            var password = Password.Create(plainTextPassword);
-            password.VerifyPassword(plainTextPassword).Should().BeTrue();
+            // Arrange
+            string longPassword = "ThisIsAVeryLongAndSecurePassword123!@#";
+
+            // Act
+            var password = Password.Create(longPassword);
+
+            // Assert
+            password.Value.Should().Be(longPassword);
         }
 
         [Fact]
         public void Given_PasswordObject_When_ImplicitConvertToString_Then_ShouldReturnValue()
         {
-            const string plainTextPassword = "Convert123!";
-            var password = Password.Create(plainTextPassword);
+            // Arrange
+            var password = Password.Create("Convert123!");
 
+            // Act
             string value = password;
 
-            value.Should().NotBe(plainTextPassword, "A conversão implícita deve retornar o hash, não a senha clara.");
-            value.Should().MatchRegex(@"^\$2[abxy]\$\d{2}\$.{53}$");
+            // Assert
+            value.Should().Be("Convert123!");
         }
 
         [Fact]
         public void Given_PasswordObject_When_CallToString_Then_ShouldReturnValue()
         {
-            const string plainTextPassword = "ToString123!";
-            var password = Password.Create(plainTextPassword);
+            // Arrange
+            var password = Password.Create("ToString123!");
 
+            // Act
             string result = password.ToString();
 
-            result.Should().NotBe(plainTextPassword, "ToString deve retornar o hash.");
-            result.Should().MatchRegex(@"^\$2[abxy]\$\d{2}\$.{53}$");
+            // Assert
+            result.Should().Be("ToString123!");
         }
 
         [Fact]
@@ -141,7 +149,6 @@ namespace FCG.UnitTests.Domain.ValueObjects
         {
             var password1 = Password.Create("FirstPass123!");
             var password2 = Password.Create("SecondPass123!");
-
             password1.Should().NotBe(password2);
         }
     }

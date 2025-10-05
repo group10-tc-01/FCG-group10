@@ -11,8 +11,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Infrastructure.Migrations
 {
-    [ExcludeFromCodeCoverage]
     [DbContext(typeof(FcgDbContext))]
+    [ExcludeFromCodeCoverage]
     partial class FcgDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -23,40 +23,6 @@ namespace FCG.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("FCG.Domain.Entities.Example", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Examples", (string)null);
-                });
 
             modelBuilder.Entity("FCG.Domain.Entities.Game", b =>
                 {
@@ -83,14 +49,6 @@ namespace FCG.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -150,9 +108,6 @@ namespace FCG.Infrastructure.Migrations
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("PurchasePrice")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -173,10 +128,6 @@ namespace FCG.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("Discount");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -202,6 +153,48 @@ namespace FCG.Infrastructure.Migrations
                     b.ToTable("Promotions", (string)null);
                 });
 
+            modelBuilder.Entity("FCG.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("RevokedReason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("FCG.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -213,25 +206,10 @@ namespace FCG.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -284,6 +262,51 @@ namespace FCG.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FCG.Domain.Entities.Game", b =>
+                {
+                    b.OwnsOne("FCG.Domain.ValueObjects.Name", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("GameId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("Name");
+
+                            b1.HasKey("GameId");
+
+                            b1.ToTable("Games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GameId");
+                        });
+
+                    b.OwnsOne("FCG.Domain.ValueObjects.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("GameId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("Price");
+
+                            b1.HasKey("GameId");
+
+                            b1.ToTable("Games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GameId");
+                        });
+
+                    b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("Price")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FCG.Domain.Entities.Library", b =>
                 {
                     b.HasOne("FCG.Domain.Entities.User", "User")
@@ -309,9 +332,32 @@ namespace FCG.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("FCG.Domain.ValueObjects.Price", "PurchasePrice", b1 =>
+                        {
+                            b1.Property<Guid>("LibraryGameLibraryId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("LibraryGameGameId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("PurchasePrice");
+
+                            b1.HasKey("LibraryGameLibraryId", "LibraryGameGameId");
+
+                            b1.ToTable("LibraryGames");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LibraryGameLibraryId", "LibraryGameGameId");
+                        });
+
                     b.Navigation("Game");
 
                     b.Navigation("Library");
+
+                    b.Navigation("PurchasePrice")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FCG.Domain.Entities.Promotion", b =>
@@ -322,7 +368,110 @@ namespace FCG.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("FCG.Domain.ValueObjects.Discount", "Discount", b1 =>
+                        {
+                            b1.Property<Guid>("PromotionId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("decimal(5,2)")
+                                .HasColumnName("Discount");
+
+                            b1.HasKey("PromotionId");
+
+                            b1.ToTable("Promotions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PromotionId");
+                        });
+
+                    b.Navigation("Discount")
+                        .IsRequired();
+
                     b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("FCG.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("FCG.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FCG.Domain.Entities.User", b =>
+                {
+                    b.OwnsOne("FCG.Domain.ValueObjects.Name", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("Name");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("FCG.Domain.ValueObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("UserId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique();
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("FCG.Domain.ValueObjects.Password", "Password", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("Password");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("Password")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FCG.Domain.Entities.Wallet", b =>
@@ -351,6 +500,8 @@ namespace FCG.Infrastructure.Migrations
             modelBuilder.Entity("FCG.Domain.Entities.User", b =>
                 {
                     b.Navigation("Library");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("Wallet");
                 });

@@ -1,5 +1,7 @@
 ﻿using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
+using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi;
 using Microsoft.AspNetCore.Hosting;
@@ -17,12 +19,15 @@ namespace FCG.IntegratedTests.Configurations
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         private DbConnection? _connection;
+        public List<User> CreatedUsers { get; private set; } = [];
+        public List<RefreshToken> CreatedRefreshTokens { get; private set; } = [];
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("Test").ConfigureServices(services =>
             {
                 RemoveEntityFrameworkServices(services);
+                RemovePasswordEncrypterService(services);
 
                 _connection?.Dispose();
                 _connection = new SqliteConnection("Data Source=:memory:");
@@ -53,7 +58,19 @@ namespace FCG.IntegratedTests.Configurations
             }
         }
 
-        private static void EnsureDatabaseSeeded(IServiceCollection services)
+        private static void RemovePasswordEncrypterService(IServiceCollection services)
+        {
+            var passwordEncrypterService = services.Where(service => service.ServiceType == typeof(IPasswordEncrypter));
+
+            if (passwordEncrypterService.Any())
+            {
+                services.Remove(passwordEncrypterService.First());
+            }
+
+            services.AddScoped<IPasswordEncrypter>(_ => PasswordEncrypterServiceBuilder.Build());
+        }
+
+        private void EnsureDatabaseSeeded(IServiceCollection services)
         {
             using var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
@@ -67,39 +84,48 @@ namespace FCG.IntegratedTests.Configurations
             StartDatabase(dbContext);
         }
 
-        private static void StartDatabase(FcgDbContext context)
+        private void StartDatabase(FcgDbContext context)
         {
             var itemsQuantity = 2;
 
             Log.Information($"Creating {itemsQuantity} items for integrated test");
 
-            try
-            {
-                var example = CreateExample(context, itemsQuantity);
-
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while seeding the database with test data. Error: {Message}", ex.Message);
-                throw;
-            }
+            CreatedUsers = CreateUser(context, itemsQuantity);
+            CreatedRefreshTokens = CreateRefreshTokens(context, CreatedUsers);
         }
 
-        private static List<Example> CreateExample(FcgDbContext context, int itemsQuantity)
+        private List<User> CreateUser(FcgDbContext context, int itemsQuantity)
         {
-            var examples = new List<Example>();
+            var users = new List<User>();
 
             for (int i = 1; i <= itemsQuantity; i++)
             {
-                var example = ExampleBuilder.Build();
-                examples.Add(example);
+                var user = UserBuilder.Build();
+                users.Add(user);
             }
-            context.Examples.AddRange(examples);
+
+            context.Users.AddRange(users);
             context.SaveChanges();
+            Log.Information("Created {Count} users", users.Count);
 
-            Log.Information("Created {Count} examples", examples.Count);
+            return users;
+        }
 
-            return examples;
+        public List<RefreshToken> CreateRefreshTokens(FcgDbContext context, List<User> users)
+        {
+            var refreshTokens = new List<RefreshToken>();
+
+            foreach (var user in users)
+            {
+                var refreshToken = RefreshTokenBuilder.BuildWithUserId(user.Id);
+                refreshTokens.Add(refreshToken);
+            }
+
+            context.RefreshTokens.AddRange(refreshTokens);
+            context.SaveChanges();
+            Log.Information("Created {Count} refresh tokens", refreshTokens.Count);
+            CreatedRefreshTokens = refreshTokens;
+            return refreshTokens;
         }
 
         protected override void Dispose(bool disposing)

@@ -1,5 +1,5 @@
 ﻿using FCG.FunctionalTests.Extensions;
-using FCG.FunctionalTests.Fixtures.Example;
+using FCG.FunctionalTests.Fixtures.Authentication;
 using Reqnroll;
 
 namespace FCG.FunctionalTests.Fixtures
@@ -13,8 +13,9 @@ namespace FCG.FunctionalTests.Fixtures
             _scenarioContext = scenarioContext;
         }
 
-        public CreateExampleFixture CreateExample => GetOrCreateFixture<CreateExampleFixture>();
-
+        public LoginFixture Login => GetOrCreateFixture<LoginFixture>();
+        public LogoutFixture Logout => GetOrCreateFixture<LogoutFixture>();
+        public RefreshTokenFixture RefreshToken => GetOrCreateFixture<RefreshTokenFixture>();
 
         private T GetOrCreateFixture<T>() where T : new()
         {
