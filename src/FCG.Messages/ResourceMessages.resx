@@ -123,6 +123,9 @@
   <data name="InvalidRefreshToken" xml:space="preserve">
     <value>Invalid refresh token.</value>
   </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid access token.</value>
+  </data>
   <data name="LoginEmalRequired" xml:space="preserve">
     <value>Email is required.</value>
   </data>

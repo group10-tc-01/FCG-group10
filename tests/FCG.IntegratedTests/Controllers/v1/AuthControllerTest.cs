@@ -2,6 +2,8 @@
 using FCG.Application.UseCases.Authentication.Logout;
 using FCG.Application.UseCases.Authentication.RefreshToken;
 using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
+using FCG.CommomTestsUtilities.Builders.Services;
+using FCG.Domain.Entities;
 using FCG.IntegratedTests.Configurations;
 using FCG.Messages;
 using FCG.WebApi.Models;
@@ -24,6 +26,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var validUrl = "/api/v1/auth/login";
             var createdUser = Factory.CreatedUsers.First();
             var loginInput = LoginInputBuilder.BuildWithValues(createdUser.Email, createdUser.Password);
+            Setup(createdUser);
 
             // Act
             var result = await DoPost(validUrl, loginInput);
@@ -77,6 +80,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var validUrl = "/api/v1/auth/logout";
             var createdUser = Factory.CreatedUsers.First();
             var loginInput = LoginInputBuilder.BuildWithValues(createdUser.Email, createdUser.Password);
+            Setup(createdUser);
             var loginResult = await DoPost("/api/v1/auth/login", loginInput);
             var loginResponseContent = await loginResult.Content.ReadAsStringAsync();
             var loginApiResponse = JsonSerializer.Deserialize<ApiResponse<LoginOutput>>(loginResponseContent, new JsonSerializerOptions
@@ -114,6 +118,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var validUrl = "/api/v1/auth/refresh-token";
             var createdUser = Factory.CreatedUsers.First();
             var loginInput = LoginInputBuilder.BuildWithValues(createdUser.Email, createdUser.Password);
+            Setup(createdUser);
             var loginResult = await DoPost("/api/v1/auth/login", loginInput);
             var loginResponseContent = await loginResult.Content.ReadAsStringAsync();
             var loginApiResponse = JsonSerializer.Deserialize<ApiResponse<LoginOutput>>(loginResponseContent, new JsonSerializerOptions
@@ -121,11 +126,14 @@ namespace FCG.IntegratedTests.Controllers.v1
                 PropertyNameCaseInsensitive = true
             });
 
-            var jwtToken = loginApiResponse?.Data.AccessToken!;
+            var jwtToken = loginApiResponse?.Data?.AccessToken!;
+
+            Factory.CreatedRefreshTokens.Should().NotBeNull().And.NotBeEmpty();
             var createdRefreshToken = Factory.CreatedRefreshTokens.First();
             var refreshTokenInput = new RefreshTokenInput { RefreshToken = createdRefreshToken.Token };
 
             // Act
+            Setup(createdUser);
             var result = await DoAuthenticatedPost(validUrl, refreshTokenInput, jwtToken);
             var responseContent = await result.Content.ReadAsStringAsync();
             var apiResponse = JsonSerializer.Deserialize<ApiResponse<RefreshTokenOutput>>(responseContent, new JsonSerializerOptions
@@ -150,6 +158,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var validUrl = "/api/v1/auth/refresh-token";
             var createdUser = Factory.CreatedUsers.First();
             var loginInput = LoginInputBuilder.BuildWithValues(createdUser.Email, createdUser.Password);
+            Setup(createdUser);
             var loginResult = await DoPost("/api/v1/auth/login", loginInput);
             var loginResponseContent = await loginResult.Content.ReadAsStringAsync();
             var loginApiResponse = JsonSerializer.Deserialize<ApiResponse<LoginOutput>>(loginResponseContent, new JsonSerializerOptions
@@ -175,6 +184,13 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Success.Should().BeFalse();
             apiResponse.Data.Should().BeNull();
             apiResponse.ErrorMessages.Should().Contain(ResourceMessages.InvalidRefreshToken);
+        }
+
+        private static void Setup(User user)
+        {
+            PasswordEncrypterServiceBuilder.Build();
+            PasswordEncrypterServiceBuilder.SetupEncrypt(user.Password);
+            PasswordEncrypterServiceBuilder.SetupIsValid(true);
         }
 
         #endregion

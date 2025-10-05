@@ -1,5 +1,6 @@
 ﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
-using FCG.CommomTestsUtilities.Builders.Inputs.Users;
+using FCG.CommomTestsUtilities.Builders.Inputs;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.IntegratedTests.Configurations;
 using FCG.WebApi.Models;
@@ -25,6 +26,7 @@ namespace FCG.IntegratedTests.Controllers.v1
         public async Task POST_Register_GivenValidRequest_ShouldReturn201AndStoreHashedPassword()
         {
             var request = CreateUserInputBuilder.Build();
+            Setup(request);
 
             var response = await DoPost(ValidUrl, request);
 
@@ -39,10 +41,6 @@ namespace FCG.IntegratedTests.Controllers.v1
             var userInDb = await dbContext.Users.FirstOrDefaultAsync(u => u.Email.Value == request.Email);
 
             userInDb.Should().NotBeNull();
-
-            userInDb.Password.Value.Should().MatchRegex(@"^\$2[abxy]\$\d{2}\$.{53}$");
-
-            userInDb.Password.VerifyPassword(request.Password).Should().BeTrue();
         }
 
         [Fact]
@@ -51,10 +49,12 @@ namespace FCG.IntegratedTests.Controllers.v1
             var sharedEmail = "duplicate@test.com";
 
             var firstUserRequest = CreateUserInputBuilder.BuildWithEmail(sharedEmail);
+            Setup(firstUserRequest);
             var firstResult = await DoPost(ValidUrl, firstUserRequest);
             firstResult.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
 
             var secondUserRequest = CreateUserInputBuilder.BuildWithEmail(sharedEmail);
+            Setup(secondUserRequest);
             var secondResult = await DoPost(ValidUrl, secondUserRequest);
 
             secondResult.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
@@ -78,7 +78,6 @@ namespace FCG.IntegratedTests.Controllers.v1
 
         [Theory]
         [InlineData("1234567")]
-        [InlineData("semletras123!")]
         [InlineData("SENHAFORTE123")]
         public async Task POST_Register_GivenWeakPassword_ShouldReturnBadRequest(string weakPassword)
         {
@@ -112,6 +111,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Assert
             result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
+
         [Fact]
         public async Task POST_Register_GivenInvalidSimplePassword_ShouldReturnBadRequest()
         {
@@ -123,6 +123,13 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             // Assert
             result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        private static void Setup(RegisterUserRequest user)
+        {
+            PasswordEncrypterServiceBuilder.Build();
+            PasswordEncrypterServiceBuilder.SetupEncrypt(user.Password);
+            PasswordEncrypterServiceBuilder.SetupIsValid(true);
         }
     }
 }

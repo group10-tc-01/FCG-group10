@@ -9,5 +9,6 @@ namespace FCG.Domain.Services
         Task<string?> ValidateRefreshTokenAsync(string refreshToken);
         Task RevokeRefreshTokenAsync(string refreshToken);
         Task<RefreshToken> SaveRefreshTokenAsync(string token, Guid userId);
+        Guid ValidateAccessToken(string accessToken);
     }
 }

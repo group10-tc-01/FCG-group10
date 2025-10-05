@@ -19,18 +19,12 @@ namespace FCG.Infrastructure.Persistance.Repositories
 
         public async Task<RefreshToken?> GetByTokenAsync(string token)
         {
-            return await _fcgDbContext.RefreshTokens
-                .AsNoTracking()
-                .Include(rt => rt.User)
-                .FirstOrDefaultAsync(rt => rt.Token == token);
+            return await _fcgDbContext.RefreshTokens.Include(rt => rt.User).FirstOrDefaultAsync(rt => rt.Token == token);
         }
 
         public async Task<IEnumerable<RefreshToken>> GetByUserIdAsync(Guid userId)
         {
-            return await _fcgDbContext.RefreshTokens
-                .AsNoTracking()
-                .Where(rt => rt.UserId == userId)
-                .ToListAsync();
+            return await _fcgDbContext.RefreshTokens.Where(rt => rt.UserId == userId).ToListAsync();
         }
 
         public async Task UpdateAsync(RefreshToken refreshToken)

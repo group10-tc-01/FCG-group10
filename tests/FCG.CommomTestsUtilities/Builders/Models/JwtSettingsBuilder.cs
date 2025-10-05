@@ -15,5 +15,17 @@ namespace FCG.CommomTestsUtilities.Builders.Models
                 RefreshTokenExpirationDays = 1
             };
         }
+
+        public static JwtSettings BuildWithShortExpiration()
+        {
+            return new JwtSettings
+            {
+                SecretKey = "teste-key-teste-key-teste-key-teste-key-teste-key-teste-key-teste-key-teste-key",
+                Issuer = "FCG-API-TEST",
+                Audience = "FCG-Client-TEST",
+                AccessTokenExpirationMinutes = 0,
+                RefreshTokenExpirationDays = 1
+            };
+        }
     }
 }

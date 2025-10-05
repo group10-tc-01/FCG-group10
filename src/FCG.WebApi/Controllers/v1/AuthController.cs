@@ -1,9 +1,9 @@
 ﻿using FCG.Application.UseCases.Authentication.Login;
 using FCG.Application.UseCases.Authentication.Logout;
 using FCG.Application.UseCases.Authentication.RefreshToken;
+using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -35,15 +35,12 @@ namespace FCG.WebApi.Controllers.v1
         }
 
         [HttpPost("logout")]
-        [Authorize]
+        [AuthenticatedUser]
         [ProducesResponseType(typeof(ApiResponse<LogoutOutput>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Logout()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-                return Ok("ERROR");
+            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             var input = new LogoutInput { UserId = userId };
             var output = await _mediator.Send(input, CancellationToken.None).ConfigureAwait(false);

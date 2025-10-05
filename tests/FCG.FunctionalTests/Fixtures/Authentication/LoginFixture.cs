@@ -18,8 +18,9 @@ namespace FCG.FunctionalTests.Fixtures.Authentication
             Setup(refreshToken);
             var tokenService = TokenServiceBuilder.Build();
             var jwtSettings = Options.Create(JwtSettingsBuilder.Build());
+            var passwordEcrypter = PasswordEncrypterServiceBuilder.Build();
 
-            LoginUseCase = new LoginUseCase(userRepository, tokenService, jwtSettings);
+            LoginUseCase = new LoginUseCase(userRepository, tokenService, jwtSettings, passwordEcrypter);
             LoginInput = LoginInputBuilder.Build();
         }
 
@@ -29,10 +30,11 @@ namespace FCG.FunctionalTests.Fixtures.Authentication
         private static void Setup(RefreshToken refreshToken)
         {
             var user = UserBuilder.Build();
-            ReadOnlyUserRepositoryBuilder.SetupGetByEmailAndPasswordAsync(user);
+            ReadOnlyUserRepositoryBuilder.SetupGetByEmailAsync(user);
             TokenServiceBuilder.SetupGenerateAccessToken("access_token");
             TokenServiceBuilder.SetupGenerateRefreshToken("refresh_token");
             TokenServiceBuilder.SetupSaveRefreshTokenAsync(refreshToken);
+            PasswordEncrypterServiceBuilder.SetupIsValid(true);
         }
     }
 }

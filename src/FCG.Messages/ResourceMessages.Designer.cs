@@ -79,6 +79,15 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid access token..
+        /// </summary>
+        public static string InvalidToken {
+            get {
+                return ResourceManager.GetString("InvalidToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is required..
         /// </summary>
         public static string LoginEmalRequired {

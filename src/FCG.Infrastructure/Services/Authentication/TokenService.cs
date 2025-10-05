@@ -1,7 +1,9 @@
 using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Models.Authenticaiton;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Domain.Services;
+using FCG.Messages;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -81,6 +83,47 @@ namespace FCG.Infrastructure.Services.Authentication
         {
             var refreshToken = RefreshToken.Create(token, userId, TimeSpan.FromDays(_jwtSettings.RefreshTokenExpirationDays));
             return await _refreshTokenRepository.CreateAsync(refreshToken);
+        }
+
+        public Guid ValidateAccessToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = _jwtSettings.Issuer,
+                ValidateAudience = true,
+                ValidAudience = _jwtSettings.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(accessToken, validationParameters, out SecurityToken validatedToken);
+
+                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                {
+                    throw new UnauthorizedException(ResourceMessages.InvalidToken);
+                }
+
+                return Guid.Parse(userIdClaim);
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                throw new UnauthorizedException(ResourceMessages.InvalidToken);
+            }
+            catch (SecurityTokenException)
+            {
+                throw new UnauthorizedException(ResourceMessages.InvalidToken);
+            }
         }
     }
 }

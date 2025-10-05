@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace FCG.Application.EventsHandlers.Promotion
+namespace FCG.Application.EventsHandlers.Promotions
 {
     public class PromotionCreatedEventHandler : INotificationHandler<PromotionCreatedEvent>
     {

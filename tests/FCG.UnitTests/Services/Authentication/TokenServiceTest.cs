@@ -1,11 +1,18 @@
 ﻿using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Models;
 using FCG.CommomTestsUtilities.Builders.Repositories.RefreshTokenRepository;
+using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Models.Authenticaiton;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Infrastructure.Services.Authentication;
+using FCG.Messages;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace FCG.UnitTests.Services.Authentication
 {
@@ -194,6 +201,45 @@ namespace FCG.UnitTests.Services.Authentication
             // Act & Assert
             var act = async () => await _sut.RevokeRefreshTokenAsync(invalidToken!);
             await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public void Given_ExpiredAccessToken_When_ValidateAccessToken_Then_ShouldThrowUnauthorizedException()
+        {
+            // Arrange - Create a token with a past date by manually crafting an expired JWT
+            var user = UserBuilder.Build();
+            var expiredToken = CreateExpiredToken(user);
+
+            // Act & Assert
+            var act = () => _sut.ValidateAccessToken(expiredToken);
+            act.Should().Throw<UnauthorizedException>().WithMessage(ResourceMessages.InvalidToken);
+        }
+
+        private string CreateExpiredToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtSettings.Value.SecretKey);
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Email, user.Email.Value),
+                new(ClaimTypes.GivenName, user.Name.Value),
+                new(ClaimTypes.Role, user.Role.ToString())
+            };
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(-1),
+                NotBefore = DateTime.UtcNow.AddMinutes(-2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _jwtSettings.Value.Issuer,
+                Audience = _jwtSettings.Value.Audience
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

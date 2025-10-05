@@ -1,4 +1,5 @@
 ﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Domain.ValueObjects;
 using FluentValidation;
 
 namespace FCG.Application.UseCases.Users.Register
@@ -25,31 +26,24 @@ namespace FCG.Application.UseCases.Users.Register
                 .MaximumLength(100)
                 .WithMessage("A senha não pode exceder 100 caracteres.")
 
-                .Must(MeetsDomainPasswordRequirements)
-                .WithMessage("A senha não atende aos requisitos de força (mínimo 8 caracteres, maiúscula, número, e caractere especial).");
+                .Must(BeValidPassword)
+                .WithMessage("A senha não atende aos requisitos de força (mínimo 8 caracteres, número, e caractere especial).");
         }
 
-        private bool MeetsDomainPasswordRequirements(string password)
+        private static bool BeValidPassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
                 return false;
 
-            if (password.Length < 8)
+            try
+            {
+                Password.Create(password);
+                return true;
+            }
+            catch
+            {
                 return false;
-
-            if (!password.Any(char.IsLetter))
-                return false;
-
-            if (!password.Any(char.IsDigit))
-                return false;
-
-            if (!password.Any(char.IsUpper))
-                return false;
-
-            if (!password.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c)))
-                return false;
-
-            return true;
+            }
         }
     }
 }

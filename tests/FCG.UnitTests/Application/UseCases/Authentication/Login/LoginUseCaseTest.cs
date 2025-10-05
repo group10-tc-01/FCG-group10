@@ -16,13 +16,15 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly ITokenService _tokenService;
+        private readonly IPasswordEncrypter _passwordEncrypter;
         private readonly ILoginUseCase _sut;
 
         public LoginUseCaseTest()
         {
             _readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
             _tokenService = TokenServiceBuilder.Build();
-            _sut = new LoginUseCase(_readOnlyUserRepository, _tokenService, Options.Create(JwtSettingsBuilder.Build()));
+            _passwordEncrypter = PasswordEncrypterServiceBuilder.Build();
+            _sut = new LoginUseCase(_readOnlyUserRepository, _tokenService, Options.Create(JwtSettingsBuilder.Build()), _passwordEncrypter);
         }
 
         [Fact]
@@ -46,10 +48,11 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
         private static void Setup(RefreshToken refreshToken)
         {
             var user = UserBuilder.Build();
-            ReadOnlyUserRepositoryBuilder.SetupGetByEmailAndPasswordAsync(user);
+            ReadOnlyUserRepositoryBuilder.SetupGetByEmailAsync(user);
             TokenServiceBuilder.SetupGenerateAccessToken("access_token");
             TokenServiceBuilder.SetupGenerateRefreshToken("refresh_token");
             TokenServiceBuilder.SetupSaveRefreshTokenAsync(refreshToken);
+            PasswordEncrypterServiceBuilder.SetupIsValid(true);
         }
     }
 }

@@ -4,12 +4,12 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
+using FCG.Infrastructure.Persistance.Repositories.UserRepository;
 using FCG.Infrastructure.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
-using FCG.Domain.Repositories.UserRepository;
 
 namespace FCG.Infrastructure.DependencyInjection
 {
@@ -46,6 +46,7 @@ namespace FCG.Infrastructure.DependencyInjection
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
         }
     }
 }

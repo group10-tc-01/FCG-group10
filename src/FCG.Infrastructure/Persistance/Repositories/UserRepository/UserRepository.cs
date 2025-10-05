@@ -2,7 +2,7 @@
 using FCG.Domain.Repositories.UserRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG.Infrastructure.Persistance.Repositories
+namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 {
     public class UserRepository : IReadOnlyUserRepository, IWriteOnlyUserRepository
     {

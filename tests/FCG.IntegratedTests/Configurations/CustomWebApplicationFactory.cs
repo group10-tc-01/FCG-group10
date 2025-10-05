@@ -1,5 +1,7 @@
 ﻿using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
+using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +27,7 @@ namespace FCG.IntegratedTests.Configurations
             builder.UseEnvironment("Test").ConfigureServices(services =>
             {
                 RemoveEntityFrameworkServices(services);
+                RemovePasswordEncrypterService(services);
 
                 _connection?.Dispose();
                 _connection = new SqliteConnection("Data Source=:memory:");
@@ -53,6 +56,18 @@ namespace FCG.IntegratedTests.Configurations
             {
                 services.Remove(descriptor);
             }
+        }
+
+        private static void RemovePasswordEncrypterService(IServiceCollection services)
+        {
+            var passwordEncrypterService = services.Where(service => service.ServiceType == typeof(IPasswordEncrypter));
+
+            if (passwordEncrypterService.Any())
+            {
+                services.Remove(passwordEncrypterService.First());
+            }
+
+            services.AddScoped<IPasswordEncrypter>(_ => PasswordEncrypterServiceBuilder.Build());
         }
 
         private void EnsureDatabaseSeeded(IServiceCollection services)
