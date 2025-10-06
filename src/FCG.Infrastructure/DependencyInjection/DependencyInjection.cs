@@ -38,13 +38,9 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IWriteOnlyUserRepository, UserRepository>();
-<<<<<<< HEAD
-            services.AddScoped<IWriteOnlyExampleRepository, ExampleRepository>();
-=======
-
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
->>>>>>> develop
+
         }
 
         public static void AddServices(this IServiceCollection services)

@@ -19,6 +19,12 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             return Task.CompletedTask;
         }
 
+        public Task UpdateAsync(User user)
+        {
+            _fcgDbContext.Users.Update(user);
+            return Task.CompletedTask;
+        }
+
         public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
             return await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
@@ -41,7 +47,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
         }
         public Task<IQueryable<User>> GetQueryableAllUsers()
         {
-            return Task.FromResult(_context.Users.AsNoTracking().AsQueryable());
+            return Task.FromResult(_fcgDbContext.Users.AsNoTracking().AsQueryable());
         }
     }
 }

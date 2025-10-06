@@ -4,12 +4,11 @@ using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
 using System.Diagnostics.CodeAnalysis;
 using FCG.Application.Shared.Models;
+using FCG.Application.UseCases.Users.Update.UsersDTO;
 using Microsoft.AspNetCore.Authorization;
-=======
->>>>>>> develop
+
 
 namespace FCG.WebApi.Controllers.v1
 {
@@ -27,7 +26,7 @@ namespace FCG.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<List<UserListResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUser([FromQuery] GetAllUserCaseQuery queryPagination)
@@ -35,6 +34,13 @@ namespace FCG.WebApi.Controllers.v1
             var output = await _mediator.Send(queryPagination, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<PagedListResponse<UserListResponse>>.SuccesResponse(output));
 
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        {
+            var output = await _mediator.Send(request, CancellationToken.None).ConfigureAwait(false);
+            return Ok(ApiResponse<UpdateUserResponse>.SuccesResponse(output));
         }
     }
 }

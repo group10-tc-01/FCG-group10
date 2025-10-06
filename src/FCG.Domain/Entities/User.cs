@@ -30,5 +30,14 @@ namespace FCG.Domain.Entities
             user.AddDomainEvent(new UserCreatedEvent(user.Id, user.Name, user.Email));
             return user;
         }
+
+        public void Update(string name, string email, string password, Role role)
+        {
+            Name = Name.Create(name);
+            Email = Email.Create(email);
+            Password = Password.Create(password);
+            Role = role;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

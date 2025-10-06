@@ -3,7 +3,6 @@ using FCG.Infrastructure.DependencyInjection;
 using FCG.Infrastructure.Logging;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
-using FCG.WebApi.Extensions;
 using FCG.WebApi.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -23,16 +22,11 @@ namespace FCG.WebApi
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
 
             builder.Services.AddWebApi(builder.Configuration);
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddSerilogLogging(builder.Configuration);
-            builder.Services.AddSwaggerWithSecurity();
 
 
             var app = builder.Build();
@@ -71,10 +65,7 @@ namespace FCG.WebApi
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
             app.UseAuthorization();
 
             app.MapControllers();
