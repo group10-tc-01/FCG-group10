@@ -7,5 +7,7 @@ namespace FCG.Domain.Repositories.UserRepository
         Task<bool> AnyAdminAsync(CancellationToken cancellationToken = default);
         Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
 
+        Task<User?> GetByEmailAndPasswordAsync(string email, string password);
+        Task<User?> GetByIdAsync(Guid id);
     }
 }

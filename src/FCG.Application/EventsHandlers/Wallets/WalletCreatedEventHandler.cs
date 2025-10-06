@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace FCG.Application.EventsHandlers.Wallet
+namespace FCG.Application.EventsHandlers.Wallets
 {
     public class WalletCreatedEventHandler : INotificationHandler<WalletCreatedEvent>
     {

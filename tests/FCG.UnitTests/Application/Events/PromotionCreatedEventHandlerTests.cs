@@ -1,4 +1,4 @@
-﻿using FCG.Application.EventsHandlers.Promotion;
+﻿using FCG.Application.EventsHandlers.Promotions;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.Promotion;

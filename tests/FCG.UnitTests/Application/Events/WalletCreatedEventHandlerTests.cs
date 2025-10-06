@@ -1,4 +1,4 @@
-﻿using FCG.Application.EventsHandlers.Wallet;
+﻿using FCG.Application.EventsHandlers.Wallets;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Events;
 using FCG.Domain.Events.Wallet;

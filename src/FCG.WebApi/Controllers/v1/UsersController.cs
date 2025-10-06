@@ -2,13 +2,9 @@
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.WebApi.Controllers.v1
 {
-    [ExcludeFromCodeCoverage]
-    [Route("api/[controller]")]
-    [ApiController]
     public class UsersController : FcgBaseController
     {
         public UsersController(IMediator mediator) : base(mediator) { }

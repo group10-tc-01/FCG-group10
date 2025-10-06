@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using FCG.Application.UseCases.Users.Register.UsersDTO;
 
-namespace FCG.CommomTestsUtilities.Builders.Inputs.Users
+namespace FCG.CommomTestsUtilities.Builders.Inputs
 {
     public class CreateUserInputBuilder
     {
