@@ -18,14 +18,14 @@ namespace FCG.Application.Services.Seeds
             _readOnlyUserRepository = readOnlyUserRepository;
         }
 
-        public async Task SeedAsync(CancellationToken cancellation = default)
+        public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
-            var hasAnyAdmin = await _readOnlyUserRepository.AnyAdminAsync(cancellation);
+            var hasAnyAdmin = await _readOnlyUserRepository.AnyAdminAsync(cancellationToken);
             if (!hasAnyAdmin)
             {
                 var admin = User.Create("admin", "admin@mail.com", "admin@123", Role.Admin);
                 await _writeOnlyUserRepository.AddAsync(admin);
-                await _uow.SaveChangesAsync();
+                await _uow.SaveChangesAsync(cancellationToken);
             }
         }
     }

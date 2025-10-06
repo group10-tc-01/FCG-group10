@@ -91,6 +91,36 @@ namespace FCG.UnitTests.Infrastructure.Persistance
             userFromDb.Name.Value.Should().Be("New User");
             userFromDb.Email.Value.Should().Be(newUserEmail);
         }
+
+        [Fact]
+        public async Task AnyAdminAsync_ShouldReturnFalse_WhenNoAdminExists()
+        {
+            // Arrange
+            var user = User.Create("User", "user@mail.com", "admin@123", Role.User);
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.AnyAdminAsync();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task AnyAdminAsync_ShouldReturnTrue_WhenAnyAdminExists()
+        {
+            // Arrange
+            var user = User.Create("User", "user@mail.com", "admin@123", Role.Admin);
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.AnyAdminAsync();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }
 
