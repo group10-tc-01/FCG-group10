@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,11 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive && u.Id == id);
 
             return user;
+        }
+
+        public async Task<bool> AnyAdminAsync(CancellationToken cancellationToken = default)
+        {
+            return await _fcgDbContext.Users.AsNoTracking().AnyAsync(u => u.Role == Role.Admin, cancellationToken);
         }
     }
 }

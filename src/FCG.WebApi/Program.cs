@@ -1,4 +1,5 @@
 using FCG.Application.DependencyInjection;
+using FCG.Application.Services.Seeds;
 using FCG.Infrastructure.DependencyInjection;
 using FCG.Infrastructure.Logging;
 using FCG.Infrastructure.Persistance;
@@ -66,7 +67,14 @@ namespace FCG.WebApi
         {
             using var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+            var seeds = scope.ServiceProvider.GetServices<ISeed>();
+
             await dbContext.Database.MigrateAsync();
+
+            foreach (var seed in seeds)
+            {
+                await seed.SeedAsync();
+            }
         }
     }
 }
