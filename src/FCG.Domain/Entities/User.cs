@@ -1,6 +1,7 @@
 ﻿using FCG.Domain.Enum;
 using FCG.Domain.Events.User;
 using FCG.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 
 namespace FCG.Domain.Entities
 {
@@ -31,12 +32,9 @@ namespace FCG.Domain.Entities
             return user;
         }
 
-        public void Update(string name, string email, string password, Role role)
+        public void Update(string password)
         {
-            Name = Name.Create(name);
-            Email = Email.Create(email);
             Password = Password.Create(password);
-            Role = role;
             UpdatedAt = DateTime.UtcNow;
         }
     }

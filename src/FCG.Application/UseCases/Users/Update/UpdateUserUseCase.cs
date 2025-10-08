@@ -9,10 +9,10 @@ using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FCG.Domain.ValueObjects;
 
 namespace FCG.Application.UseCases.Users.Update
 {
-    // A interface do MediatR deve ser IRequestHandler
     public class UpdateUserUseCase : IRequestHandler<UpdateUserRequest, UpdateUserResponse>
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
@@ -39,29 +39,14 @@ namespace FCG.Application.UseCases.Users.Update
             {
                 throw new NotFoundException($"Usuário com ID {request.Id} não encontrado para atualização.");
             }
-
-            if (userToUpdate.Email.Value != request.Email)
-            {
-                var existingUserWithNewEmail = await _readOnlyUserRepository.GetByEmailAsync(request.Email, cancellationToken);
-
-                if (existingUserWithNewEmail is not null && existingUserWithNewEmail.Id != userToUpdate.Id)
-                {
-                    throw new DuplicateEmailException($"O e-mail '{request.Email}' já está em uso por outro usuário.");
-                }
-            }
             string hashedPassword = userToUpdate.Password.Value;
             if (!string.IsNullOrEmpty(request.Password))
             {
-                hashedPassword = _passwordEncrypter.Encrypt(request.Password);
+                Password newPassword = Password.Create(request.Password);
+                hashedPassword = _passwordEncrypter.Encrypt(newPassword.Value);
             }
-
-            Role newRole = Enum.TryParse<Role>(request.Role, true, out var roleResult) ? roleResult : userToUpdate.Role;
-
             userToUpdate.Update(
-                request.Name,
-                request.Email,
-                hashedPassword,
-                newRole
+                hashedPassword
             );
 
             await _writeOnlyUserRepository.UpdateAsync(userToUpdate);
@@ -70,9 +55,6 @@ namespace FCG.Application.UseCases.Users.Update
             return new UpdateUserResponse
             {
                 Id = userToUpdate.Id,
-                Name = userToUpdate.Name.Value,
-                Email = userToUpdate.Email.Value,
-                Role = userToUpdate.Role.ToString(),
                 UpdatedAt = userToUpdate.UpdatedAt,
                 Message = $"Usuário {userToUpdate.Name.Value} atualizado com sucesso!"
             };

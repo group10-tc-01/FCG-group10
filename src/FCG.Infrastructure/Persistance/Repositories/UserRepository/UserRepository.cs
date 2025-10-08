@@ -13,9 +13,10 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             _fcgDbContext = context;
         }
 
-        public Task AddAsync(User user)
+        public Task AddAsync(User user, Wallet wallet)
         {
             _fcgDbContext.Users.Add(user);
+            _fcgDbContext.Wallets.Add(wallet);
             return Task.CompletedTask;
         }
 
