@@ -138,6 +138,18 @@
   <data name="LogoutSuccessFull" xml:space="preserve">
     <value>Logout successful. All refresh tokens have been revoked.</value>
   </data>
+  <data name="LongPassword" xml:space="preserve">
+    <value>Password cannot exceed 100 characters</value>
+  </data>
+  <data name="NameIsLong" xml:space="preserve">
+    <value>Name cannot exceed 100 characters</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Name is required.</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>The password does not meet the strength requirements (minimum 8 characters, number, and special character).</value>
+  </data>
   <data name="RefreshTokenDefaultReason" xml:space="preserve">
     <value>New refresh token generated.</value>
   </data>
