@@ -45,6 +45,7 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
             services.AddScoped<IWriteOnlyGameRepository, GameRepository>();
+            services.AddScoped<IReadOnlyGameRepository, GameRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)

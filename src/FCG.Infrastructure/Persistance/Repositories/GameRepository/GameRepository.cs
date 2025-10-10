@@ -1,9 +1,10 @@
 ﻿using FCG.Domain.Entities;
 using FCG.Domain.Repositories.GamesRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace FCG.Infrastructure.Persistance.Repositories.GameRepository
 {
-    public class GameRepository : IWriteOnlyGameRepository
+    public class GameRepository : IWriteOnlyGameRepository, IReadOnlyGameRepository
     {
         private readonly FcgDbContext _fcgDbContext;
 
@@ -16,6 +17,13 @@ namespace FCG.Infrastructure.Persistance.Repositories.GameRepository
         {
             _fcgDbContext.Games.Add(game);
             return Task.CompletedTask;
+        }
+
+        public async Task<Game?> GetByNameAsync(string name)
+        {
+            var game = await _fcgDbContext.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Name.Value == name);
+
+            return game;
         }
     }
 }

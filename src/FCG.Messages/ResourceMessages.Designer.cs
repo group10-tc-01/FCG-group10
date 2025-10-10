@@ -61,6 +61,15 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The game with name {0} already exists..
+        /// </summary>
+        public static string GameNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("GameNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid access level..
         /// </summary>
         public static string InvalidAccessLevel {
