@@ -47,6 +47,9 @@ namespace FCG.Infrastructure.DependencyInjection
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
+
+
+
         }
     }
 }

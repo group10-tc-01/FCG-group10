@@ -1,8 +1,8 @@
 ﻿using FCG.Domain.Entities;
 
-namespace FCG.Application.UseCases.Users.GetById.GetUserDTO
+namespace FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO
 {
-    public class UserIdListResponse
+    public class GetUserByIdResponse
     {
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

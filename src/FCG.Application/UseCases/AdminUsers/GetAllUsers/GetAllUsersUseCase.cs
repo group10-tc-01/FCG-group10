@@ -1,11 +1,11 @@
 ﻿using FCG.Application.Shared.Models;
-using FCG.Application.UseCases.Users.GetAllUsers.GetAllUserDTO;
+using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
 using FCG.Domain.Entities;
 using FCG.Domain.Repositories.UserRepository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG.Application.UseCases.Users.GetAllUsers
+namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
 {
     public sealed class GetAllUsersUseCase : IRequestHandler<GetAllUserCaseQuery, PagedListResponse<UserListResponse>>
     {

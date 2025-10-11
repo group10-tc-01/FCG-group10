@@ -1,15 +1,10 @@
 ﻿using FCG.Application.UseCases.Users.Update.UsersDTO;
-using FCG.Domain.Entities;
-using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
-using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using FCG.Domain.ValueObjects;
+using MediatR;
 
 namespace FCG.Application.UseCases.Users.Update
 {

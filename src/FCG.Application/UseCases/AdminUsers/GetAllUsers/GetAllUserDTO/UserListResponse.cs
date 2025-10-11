@@ -1,4 +1,4 @@
-﻿namespace FCG.Application.UseCases.Users.GetAllUsers.GetAllUserDTO
+﻿namespace FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO
 {
     public class UserListResponse
     {
