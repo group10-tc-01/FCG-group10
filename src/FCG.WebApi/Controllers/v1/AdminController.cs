@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FCG.WebApi.Controllers.v1
 {
-    [Route("api/[controller]/users")]
+    [Route("api/v1/admin/users")]
     [ApiController]
     public class AdminController : FcgBaseController
     {
@@ -28,13 +28,15 @@ namespace FCG.WebApi.Controllers.v1
 
 
         [HttpGet(("{id}"))]
-        [ProducesResponseType(typeof(ApiResponse<GetUserByIdResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserDetailResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById([FromRoute] Guid id)
         {
             var query = new GetByIdUserQuery(id);
             var output = await _mediator.Send(query, CancellationToken.None).ConfigureAwait(false);
-            return Ok(ApiResponse<GetUserByIdResponse>.SuccesResponse(output));
+            return Ok(ApiResponse<UserDetailResponse>.SuccesResponse(output));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace FCG.Application.UseCases.Users
     public interface IUserManagementUseCase
     {
         Task<PagedListResponse<UserListResponse>> GetUserAsync(GetAllUserCaseQuery query);
-        Task<GetUserByIdResponse> GetUserByIdAsync(GetByIdUserQuery request);
+        Task<UserDetailResponse> GetUserByIdAsync(GetByIdUserQuery request);
         Task<RegisterUserResponse> RegisterUserAsync(RegisterUserRequest request);
         Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest request);
     }

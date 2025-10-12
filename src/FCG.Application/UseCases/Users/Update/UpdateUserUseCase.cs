@@ -14,6 +14,7 @@ namespace FCG.Application.UseCases.Users.Update
         private readonly IWriteOnlyUserRepository _writeOnlyUserRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordEncrypter _passwordEncrypter;
+
         public UpdateUserUseCase(
             IReadOnlyUserRepository readOnlyUserRepository,
             IWriteOnlyUserRepository writeOnlyUserRepository,
@@ -25,24 +26,41 @@ namespace FCG.Application.UseCases.Users.Update
             _unitOfWork = unitOfWork;
             _passwordEncrypter = passwordEncrypter;
         }
-
         public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
-            var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(request.Id);
+            var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (userToUpdate is null)
             {
                 throw new NotFoundException($"Usuário com ID {request.Id} não encontrado para atualização.");
             }
+
             string hashedPassword = userToUpdate.Password.Value;
-            if (!string.IsNullOrEmpty(request.Password))
+
+            if (!string.IsNullOrWhiteSpace(request.NewPassword))
             {
-                Password newPassword = Password.Create(request.Password);
-                hashedPassword = _passwordEncrypter.Encrypt(newPassword.Value);
+                if (string.IsNullOrWhiteSpace(request.CurrentPassword))
+                {
+                    throw new DomainException("A senha atual é obrigatória para alterar a senha.");
+                }
+
+                if (!_passwordEncrypter.IsValid(request.CurrentPassword, userToUpdate.Password.Value))
+                {
+                    throw new DomainException("A senha atual está incorreta.");
+                }
+
+                if (request.CurrentPassword == request.NewPassword)
+                {
+                    throw new DomainException("A nova senha deve ser diferente da senha atual.");
+                }
+
+                Password newPasswordVo = Password.Create(request.NewPassword);
+
+                hashedPassword = _passwordEncrypter.Encrypt(newPasswordVo.Value);
             }
-            userToUpdate.Update(
-                hashedPassword
-            );
+
+
+            userToUpdate.Update(hashedPassword);
 
             await _writeOnlyUserRepository.UpdateAsync(userToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -51,7 +69,7 @@ namespace FCG.Application.UseCases.Users.Update
             {
                 Id = userToUpdate.Id,
                 UpdatedAt = userToUpdate.UpdatedAt,
-                Message = $"Usuário {userToUpdate.Name.Value} atualizado com sucesso!"
+                Message = $"Usuário {userToUpdate.Name.Value} sua senha foi atualizado com sucesso!"
             };
         }
     }

@@ -22,7 +22,7 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.UserRepository
 
         public static void SetupGetByIdAsync(User? user)
         {
-            _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(user);
+            _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(user);
         }
     }
 }

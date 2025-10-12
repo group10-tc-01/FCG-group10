@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,40 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             return await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
         }
 
+        public async Task<(IEnumerable<User> Items, int TotalCount)> GetQueryableAllUsers(
+            string? emailFilter,
+            string? roleFilter,
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            IQueryable<User> query = _fcgDbContext.Users.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(emailFilter))
+            {
+                var searchEmail = emailFilter.Trim().ToLower();
+                query = query.Where(u => u.Email.Value.ToLower().Contains(searchEmail));
+            }
+
+            if (!string.IsNullOrWhiteSpace(roleFilter))
+            {
+                if (System.Enum.TryParse<Role>(roleFilter, true, out Role filterRole))
+                {
+                    query = query.Where(u => u.Role == filterRole);
+                }
+            }
+
+            int totalCount = await query.CountAsync(cancellationToken);
+
+            IEnumerable<User> items = await query
+                .OrderBy(u => u.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (items, totalCount);
+        }
+
         public async Task<User?> GetByEmailAndPasswordAsync(string email, string password)
         {
             var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive &&
@@ -40,15 +75,25 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             return user;
         }
 
-        public async Task<User?> GetByIdAsync(Guid id)
+        public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive && u.Id == id);
+            var user = await _fcgDbContext.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
 
             return user;
         }
-        public Task<IQueryable<User>> GetQueryableAllUsers()
+
+        public async Task<User?> GetByIdWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_fcgDbContext.Users.AsNoTracking().AsQueryable());
+            var user = await _fcgDbContext.Users
+                .AsNoTracking()
+                .Include(u => u.Wallet)
+                .Include(u => u.Library)
+                .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
+
+            return user;
         }
+
     }
 }

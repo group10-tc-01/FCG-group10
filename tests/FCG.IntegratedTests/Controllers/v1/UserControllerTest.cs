@@ -17,9 +17,12 @@ namespace FCG.IntegratedTests.Controllers.v1
         private readonly CustomWebApplicationFactory _factory;
         private const string ValidUrl = "/api/v1/users/register";
 
+
+
         public UserControllerTest(CustomWebApplicationFactory factory) : base(factory)
         {
             _factory = factory;
+
         }
 
         [Fact]
@@ -124,7 +127,6 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Assert
             result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
-
         private static void Setup(RegisterUserRequest user)
         {
             PasswordEncrypterServiceBuilder.Build();

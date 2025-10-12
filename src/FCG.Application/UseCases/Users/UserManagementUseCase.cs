@@ -37,7 +37,7 @@ namespace FCG.Application.UseCases.Users
             return _getAllUsersHandler.Handle(query, CancellationToken.None);
         }
 
-        public Task<GetUserByIdResponse> GetUserByIdAsync(GetByIdUserQuery request)
+        public Task<UserDetailResponse> GetUserByIdAsync(GetByIdUserQuery request)
         {
             return _getByIdUserHandler.Handle(request, CancellationToken.None);
         }

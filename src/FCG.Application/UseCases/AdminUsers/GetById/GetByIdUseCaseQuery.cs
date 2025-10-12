@@ -1,7 +1,6 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using MediatR;
-using System;
-public record GetByIdUserQuery : IRequest<GetUserByIdResponse>
+public record GetByIdUserQuery : IRequest<UserDetailResponse>
 {
     public Guid Id { get; init; }
 

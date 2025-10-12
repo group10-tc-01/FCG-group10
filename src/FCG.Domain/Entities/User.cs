@@ -34,7 +34,7 @@ namespace FCG.Domain.Entities
 
         public void Update(string password)
         {
-            Password = Password.Create(password);
+            Password = Password.CreateFromHash(password);
             UpdatedAt = DateTime.UtcNow;
         }
     }

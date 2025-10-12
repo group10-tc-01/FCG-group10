@@ -1,9 +1,8 @@
 ﻿using FCG.Application.Shared.Models;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
-using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
 {
@@ -20,29 +19,13 @@ namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
             GetAllUserCaseQuery request,
             CancellationToken cancellationToken)
         {
-            var baseQuery = await _userRepository.GetQueryableAllUsers();
-
-            var totalCountBeforeFilter = await baseQuery.CountAsync(cancellationToken);
-            IEnumerable<User> filteredUsers;
-
-            if (!string.IsNullOrWhiteSpace(request.Email))
-            {
-                var searchEmail = request.Email.Trim().ToLower();
-
-                var allUsers = await baseQuery
-                    .OrderBy(u => u.Id)
-                    .ToListAsync(cancellationToken);
-
-                filteredUsers = allUsers
-                    .Where(u => u.Email.Value.ToLower().Contains(searchEmail));
-            }
-            else
-            {
-                filteredUsers = await baseQuery
-                    .OrderBy(u => u.Id)
-                    .ToListAsync(cancellationToken);
-            }
-            var totalCount = filteredUsers.Count();
+            var (users, totalCount) = await _userRepository.GetQueryableAllUsers(
+                request.Email,
+                request.Role,
+                request.PageNumber,
+                request.PageSize,
+                cancellationToken
+            );
 
             if (totalCount == 0)
             {
@@ -53,13 +36,7 @@ namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
                     request.PageSize
                 );
             }
-
-            var pagedEntities = filteredUsers
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToList();
-
-            var items = pagedEntities.Select(u => new UserListResponse
+            var items = users.Select(u => new UserListResponse
             {
                 Id = u.Id,
                 Name = u.Name.Value,
@@ -75,5 +52,9 @@ namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
                 request.PageSize
             );
         }
+
+
     }
+
+
 }
