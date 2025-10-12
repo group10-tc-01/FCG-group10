@@ -1,7 +1,6 @@
 ﻿using FCG.Domain.Enum;
 using FCG.Domain.Events.User;
 using FCG.Domain.ValueObjects;
-using Microsoft.AspNetCore.Identity;
 
 namespace FCG.Domain.Entities
 {
