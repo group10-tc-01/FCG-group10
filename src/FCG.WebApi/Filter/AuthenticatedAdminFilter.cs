@@ -1,4 +1,5 @@
-﻿using FCG.Domain.Exceptions;
+﻿using FCG.Domain.Enum;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Messages;
@@ -6,12 +7,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace FCG.WebApi.Filter
 {
-    public class AuthenticatedUserFilter : IAsyncAuthorizationFilter
+    public class AuthenticatedAdminFilter : IAsyncAuthorizationFilter
     {
         private readonly ITokenService _tokenService;
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
 
-        public AuthenticatedUserFilter(ITokenService tokenService, IReadOnlyUserRepository readOnlyUserRepository)
+        public AuthenticatedAdminFilter(ITokenService tokenService, IReadOnlyUserRepository readOnlyUserRepository)
         {
             _tokenService = tokenService;
             _readOnlyUserRepository = readOnlyUserRepository;
@@ -23,11 +24,11 @@ namespace FCG.WebApi.Filter
 
             var userId = _tokenService.ValidateAccessToken(token);
 
-            var user = await _readOnlyUserRepository.GetByIdAsync(userId);
+            var user = await _readOnlyUserRepository.GetByIdAsync(userId) ?? throw new UnauthorizedException(ResourceMessages.InvalidToken);
 
-            if (user is null)
+            if (user.Role != Role.Admin)
             {
-                throw new UnauthorizedException(ResourceMessages.InvalidToken);
+                throw new ForbiddenAccessException(ResourceMessages.InvalidAccessLevel);
             }
         }
 

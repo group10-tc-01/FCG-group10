@@ -25,6 +25,7 @@
     <ProjectReference Include="..\..\src\FCG.Domain\FCG.Domain.csproj" />
     <ProjectReference Include="..\..\src\FCG.Infrastructure\FCG.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\FCG.Messages\FCG.Messages.csproj" />
+    <ProjectReference Include="..\..\src\FCG.WebApi\FCG.WebApi.csproj" />
     <ProjectReference Include="..\FCG.CommomTestsUtilities\FCG.CommomTestsUtilities.csproj" />
   </ItemGroup>
 
