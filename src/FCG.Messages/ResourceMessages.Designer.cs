@@ -71,6 +71,10 @@ namespace FCG.Messages
 
         /// <summary>
 
+
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid email or password..
+
+
         ///   Looks up a localized string similar to Invalid access level..
         /// </summary>
         public static string InvalidAccessLevel
