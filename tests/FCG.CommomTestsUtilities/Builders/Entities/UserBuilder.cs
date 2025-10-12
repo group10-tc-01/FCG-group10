@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
+using System.Reflection;
 
 namespace FCG.CommomTestsUtilities.Builders.Entities
 {
@@ -20,7 +21,6 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
         {
             return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.ToString()!, f.Internet.Email(), GenerateValidPassword(f), Role.User)).Generate();
         }
-
         private static string GenerateValidPassword(Faker faker)
         {
             var letter = faker.Random.Char('a', 'z');
