@@ -8,10 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FCG.Messages {
+namespace FCG.Messages
+{
     using System;
-    
-    
+
+
     /// <summary>
     ///   Uma classe de recurso de tipo de alta segurança, para pesquisar cadeias de caracteres localizadas etc.
     /// </summary>
@@ -22,148 +23,193 @@ namespace FCG.Messages {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ResourceMessages {
-        
+    public class ResourceMessages
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ResourceMessages() {
+        internal ResourceMessages()
+        {
         }
-        
+
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        public static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FCG.Messages.ResourceMessages", typeof(ResourceMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Substitui a propriedade CurrentUICulture do thread atual para todas as
         ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
+        public static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid email or password..
+
+        ///   Looks up a localized string similar to Invalid access level..
         /// </summary>
-        public static string InvalidEmailOrPassword {
-            get {
+        public static string InvalidAccessLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidAccessLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid email or password..
+
+        /// </summary>
+        public static string InvalidEmailOrPassword
+        {
+            get
+            {
                 return ResourceManager.GetString("InvalidEmailOrPassword", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid refresh token..
         /// </summary>
-        public static string InvalidRefreshToken {
-            get {
+        public static string InvalidRefreshToken
+        {
+            get
+            {
                 return ResourceManager.GetString("InvalidRefreshToken", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid access token..
         /// </summary>
-        public static string InvalidToken {
-            get {
+        public static string InvalidToken
+        {
+            get
+            {
                 return ResourceManager.GetString("InvalidToken", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Email is required..
         /// </summary>
-        public static string LoginEmalRequired {
-            get {
+        public static string LoginEmalRequired
+        {
+            get
+            {
                 return ResourceManager.GetString("LoginEmalRequired", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Invalid email format..
         /// </summary>
-        public static string LoginInvalidEmailFormat {
-            get {
+        public static string LoginInvalidEmailFormat
+        {
+            get
+            {
                 return ResourceManager.GetString("LoginInvalidEmailFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Password is required..
         /// </summary>
-        public static string LoginPasswordRequired {
-            get {
+        public static string LoginPasswordRequired
+        {
+            get
+            {
                 return ResourceManager.GetString("LoginPasswordRequired", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Logout successful. All refresh tokens have been revoked..
         /// </summary>
-        public static string LogoutSuccessFull {
-            get {
+        public static string LogoutSuccessFull
+        {
+            get
+            {
                 return ResourceManager.GetString("LogoutSuccessFull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Password cannot exceed 100 characters.
         /// </summary>
-        public static string LongPassword {
-            get {
+        public static string LongPassword
+        {
+            get
+            {
                 return ResourceManager.GetString("LongPassword", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name cannot exceed 100 characters.
         /// </summary>
-        public static string NameIsLong {
-            get {
+        public static string NameIsLong
+        {
+            get
+            {
                 return ResourceManager.GetString("NameIsLong", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Name is required..
         /// </summary>
-        public static string NameRequired {
-            get {
+        public static string NameRequired
+        {
+            get
+            {
                 return ResourceManager.GetString("NameRequired", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The password does not meet the strength requirements (minimum 8 characters, number, and special character)..
         /// </summary>
-        public static string Password {
-            get {
+        public static string Password
+        {
+            get
+            {
                 return ResourceManager.GetString("Password", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a New refresh token generated..
         /// </summary>
-        public static string RefreshTokenDefaultReason {
-            get {
+        public static string RefreshTokenDefaultReason
+        {
+            get
+            {
                 return ResourceManager.GetString("RefreshTokenDefaultReason", resourceCulture);
             }
         }

@@ -84,6 +84,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             return user;
         }
 
+
         public async Task<User?> GetByIdWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var user = await _fcgDbContext.Users
@@ -93,6 +94,12 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
                 .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
 
             return user;
+        }
+
+
+        public async Task<bool> AnyAdminAsync(CancellationToken cancellationToken = default)
+        {
+            return await _fcgDbContext.Users.AsNoTracking().AnyAsync(u => u.Role == Role.Admin, cancellationToken);
         }
 
     }
