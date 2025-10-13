@@ -117,6 +117,20 @@ namespace FCG.UnitTests.Domain.ValueObjects
             // Assert
             password.Value.Should().Be(longPassword);
         }
+        [Theory]
+        [InlineData(null, "Password cannot be null or empty.")]
+        [InlineData("1234567", "Password must be at least 8 characters long.")] // Falha 1: Comprimento
+        [InlineData("12345678!@#", "Password must contain at least one letter.")] // Falha 2: Falta Letra
+        [InlineData("ABCDEFGHI!", "Password must contain at least one number.")] // Falha 3: Falta Dígito
+        [InlineData("Abcdefgh123", "Password must contain at least one special character.")] // Falha 4: Falta Especial
+        public void PasswordCreate_GivenInvalidRequirements_ShouldThrowDomainException(string? invalidPassword, string expectedMessagePart)
+        {
+            // ARRANGE / ACT / ASSERT
+            var act = () => Password.Create(invalidPassword!);
+
+            act.Should().Throw<DomainException>()
+                .WithMessage($"*{expectedMessagePart}*");
+        }
 
         [Fact]
         public void Given_PasswordObject_When_ImplicitConvertToString_Then_ShouldReturnValue()

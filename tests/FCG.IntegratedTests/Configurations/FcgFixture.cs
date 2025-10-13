@@ -1,12 +1,12 @@
 ﻿using FCG.Domain.Entities;
 using FCG.Domain.Enum;
-using FCG.FunctionalTests.Helpers;
 using FCG.Infrastructure.Persistance;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
+using FCG.FunctionalTests.Helpers;
 
 namespace FCG.IntegratedTests.Configurations
 {
@@ -51,23 +51,27 @@ namespace FCG.IntegratedTests.Configurations
             SetAuthenticationHeader(jwtToken);
             return await _httpClient.PostAsync(url, null);
         }
+
         protected async Task<User> AddUserToDatabaseAsync(string email, string password = "OriginalPass!1")
         {
-            // 1. Cria um escopo de serviço
             using var scope = Factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
 
-            // 2. Cria as entidades
             var user = User.Create("Test User", email, password, Role.User);
-            var wallet = Wallet.Create(user.Id); // Cria a Wallet com saldo inicial 10
+            var wallet = Wallet.Create(user.Id);
 
-            // 3. Persiste no banco de dados
             dbContext.Users.Add(user);
             dbContext.Wallets.Add(wallet);
 
             await dbContext.SaveChangesAsync();
 
             return user;
+        }
+        protected async Task<HttpResponseMessage> DoAuthenticatedGet(string url, string jwtToken)
+        {
+            SetAuthenticationHeader(jwtToken);
+
+            return await _httpClient.GetAsync(url);
         }
         protected string GenerateToken(Guid userId, string role)
         {

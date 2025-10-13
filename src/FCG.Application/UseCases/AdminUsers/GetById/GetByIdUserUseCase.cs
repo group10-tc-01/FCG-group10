@@ -40,6 +40,7 @@ namespace FCG.Application.UseCases.AdminUsers.GetById
 
             var response = new UserDetailResponse
             {
+                Id = user.Id,
                 Name = user.Name.Value,
                 Email = user.Email.Value,
                 Role = user.Role.ToString(),

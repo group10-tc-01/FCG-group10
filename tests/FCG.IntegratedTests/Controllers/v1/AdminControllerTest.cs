@@ -1,10 +1,19 @@
-﻿using FCG.FunctionalTests.Helpers;
+﻿using FCG.Application.UseCases.AdminUsers.GetById;
+using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+using FCG.Domain.Enum;
+using FCG.Domain.Repositories.UserRepository;
+using FCG.FunctionalTests.Helpers;
 using FCG.IntegratedTests.Configurations;
+using FCG.WebApi.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Security.Policy;
 
 namespace FCG.IntegratedTests.Controllers.v1
 {
@@ -196,8 +205,58 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Then
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+        [Fact]
+        public async Task GET_List_WhenInternalErrorOccurs_ShouldReturn500InternalServerError()
+        {
+            var factory = Factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    var mockRepo = new Mock<IReadOnlyUserRepository>();
 
+                    mockRepo.Setup(repo => repo.GetQueryableAllUsers(
+                            It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                        .ThrowsAsync(new Exception("Simulação de falha de serviço não mapeada."));
 
+                    services.RemoveAll<IReadOnlyUserRepository>();
+                    services.AddScoped<IReadOnlyUserRepository>(sp => mockRepo.Object);
+                });
+            });
+
+            using var client = factory.CreateClient();
+
+            var adminToken = GenerateToken(Guid.NewGuid(), "Admin");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", adminToken);
+
+            // ACT (WHEN)
+            var response = await client.GetAsync("/api/v1/admin/users");
+
+            // ASSERT (THEN)
+            response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        }
+        [Fact]
+        public async Task GET_UserById_GivenValidIdAndAdminToken_ShouldReturn200AndUserData()
+        {
+            var expectedEmail = $"search.{Guid.NewGuid()}@adminsearch.com";
+
+            var userToFind = await AddUserToDatabaseAsync(expectedEmail, "PasswordSearch!1");
+
+            var adminToken = GenerateToken(Guid.NewGuid(), "Admin");
+
+            var url = $"/api/v1/admin/users/{userToFind.Id}";
+
+            // ACT (WHEN)
+            var response = await DoAuthenticatedGet(url, adminToken);
+
+            // ASSERT (THEN)
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<UserDetailResponse>>();
+
+            apiResponse.Data.Should().NotBeNull();
+            apiResponse!.Data.Id.Should().Be(userToFind.Id);
+            apiResponse.Data.Email.Should().Be(expectedEmail, "O email deve bater com o usuário criado.");
+        }
 
     }
 }

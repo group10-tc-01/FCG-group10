@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace FCG.IntegratedTests.Controllers.v1
@@ -180,6 +181,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Assert
             result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
+
         private static void Setup(RegisterUserRequest user)
         {
             PasswordEncrypterServiceBuilder.Build();
