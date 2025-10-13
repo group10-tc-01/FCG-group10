@@ -1,5 +1,6 @@
 ﻿using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
 using FCG.Domain.Enum;
+using FCG.Messages;
 using FluentValidation;
 
 namespace FCG.Application.UseCases.Users.RoleManagement
@@ -10,11 +11,11 @@ namespace FCG.Application.UseCases.Users.RoleManagement
         {
             RuleFor(x => x.UserId)
                 .NotEmpty()
-                .WithMessage("O Id do usuário não pode ser nulo ou vazio.");
+                .WithMessage(ResourceMessages.UserIdRequired);
 
             RuleFor(x => x.NewRole)
                 .Must(role => Enum.IsDefined(typeof(Role), role))
-                .WithMessage("O cargo do usuário é inválido.");
+                .WithMessage(ResourceMessages.InvalidUserRole);
         }
     }
 }
