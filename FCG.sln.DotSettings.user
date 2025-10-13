@@ -3,5 +3,10 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::D3586424-61A4-43E2-BAE1-BC208707CE51::net8.0::FCG.UnitTests.Application.UseCases.Users.RoleManagement.RoleManagementUseCaseTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D3586424-61A4-43E2-BAE1-BC208707CE51::net8.0::FCG.UnitTests.Application.UseCases.Users.RoleManagement.RoleManagementInputValidatorTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_GivenValidAdminToken_ShouldReturnOk&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_AsAdmin_ShouldReturnOk&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_AsNonAdmin_ShouldReturnForbidden&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_InvalidInput_ShouldReturnBadRequest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
