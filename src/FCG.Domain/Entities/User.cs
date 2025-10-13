@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Enum;
 using FCG.Domain.Events.User;
+using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
 
 namespace FCG.Domain.Entities
@@ -30,6 +31,22 @@ namespace FCG.Domain.Entities
             var user = new User(name, email, password, role);
             user.AddDomainEvent(new UserCreatedEvent(user.Id, user.Name, user.Email));
             return user;
+        }
+
+        public void PromoteToAdmin()
+        {
+            if (Role == Role.Admin)
+                throw new DomainException("User is already an Admin.");
+
+            Role = Role.Admin;
+        }
+
+        public void DemoteToUser()
+        {
+            if (Role == Role.User)
+                throw new DomainException("User is already a User.");
+
+            Role = Role.User;
         }
     }
 }

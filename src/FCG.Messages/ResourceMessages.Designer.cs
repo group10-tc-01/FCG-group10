@@ -97,6 +97,15 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The user&apos;s role is invalid..
+        /// </summary>
+        public static string InvalidUserRole {
+            get {
+                return ResourceManager.GetString("InvalidUserRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is required..
         /// </summary>
         public static string LoginEmalRequired {
@@ -138,6 +147,15 @@ namespace FCG.Messages {
         public static string RefreshTokenDefaultReason {
             get {
                 return ResourceManager.GetString("RefreshTokenDefaultReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Id cannot be null or empty..
+        /// </summary>
+        public static string UserIdRequired {
+            get {
+                return ResourceManager.GetString("UserIdRequired", resourceCulture);
             }
         }
     }
