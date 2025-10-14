@@ -60,8 +60,42 @@ namespace FCG.Tests.Application.UseCases.Users
             result.CurrentPage.Should().Be(1);
             result.PageSize.Should().Be(10);
         }
-
         [Fact]
+        public async Task Given_NoUsersFound_When_HandlingQuery_Then_ShouldReturnEmptyPagedList()
+        {
+            // Given
+            var query = new GetAllUserCaseQuery
+            {
+                PageNumber = 1,
+                PageSize = 10
+            };
+        
+            // Repositório retorna nenhum usuário
+            var repositoryResponse = (
+                Items: Enumerable.Empty<User>(),
+                TotalCount: 0
+            );
+        
+            _userRepositoryMock
+                .Setup(repo => repo.GetQueryableAllUsers(
+                    query.Email,
+                    query.Role,
+                    query.PageNumber,
+                    query.PageSize,
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(repositoryResponse);
+        
+            // When
+            var result = await _handler.Handle(query, CancellationToken.None);
+        
+            // Then
+            result.Should().NotBeNull();
+            result.Items.Should().BeEmpty("pois o totalCount é zero");
+            result.TotalCount.Should().Be(0, "pois nenhum usuário foi encontrado");
+            result.CurrentPage.Should().Be(1);
+            result.PageSize.Should().Be(10);
+        }
+                [Fact]
         public async Task Given_EmailFilter_When_HandlingQuery_Then_ShouldReturnFilteredPagedList()
         {
             // Given
