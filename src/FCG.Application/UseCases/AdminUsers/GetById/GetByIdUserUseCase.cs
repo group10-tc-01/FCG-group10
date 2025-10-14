@@ -2,12 +2,9 @@
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using MediatR;
-using System.Linq;
-
 
 namespace FCG.Application.UseCases.AdminUsers.GetById
 {
-
     public class GetByIdUserUseCase : IRequestHandler<GetByIdUserQuery, UserDetailResponse>
     {
         private readonly IReadOnlyUserRepository _userRepository;
@@ -26,13 +23,13 @@ namespace FCG.Application.UseCases.AdminUsers.GetById
                 throw new NotFoundException($"Usuário com Id: {request.Id} não encontrado.");
             }
 
-            var walletDto = user.Wallet == null ? null : new WalletDTO
+            var walletDto = user.Wallet == null ? null : new WalletDto
             {
                 Id = user.Wallet.Id,
                 Balance = user.Wallet.Balance
 
             };
-            var libraryDto = user.Library == null ? null : new LibraryDTO
+            var libraryDto = user.Library == null ? null : new LibraryDto
             {
                 Id = user.Library.Id,
                 CreatedAt = user.Library.CreatedAt

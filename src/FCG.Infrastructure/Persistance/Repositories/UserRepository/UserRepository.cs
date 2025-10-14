@@ -34,7 +34,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 
         public async Task<(IEnumerable<User> Items, int TotalCount)> GetQueryableAllUsers(
             string? emailFilter,
-            string? roleFilter,
+            string? role,
             int pageNumber,
             int pageSize,
             CancellationToken cancellationToken = default)
@@ -43,13 +43,13 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 
             if (!string.IsNullOrWhiteSpace(emailFilter))
             {
-                var searchEmail = emailFilter.Trim().ToLower();
-                query = query.Where(u => u.Email.Value.ToLower().Contains(searchEmail));
+                query = query.Where(u => u.Email.Value.Contains(emailFilter.Trim(), StringComparison.OrdinalIgnoreCase));
+
             }
 
-            if (!string.IsNullOrWhiteSpace(roleFilter))
+            if (!string.IsNullOrWhiteSpace(role))
             {
-                if (System.Enum.TryParse<Role>(roleFilter, true, out Role filterRole))
+                if (System.Enum.TryParse<Role>(role, true, out Role filterRole))
                 {
                     query = query.Where(u => u.Role == filterRole);
                 }

@@ -1,6 +1,7 @@
 ﻿using FCG.Application.Shared.Models;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
+using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.WebApi.Models;
 using MediatR;
@@ -19,7 +20,7 @@ namespace FCG.WebApi.Controllers.v1
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<List<UserListResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetUser([FromQuery] GetAllUserCaseQuery queryPagination)
         {
             var output = await _mediator.Send(queryPagination, CancellationToken.None).ConfigureAwait(false);
@@ -30,6 +31,7 @@ namespace FCG.WebApi.Controllers.v1
         [HttpGet(("{id}"))]
         [ProducesResponseType(typeof(ApiResponse<UserDetailResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById([FromRoute] Guid id)
         {

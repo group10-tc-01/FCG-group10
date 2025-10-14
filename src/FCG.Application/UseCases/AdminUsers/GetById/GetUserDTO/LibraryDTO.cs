@@ -1,6 +1,6 @@
 ﻿namespace FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO
 {
-    public class LibraryDTO
+    public class LibraryDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

@@ -39,5 +39,6 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
 
             return new string(passwordChars);
         }
+
     }
 }

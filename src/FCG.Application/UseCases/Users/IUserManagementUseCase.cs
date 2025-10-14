@@ -1,6 +1,7 @@
 ﻿using FCG.Application.Shared.Models;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
+using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update.UsersDTO;

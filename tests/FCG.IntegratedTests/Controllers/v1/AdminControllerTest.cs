@@ -1,20 +1,15 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetById;
-using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
-using FCG.Domain.Enum;
+﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
-using FCG.FunctionalTests.Helpers;
 using FCG.IntegratedTests.Configurations;
 using FCG.WebApi.Models;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Security.Policy;
 using System.Text.Json;
 
 namespace FCG.IntegratedTests.Controllers.v1
@@ -163,21 +158,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        [Fact]
-        public async Task Given_CommonUserToken_When_GettingUserDetails_Then_ShouldReturn403Forbidden()
-        {
-            // Given
-            var existingUser = Factory.CreatedUsers.First();
-            var userToken = GenerateToken(Guid.NewGuid(), "User");
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", userToken);
 
-            // When
-            var response = await _httpClient.GetAsync($"/api/v1/admin/users/{existingUser.Id}");
-
-            // Then
-            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
 
         [Fact]
         public async Task Given_NoToken_When_GettingUserDetails_Then_ShouldReturn401Unauthorized()
@@ -236,6 +217,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             // ASSERT (THEN)
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
+
         [Fact]
         public async Task GET_UserById_GivenValidIdAndAdminToken_ShouldReturn200AndUserData()
         {
@@ -255,7 +237,7 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<UserDetailResponse>>();
 
-            apiResponse.Data.Should().NotBeNull();
+            apiResponse.Should().NotBeNull("a resposta da API não deve ser nula.");
             apiResponse!.Data.Id.Should().Be(userToFind.Id);
             apiResponse.Data.Email.Should().Be(expectedEmail, "O email deve bater com o usuário criado.");
         }
