@@ -6,6 +6,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 {
     public class PasswordTest
     {
+        
 
         [Fact]
         public void Given_ValidPassword_When_CreatePassword_Then_ShouldCreateSuccessfully()
@@ -165,5 +166,21 @@ namespace FCG.UnitTests.Domain.ValueObjects
             var password2 = Password.Create("SecondPass123!");
             password1.Should().NotBe(password2);
         }
+
+            [Theory]
+            [InlineData(null)]
+            [InlineData("")]
+            [InlineData("   ")]
+        public void Given_NullOrEmptyHash_When_CreateFromHash_Then_ShouldThrowArgumentNullException(string invalidHash)
+{
+    // Act
+            Action act = () => Password.CreateFromHash(invalidHash);
+
+    // Assert
+            act.Should()
+               .Throw<ArgumentNullException>()
+               .WithMessage("*Stored hash value cannot be null or empty.*");
+}
+        
     }
 }
