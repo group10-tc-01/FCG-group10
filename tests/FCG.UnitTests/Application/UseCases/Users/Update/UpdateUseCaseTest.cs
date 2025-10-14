@@ -148,7 +148,6 @@ namespace FCG.Tests.Application.UseCases.Users
             Assert.Equal("A nova senha deve ser diferente da senha atual.", exception.Message);
         }
 
-
         [Fact]
         public async Task Given_ValidRequest_When_UpdatePassword_Then_ShouldCallRepositoryInCorrectOrder()
         {
@@ -198,7 +197,6 @@ namespace FCG.Tests.Application.UseCases.Users
             _passwordEncrypterMock.Verify(x => x.IsValid("OldPass@123", oldHashedPassword), Times.Once);
             _passwordEncrypterMock.Verify(x => x.Encrypt("NewPass@456"), Times.Once);
         }
-
         private User CreateUserWithHashedPassword(Guid userId, string hashedPassword)
         {
             var user = User.Create(

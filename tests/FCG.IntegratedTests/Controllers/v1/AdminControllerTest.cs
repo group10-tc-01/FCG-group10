@@ -1,6 +1,7 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.Domain.Enum;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.FunctionalTests.Helpers;
 using FCG.IntegratedTests.Configurations;
@@ -14,6 +15,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Policy;
+using System.Text.Json;
 
 namespace FCG.IntegratedTests.Controllers.v1
 {
@@ -256,6 +258,52 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Data.Should().NotBeNull();
             apiResponse!.Data.Id.Should().Be(userToFind.Id);
             apiResponse.Data.Email.Should().Be(expectedEmail, "O email deve bater com o usuário criado.");
+        }
+
+        [Fact]
+        public async Task GET_List_WhenDomainExceptionOccurs_ShouldReturn400BadRequest()
+        {
+            // ARRANGE (GIVEN)
+            var adminToken = GenerateToken(Guid.NewGuid(), "Admin");
+
+            var domainExceptionMessage = "Erro de filtro no domínio. (Teste de cobertura)";
+
+            var factory = Factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    var mockRepo = new Mock<IReadOnlyUserRepository>();
+
+                    mockRepo.Setup(repo => repo.GetQueryableAllUsers(
+                        It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                        .ThrowsAsync(new DomainException(domainExceptionMessage));
+
+                    services.RemoveAll<IReadOnlyUserRepository>();
+                    services.AddScoped<IReadOnlyUserRepository>(sp => mockRepo.Object);
+                });
+            });
+
+            using var client = factory.CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", adminToken);
+
+            // ACT (WHEN)
+            var response = await client.GetAsync("/api/v1/admin/users");
+
+            // ASSERT (THEN)
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse<object>>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            apiResponse.Should().NotBeNull();
+            apiResponse!.Success.Should().BeFalse();
+
+            apiResponse.ErrorMessages.Should().Contain(e => e.ToString()!.Contains(domainExceptionMessage));
         }
 
     }

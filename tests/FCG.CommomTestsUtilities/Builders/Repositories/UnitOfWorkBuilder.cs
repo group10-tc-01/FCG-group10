@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.CommomTestsUtilities.Builders.Repositories
 {
-    [ExcludeFromCodeCoverage]
+
     public class UnitOfWorkBuilder
     {
         private static readonly Mock<IUnitOfWork> _mock = new Mock<IUnitOfWork>();

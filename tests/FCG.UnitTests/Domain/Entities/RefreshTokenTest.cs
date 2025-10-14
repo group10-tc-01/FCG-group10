@@ -1,4 +1,5 @@
 ﻿using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.Domain.ValueObjects;
 using FCG.Messages;
 using FluentAssertions;
 
@@ -74,5 +75,6 @@ namespace FCG.UnitTests.Domain.Entities
             // Assert
             isValid.Should().BeFalse();
         }
+
     }
 }

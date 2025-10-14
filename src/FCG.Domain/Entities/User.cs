@@ -21,7 +21,6 @@ namespace FCG.Domain.Entities
             Password = password;
             Role = role;
         }
-
         private User() { }
 
         public static User Create(string name, string email, string password, Role role)

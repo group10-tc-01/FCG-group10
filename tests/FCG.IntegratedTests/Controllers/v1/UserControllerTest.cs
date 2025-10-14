@@ -69,7 +69,6 @@ namespace FCG.IntegratedTests.Controllers.v1
 
         }
 
-
         [Fact]
         public async Task POST_Register_GivenValidRequest_ShouldCreateWalletForUser()
         {
@@ -180,6 +179,19 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             // Assert
             result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task POST_Register_GivenMalformedJson_ShouldReturn400BadRequest()
+        {
+            // ARRANGE (GIVEN)
+            var jsonContent = new StringContent("{ \"Nome\": 123 }", Encoding.UTF8, "application/json");
+
+            // ACT (WHEN)
+            var response = await DoPost("/api/v1/users/register", jsonContent);
+
+            // ASSERT (THEN)
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         private static void Setup(RegisterUserRequest user)

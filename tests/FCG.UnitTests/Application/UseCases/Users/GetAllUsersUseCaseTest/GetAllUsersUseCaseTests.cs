@@ -1,7 +1,10 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetAllUsers;
+using FCG.Application.UseCases.AdminUsers.GetById;
+using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
-using FCG.Domain.ValueObjects;
+using FluentAssertions;
 using Moq;
 
 namespace FCG.Tests.Application.UseCases.Users
@@ -11,11 +14,15 @@ namespace FCG.Tests.Application.UseCases.Users
         private readonly Mock<IReadOnlyUserRepository> _userRepositoryMock;
         private readonly GetAllUsersUseCase _handler;
 
+
         public GetAllUsersUseCaseTests()
         {
             _userRepositoryMock = new Mock<IReadOnlyUserRepository>();
             _handler = new GetAllUsersUseCase(_userRepositoryMock.Object);
+
+
         }
+
 
         [Fact]
         public async Task Given_EmailFilter_When_HandlingQuery_Then_ShouldReturnFilteredPagedListido()
@@ -114,5 +121,7 @@ namespace FCG.Tests.Application.UseCases.Users
             Assert.Equal(expectedTotalCount, result.TotalCount);
 
         }
+
     }
 }
+
