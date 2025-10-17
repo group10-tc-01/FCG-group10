@@ -18,5 +18,6 @@ namespace FCG.UnitTests.Domain.Entities
             wallet.UserId.Should().Be(userId);
             wallet.Balance.Should().Be(initialBalance);
         }
+
     }
 }

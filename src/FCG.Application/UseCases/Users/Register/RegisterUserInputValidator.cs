@@ -1,5 +1,6 @@
 ﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentValidation;
 
 namespace FCG.Application.UseCases.Users.Register
@@ -10,24 +11,24 @@ namespace FCG.Application.UseCases.Users.Register
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage("O nome é obrigatório.")
+                .WithMessage(ResourceMessages.NameRequired)
                 .MaximumLength(100)
-                .WithMessage("O nome não pode exceder 100 caracteres.");
+                .WithMessage(ResourceMessages.NameIsLong);
 
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .WithMessage("O email é obrigatório.")
+                .WithMessage(ResourceMessages.LoginEmalRequired)
                 .EmailAddress()
-                .WithMessage("O formato do email é inválido.");
+                .WithMessage(ResourceMessages.LoginInvalidEmailFormat);
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .WithMessage("A senha é obrigatória.")
+                .WithMessage(ResourceMessages.LoginPasswordRequired)
                 .MaximumLength(100)
-                .WithMessage("A senha não pode exceder 100 caracteres.")
+                .WithMessage(ResourceMessages.LongPassword)
 
                 .Must(BeValidPassword)
-                .WithMessage("A senha não atende aos requisitos de força (mínimo 8 caracteres, número, e caractere especial).");
+                .WithMessage(ResourceMessages.Password);
         }
 
         private static bool BeValidPassword(string password)

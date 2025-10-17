@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;

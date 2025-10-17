@@ -2,6 +2,7 @@
 {
     public interface IWriteOnlyUserRepository
     {
-        Task AddAsync(Entities.User user);
+        Task AddAsync(Entities.User user, Entities.Wallet wallet);
+        Task UpdateAsync(Entities.User user);
     }
 }

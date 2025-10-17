@@ -44,8 +44,10 @@ namespace FCG.Application.UseCases.Users.Register
                 hashedPassword,
                 Role.User
             );
+            var wallet = Wallet.Create(user.Id);
 
-            await _writeOnlyUserRepository.AddAsync(user);
+            await _writeOnlyUserRepository.AddAsync(user, wallet);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new RegisterUserResponse

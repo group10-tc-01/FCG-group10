@@ -36,7 +36,7 @@ namespace FCG.UnitTests.Api.Filters
             var adminUser = UserBuilder.BuildAdmin();
 
             _tokenServiceMock.Setup(x => x.ValidateAccessToken("valid-token")).Returns(userId);
-            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(adminUser);
+            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>())).ReturnsAsync(adminUser);
 
             // Act
             var act = async () => await _sut.OnAuthorizationAsync(context);
@@ -44,7 +44,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().NotThrowAsync();
             _tokenServiceMock.Verify(x => x.ValidateAccessToken("valid-token"), Times.Once);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId), Times.Once);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace FCG.UnitTests.Api.Filters
             var regularUser = UserBuilder.BuildRegularUser();
 
             _tokenServiceMock.Setup(x => x.ValidateAccessToken("valid-token")).Returns(userId);
-            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(regularUser);
+            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>())).ReturnsAsync(regularUser);
 
             // Act
             var act = async () => await _sut.OnAuthorizationAsync(context);
@@ -64,7 +64,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().ThrowAsync<ForbiddenAccessException>().WithMessage(ResourceMessages.InvalidAccessLevel);
             _tokenServiceMock.Verify(x => x.ValidateAccessToken("valid-token"), Times.Once);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId), Times.Once);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace FCG.UnitTests.Api.Filters
             var userId = Guid.NewGuid();
 
             _tokenServiceMock.Setup(x => x.ValidateAccessToken("valid-token")).Returns(userId);
-            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync((User)null!);
+            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>())).ReturnsAsync((User)null!);
 
             // Act
             var act = async () => await _sut.OnAuthorizationAsync(context);
@@ -83,7 +83,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().ThrowAsync<UnauthorizedException>().WithMessage(ResourceMessages.InvalidToken);
             _tokenServiceMock.Verify(x => x.ValidateAccessToken("valid-token"), Times.Once);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId), Times.Once);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().ThrowAsync<UnauthorizedException>().WithMessage(ResourceMessages.InvalidToken);
             _tokenServiceMock.Verify(x => x.ValidateAccessToken("invalid-token"), Times.Once);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None), Times.Never);
         }
 
         [Theory]
@@ -118,7 +118,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().ThrowAsync<UnauthorizedException>().WithMessage(ResourceMessages.InvalidToken);
             _tokenServiceMock.Verify(x => x.ValidateAccessToken(It.IsAny<string>()), Times.Never);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None), Times.Never);
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().ThrowAsync<UnauthorizedException>().WithMessage(ResourceMessages.InvalidToken);
             _tokenServiceMock.Verify(x => x.ValidateAccessToken(It.IsAny<string>()), Times.Never);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None), Times.Never);
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace FCG.UnitTests.Api.Filters
             var adminUser = UserBuilder.BuildAdmin();
 
             _tokenServiceMock.Setup(x => x.ValidateAccessToken("token-with-spaces")).Returns(userId);
-            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(adminUser);
+            _readOnlyUserRepositoryMock.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>())).ReturnsAsync(adminUser);
 
             // Act
             var act = async () => await _sut.OnAuthorizationAsync(context);
@@ -153,7 +153,7 @@ namespace FCG.UnitTests.Api.Filters
             // Assert
             await act.Should().NotThrowAsync();
             _tokenServiceMock.Verify(x => x.ValidateAccessToken("token-with-spaces"), Times.Once);
-            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId), Times.Once);
+            _readOnlyUserRepositoryMock.Verify(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

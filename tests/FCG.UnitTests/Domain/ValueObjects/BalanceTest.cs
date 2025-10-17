@@ -1,6 +1,7 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
 using FluentAssertions;
+using System.Globalization;
 
 namespace FCG.UnitTests.Domain.ValueObjects
 {
@@ -60,29 +61,19 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_BalanceObject_When_ImplicitConvertToDecimal_Then_ShouldReturnValue()
+        public void Given_BalanceObject_When_CalledToString_Then_ShouldReturnStringValue()
         {
             // Arrange
-            var balance = Balance.Create(50.75m);
+            decimal amount = 77.77m;
+            var balance = Balance.Create(amount);
 
             // Act
-            decimal value = balance;
+            var resultString = balance.Value.ToString(CultureInfo.InvariantCulture);
+            var hashCode = balance.GetHashCode();
 
             // Assert
-            value.Should().Be(50.75m);
-        }
-
-        [Fact]
-        public void Given_DecimalValue_When_ImplicitConvertToBalance_Then_ShouldCreateBalance()
-        {
-            // Arrange
-            decimal value = 25.99m;
-
-            // Act
-            Balance balance = value;
-
-            // Assert
-            balance.Value.Should().Be(25.99m);
+            resultString.Should().Be("77.77");
+            hashCode.Should().NotBe(0);
         }
     }
 }

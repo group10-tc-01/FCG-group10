@@ -38,15 +38,18 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IWriteOnlyUserRepository, UserRepository>();
-
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
         }
 
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
+
+
+
         }
     }
 }

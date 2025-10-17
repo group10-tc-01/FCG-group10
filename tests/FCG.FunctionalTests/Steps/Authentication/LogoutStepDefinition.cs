@@ -1,4 +1,5 @@
 using FCG.Application.UseCases.Authentication.Logout;
+using FCG.Domain.Exceptions;
 using FCG.FunctionalTests.Fixtures;
 using FCG.Messages;
 using FluentAssertions;
@@ -47,5 +48,6 @@ namespace FCG.FunctionalTests.Steps.Authentication
             _logoutOutput.Should().NotBeNull();
             _logoutOutput.Message.Should().Be(ResourceMessages.LogoutSuccessFull);
         }
+
     }
 }
