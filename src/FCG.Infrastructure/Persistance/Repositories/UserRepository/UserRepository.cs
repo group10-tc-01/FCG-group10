@@ -66,15 +66,6 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             return (items, totalCount);
         }
 
-        public async Task<User?> GetByEmailAndPasswordAsync(string email, string password)
-        {
-            var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive &&
-                                    u.Email.Value == email &&
-                                    u.Password.Value == password);
-
-            return user;
-        }
-
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var user = await _fcgDbContext.Users

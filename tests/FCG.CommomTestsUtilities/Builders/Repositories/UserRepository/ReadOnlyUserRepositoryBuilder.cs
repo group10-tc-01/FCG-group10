@@ -15,11 +15,6 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.UserRepository
             _mock.Setup(repo => repo.GetByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(user);
         }
 
-        public static void SetupGetByEmailAndPasswordAsync(User? user)
-        {
-            _mock.Setup(repo => repo.GetByEmailAndPasswordAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(user);
-        }
-
         public static void SetupGetByIdAsync(User? user)
         {
             _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(user);
