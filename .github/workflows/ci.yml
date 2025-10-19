@@ -10,7 +10,7 @@ permissions:
   issues: write
 
 jobs:
-  build-test-analyze:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -24,12 +24,6 @@ jobs:
       with:
         dotnet-version: 8.0.x
     
-    - name: Setup Java 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-    
     - name: Cache .NET packages
       uses: actions/cache@v4
       with:
@@ -38,31 +32,40 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-nuget-
     
-    - name: Install tools
-      run: |
-        dotnet tool install --global dotnet-sonarscanner
-        dotnet tool install --global dotnet-reportgenerator-globaltool
-    
-    - name: Begin SonarCloud analysis
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-        SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-      run: |
-        dotnet sonarscanner begin \
-          /k:"$SONAR_PROJECT_KEY" \
-          /o:"$SONAR_ORGANIZATION" \
-          /d:sonar.host.url="https://sonarcloud.io" \
-          /d:sonar.token="$SONAR_TOKEN" \
-          /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
-          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/CommomTestsUtilities/**"
-    
     - name: Restore dependencies
       run: dotnet restore
     
     - name: Build solution
       run: dotnet build --no-restore --configuration Release
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          **/bin/Release/**
+          **/obj/**
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+    
+    - name: Install coverage tools
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
     
     - name: Run unit tests with coverage
       run: |
@@ -76,6 +79,30 @@ jobs:
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover \
              DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile="**/CommomTestsUtilities/**"
     
+    - name: Upload unit test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-test-results
+        path: ./TestResults/UnitTests/
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+    
     - name: Run integration tests with coverage
       run: |
         dotnet test tests/FCG.IntegratedTests \
@@ -88,13 +115,74 @@ jobs:
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover \
              DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile="**/CommomTestsUtilities/**"
     
-    - name: Run functional tests (without coverage)
+    - name: Upload integration test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: integration-test-results
+        path: ./TestResults/IntegrationTests/
+
+  functional-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+    
+    - name: Run functional tests
       run: |
         dotnet test tests/FCG.FunctionalTests \
           --no-build \
           --configuration Release \
           --logger trx \
           --verbosity normal
+    
+    - name: Upload functional test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: functional-test-results
+        path: ./TestResults/
+
+  coverage-analysis:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    if: always() && (needs.unit-tests.result == 'success' || needs.integration-tests.result == 'success')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Install coverage tools
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+    
+    - name: Download unit test results
+      uses: actions/download-artifact@v4
+      with:
+        name: unit-test-results
+        path: ./TestResults/UnitTests/
+      continue-on-error: true
+    
+    - name: Download integration test results
+      uses: actions/download-artifact@v4
+      with:
+        name: integration-test-results
+        path: ./TestResults/IntegrationTests/
+      continue-on-error: true
     
     - name: Generate coverage reports
       run: |
@@ -108,7 +196,6 @@ jobs:
       id: coverage
       run: |
         if [ -f "./CoverageReports/Cobertura.xml" ]; then
-          # Extract line coverage from Cobertura XML
           coverage=$(grep -o 'line-rate="[^"]*"' ./CoverageReports/Cobertura.xml | head -1 | cut -d'"' -f2)
           if [ ! -z "$coverage" ]; then
             coverage_percent=$(echo "$coverage * 100" | bc -l | printf "%.0f" $(cat))
@@ -121,7 +208,6 @@ jobs:
         else
           echo "coverage_percent=0" >> $GITHUB_OUTPUT
           echo "Coverage file not found"
-          find . -name "*.xml" -type f | head -10
         fi
     
     - name: Check coverage threshold and comment
@@ -168,11 +254,6 @@ jobs:
           gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md
         fi
     
-    - name: End SonarCloud analysis
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
-    
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
       with:
@@ -184,3 +265,63 @@ jobs:
       run: |
         echo "Coverage ${{ steps.coverage.outputs.coverage_percent }}% is below the required threshold of 80%"
         exit 1
+
+  sonar-analysis:
+    runs-on: ubuntu-latest
+    needs: [build, coverage-analysis]
+    if: always() && needs.build.result == 'success'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+    
+    - name: Download coverage reports
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage-reports
+        path: ./CoverageReports/
+      continue-on-error: true
+    
+    - name: Install SonarScanner
+      run: dotnet tool install --global dotnet-sonarscanner
+    
+    - name: Begin SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+        SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+      run: |
+        dotnet sonarscanner begin \
+          /k:"$SONAR_PROJECT_KEY" \
+          /o:"$SONAR_ORGANIZATION" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.token="$SONAR_TOKEN" \
+          /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/CommomTestsUtilities/**"
+    
+    - name: Build for SonarCloud
+      run: dotnet build --configuration Release
+    
+    - name: End SonarCloud analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
