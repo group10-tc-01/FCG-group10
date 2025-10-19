@@ -1,9 +1,11 @@
 ﻿using FCG.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Infrastructure.Persistance.Configuration
 {
+    [ExcludeFromCodeCoverage]
     public class GameConfiguration : BaseConfiguration<Game>
     {
         public override void Configure(EntityTypeBuilder<Game> builder)
