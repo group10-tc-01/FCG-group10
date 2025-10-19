@@ -1,6 +1,5 @@
 ﻿using FCG.Application.Shared.Models;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
-using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using MediatR;
 

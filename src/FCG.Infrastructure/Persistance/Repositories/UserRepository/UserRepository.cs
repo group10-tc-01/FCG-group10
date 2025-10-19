@@ -34,7 +34,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 
         public async Task<(IEnumerable<User> Items, int TotalCount)> GetQueryableAllUsers(
             string? emailFilter,
-            string? role,
+            string? Role,
             int pageNumber,
             int pageSize,
             CancellationToken cancellationToken = default)
@@ -47,9 +47,9 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 
             }
 
-            if (!string.IsNullOrWhiteSpace(role))
+            if (!string.IsNullOrWhiteSpace(Role))
             {
-                if (System.Enum.TryParse<Role>(role, true, out Role filterRole))
+                if (System.Enum.TryParse<Role>(Role, true, out Role filterRole))
                 {
                     query = query.Where(u => u.Role == filterRole);
                 }
@@ -64,15 +64,6 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
                 .ToListAsync(cancellationToken);
 
             return (items, totalCount);
-        }
-
-        public async Task<User?> GetByEmailAndPasswordAsync(string email, string password)
-        {
-            var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive &&
-                                    u.Email.Value == email &&
-                                    u.Password.Value == password);
-
-            return user;
         }
 
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -95,7 +86,6 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 
             return user;
         }
-
 
         public async Task<bool> AnyAdminAsync(CancellationToken cancellationToken = default)
         {

@@ -1,9 +1,11 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
+using FCG.Infrastructure.Persistance;
 using FCG.IntegratedTests.Configurations;
 using FCG.WebApi.Models;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
@@ -81,6 +83,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var content = await response.Content.ReadAsStringAsync();
             content.Should().Contain(existingUser.Email.Value);
         }
+
 
         [Fact]
         public async Task Given_AdminToken_When_FilteringByRole_Then_ShouldReturnFilteredResults()
@@ -174,6 +177,23 @@ namespace FCG.IntegratedTests.Controllers.v1
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
+
+        [Fact]
+        public async Task Given_CommonUserToken_When_GettingUserDetails_Then_ShouldReturn403Forbidden()
+        {
+            // Given
+            var existingUser = Factory.CreatedUsers.First();
+            var userToken = GenerateToken(Guid.NewGuid(), "User"); // Token de usuário comum
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userToken);
+
+            // When
+            var response = await _httpClient.GetAsync($"/api/v1/admin/users/{existingUser.Id}");
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
         [Fact]
         public async Task Given_InvalidUserId_When_GettingUserDetails_Then_ShouldReturn400BadRequest()
         {
@@ -241,6 +261,45 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse!.Data.Id.Should().Be(userToFind.Id);
             apiResponse.Data.Email.Should().Be(expectedEmail, "O email deve bater com o usuário criado.");
         }
+
+        [Fact]
+        public async Task Given_DatabaseWithAdminUser_When_CheckingForAdmins_Then_ShouldReturnTrue()
+        {
+            using var scope = Factory.Services.CreateScope();
+            var userRepository = scope.ServiceProvider.GetRequiredService<IReadOnlyUserRepository>();
+
+            // When
+            var result = await userRepository.AnyAdminAsync();
+
+            // Then
+            result.Should().BeTrue("o banco de dados deve conter pelo menos um administrador.");
+        }
+        [Fact]
+        public async Task Given_DatabaseWithOnlyCommonUsers_When_CheckingForAdmins_Then_ShouldReturnFalse()
+        {
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+
+            var users = await dbContext.Users.ToListAsync();
+            dbContext.Users.RemoveRange(users);
+
+            var wallets = await dbContext.Wallets.ToListAsync();
+            dbContext.Wallets.RemoveRange(wallets);
+
+            var libraries = await dbContext.Libraries.ToListAsync();
+            dbContext.Libraries.RemoveRange(libraries);
+
+            await dbContext.SaveChangesAsync();
+
+            var userRepository = scope.ServiceProvider.GetRequiredService<IReadOnlyUserRepository>();
+
+            // When
+            var result = await userRepository.AnyAdminAsync();
+
+            // Then
+            result.Should().BeFalse("o banco de dados não deve conter nenhum administrador.");
+        }
+
 
         [Fact]
         public async Task GET_List_WhenDomainExceptionOccurs_ShouldReturn400BadRequest()

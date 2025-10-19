@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Infrastructure.Persistance.Repositories
 {
-    //[ExcludeFromCodeCoverage(Justification = "Will be implemented later")]
+    [ExcludeFromCodeCoverage(Justification = "Will be implemented later")]
     public class UnitOfWork : IUnitOfWork
     {
         private readonly FcgDbContext _dbContext;

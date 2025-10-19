@@ -1,5 +1,8 @@
-﻿namespace FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO
 {
+    [ExcludeFromCodeCoverage]
     public class LibraryDto
     {
         public Guid Id { get; set; }
