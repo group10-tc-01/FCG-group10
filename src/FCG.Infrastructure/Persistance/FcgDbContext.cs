@@ -1,9 +1,11 @@
 ﻿using FCG.Domain.Entities;
 using FCG.Infrastructure.Persistance.Configuration;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Infrastructure.Persistance
 {
+    [ExcludeFromCodeCoverage]
     public class FcgDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
