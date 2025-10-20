@@ -66,13 +66,6 @@ jobs:
           --verbosity normal \
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
     
-    - name: Debug unit test artifacts
-      run: |
-        echo "=== Unit Test Results Structure ==="
-        ls -la ./TestResults/UnitTests/ || echo "No UnitTests directory"
-        find ./TestResults -name "*.xml" -type f -exec ls -la {} \; || echo "No XML files found"
-        find ./TestResults -name "*coverage*" -type f -exec ls -la {} \; || echo "No coverage files found"
-    
     - name: Upload unit test results
       uses: actions/upload-artifact@v4
       with:
@@ -106,13 +99,6 @@ jobs:
           --logger trx \
           --verbosity normal \
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-    
-    - name: Debug integration test artifacts
-      run: |
-        echo "=== Integration Test Results Structure ==="
-        ls -la ./TestResults/IntegrationTests/ || echo "No IntegrationTests directory"
-        find ./TestResults -name "*.xml" -type f -exec ls -la {} \; || echo "No XML files found"
-        find ./TestResults -name "*coverage*" -type f -exec ls -la {} \; || echo "No coverage files found"
     
     - name: Upload integration test results
       uses: actions/upload-artifact@v4
@@ -182,22 +168,10 @@ jobs:
         path: ./TestResults-Integration/
       continue-on-error: true
     
-    - name: Debug downloaded artifacts
-      run: |
-        echo "=== All Downloaded Files ==="
-        find . -name "*.xml" -type f -exec ls -la {} \; || echo "No XML files found"
-        echo "=== Coverage Files Specifically ==="
-        find . -name "*coverage*" -type f -exec ls -la {} \; || echo "No coverage files found"
-        echo "=== Directory Structure ==="
-        ls -laR ./TestResults-Unit/ || echo "No unit test results"
-        ls -laR ./TestResults-Integration/ || echo "No integration test results"
-    
     - name: Generate coverage reports
       run: |
-        # Find all coverage files with multiple patterns
+        # Find all coverage files
         coverage_files=""
-        
-        # Look for common coverage file patterns
         for pattern in "coverage.cobertura.xml" "coverage.opencover.xml" "*.coverage.xml" "*coverage*.xml"; do
           files=$(find . -name "$pattern" -type f 2>/dev/null || true)
           if [ ! -z "$files" ]; then
@@ -217,26 +191,7 @@ jobs:
             -classfilters:"-FCG.UnitTests.*;-FCG.IntegratedTests.*;-FCG.FunctionalTests.*;-*.Tests.*;-*TestsUtilities.*" \
             -verbosity:Info
         else
-          echo "No coverage files found, checking if tests ran at all..."
-          
-          # Look for any .xml files that might be coverage files
-          xml_files=$(find . -name "*.xml" -type f | grep -v "\.trx$" || true)
-          
-          if [ ! -z "$xml_files" ]; then
-            echo "Found XML files that might be coverage files:"
-            echo "$xml_files"
-            
-            # Try to generate report with all XML files
-            reportgenerator \
-              -reports:"$(echo $xml_files | tr ' \n' ';')" \
-              -targetdir:"./CoverageReports" \
-              -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines" \
-              -filefilters:"-**/tests/**;-**/FCG.UnitTests/**;-**/FCG.IntegratedTests/**;-**/FCG.FunctionalTests/**;-**/CommomTestsUtilities/**" \
-              -classfilters:"-FCG.UnitTests.*;-FCG.IntegratedTests.*;-FCG.FunctionalTests.*;-*.Tests.*;-*TestsUtilities.*" \
-              -verbosity:Info || echo "Failed to generate with XML files"
-          fi
-          
-          # Fallback: create empty report
+          echo "No coverage files found"
           mkdir -p ./CoverageReports
           echo '<?xml version="1.0" encoding="UTF-8"?><coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="0" branches-covered="0" branches-valid="0" complexity="0" version="1.0" timestamp="0"></coverage>' > ./CoverageReports/Cobertura.xml
         fi
@@ -245,23 +200,16 @@ jobs:
       id: coverage
       run: |
         if [ -f "./CoverageReports/Cobertura.xml" ]; then
-          echo "=== Cobertura XML Content ==="
-          cat ./CoverageReports/Cobertura.xml
-          
-          # Extract line coverage from Cobertura XML
           coverage=$(grep -o 'line-rate="[^"]*"' ./CoverageReports/Cobertura.xml | head -1 | cut -d'"' -f2 || echo "0")
-          
           if [ ! -z "$coverage" ] && [ "$coverage" != "0" ]; then
             coverage_percent=$(echo "$coverage * 100" | bc -l | printf "%.0f" $(cat))
             echo "coverage_percent=$coverage_percent" >> $GITHUB_OUTPUT
             echo "Coverage: $coverage_percent%"
           else
             echo "coverage_percent=0" >> $GITHUB_OUTPUT
-            echo "Coverage parsing resulted in 0% or failed"
           fi
         else
           echo "coverage_percent=0" >> $GITHUB_OUTPUT
-          echo "Cobertura.xml file not found"
         fi
     
     - name: Check coverage threshold and comment
@@ -322,7 +270,7 @@ jobs:
 
   sonar-analysis:
     runs-on: ubuntu-latest
-    needs: [build, unit-tests, integration-tests]
+    needs: [build]
     if: always() && needs.build.result == 'success'
     
     steps:
@@ -342,59 +290,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     
-    - name: Install SonarScanner and ReportGenerator
+    - name: Install tools
       run: |
         dotnet tool install --global dotnet-sonarscanner
         dotnet tool install --global dotnet-reportgenerator-globaltool
-    
-    - name: Download unit test results
-      uses: actions/download-artifact@v4
-      with:
-        name: unit-test-results
-        path: ./TestResults-Unit/
-      continue-on-error: true
-    
-    - name: Download integration test results
-      uses: actions/download-artifact@v4
-      with:
-        name: integration-test-results  
-        path: ./TestResults-Integration/
-      continue-on-error: true
-    
-    - name: Process coverage for SonarCloud
-      run: |
-        echo "=== Processing coverage files for SonarCloud ==="
-        
-        # Find all coverage files
-        coverage_files=""
-        for pattern in "coverage.cobertura.xml" "coverage.opencover.xml" "*.coverage.xml" "*coverage*.xml"; do
-          files=$(find . -name "$pattern" -type f 2>/dev/null || true)
-          if [ ! -z "$files" ]; then
-            echo "Found files with pattern $pattern:"
-            echo "$files"
-            coverage_files="$coverage_files $files"
-          fi
-        done
-        
-        if [ ! -z "$coverage_files" ]; then
-          # Generate OpenCover format for SonarCloud
-          reportgenerator \
-            -reports:"$(echo $coverage_files | tr ' ' ';')" \
-            -targetdir:"./SonarCoverage" \
-            -reporttypes:"OpenCover" \
-            -filefilters:"-**/tests/**;-**/FCG.UnitTests/**;-**/FCG.IntegratedTests/**;-**/FCG.FunctionalTests/**;-**/CommomTestsUtilities/**" \
-            -classfilters:"-FCG.UnitTests.*;-FCG.IntegratedTests.*;-FCG.FunctionalTests.*;-*.Tests.*;-*TestsUtilities.*" \
-            -verbosity:Info
-          
-          echo "OpenCover report generated for SonarCloud:"
-          ls -la ./SonarCoverage/
-          
-          # Set the coverage path for SonarCloud
-          echo "COVERAGE_REPORTS=./SonarCoverage/OpenCover.xml" >> $GITHUB_ENV
-        else
-          echo "No coverage files found - SonarCloud will report 0% coverage"
-          echo "COVERAGE_REPORTS=" >> $GITHUB_ENV
-        fi
     
     - name: Begin SonarCloud analysis
       env:
@@ -403,28 +302,30 @@ jobs:
         SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
         SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
       run: |
-        # Build the sonar parameters
-        sonar_params=(
-          /k:"$SONAR_PROJECT_KEY"
-          /o:"$SONAR_ORGANIZATION"
-          /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.token="$SONAR_TOKEN"
-          /d:sonar.coverage.exclusions="**/tests/**,**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/UnitTests/**,**/IntegratedTests/**,**/CommomTestsUtilities/**,**/*.Tests.*/**"
-        )
-        
-        if [ ! -z "$COVERAGE_REPORTS" ] && [ -f "$COVERAGE_REPORTS" ]; then
-          echo "Using coverage reports: $COVERAGE_REPORTS"
-          sonar_params+=(/d:sonar.cs.opencover.reportsPaths="$COVERAGE_REPORTS")
-        else
-          echo "No coverage reports found - proceeding without coverage data"
-        fi
-        
-        dotnet sonarscanner begin "${sonar_params[@]}"
+        dotnet sonarscanner begin \
+          /k:"$SONAR_PROJECT_KEY" \
+          /o:"$SONAR_ORGANIZATION" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.token="$SONAR_TOKEN" \
+          /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/Startup.cs"
     
-    - name: Build for SonarCloud
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Run tests with coverage for SonarCloud
       run: |
-        dotnet restore
-        dotnet build --configuration Release
+        dotnet test tests/FCG.UnitTests tests/FCG.IntegratedTests \
+          --no-build \
+          --configuration Release \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults \
+          --logger trx \
+          --verbosity normal \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
     
     - name: End SonarCloud analysis
       env:
