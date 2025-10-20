@@ -54,6 +54,9 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
 
             // Assert
             result.Wallet.Should().BeNull();
+            result.Name.Should().Be("Test User");
+            result.Email.Should().Be("test@example.com");
+            result.Role.Should().Be(Role.User.ToString());
             result.Library.Should().BeNull();
         }
     }
