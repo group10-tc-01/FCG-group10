@@ -1,4 +1,5 @@
-﻿using FCG.Domain.Entities;
+﻿using FCG.CommomTestsUtilities.Builders.Services;
+using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Infrastructure.Persistance;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using FCG.FunctionalTests.Helpers;
 
 namespace FCG.IntegratedTests.Configurations
 {
@@ -73,10 +73,12 @@ namespace FCG.IntegratedTests.Configurations
 
             return await _httpClient.GetAsync(url);
         }
+
         protected string GenerateToken(Guid userId, string role)
         {
-            return TestTokenGenerator.GenerateToken(_configuration, userId, role);
+            return TokenServiceBuilder.GenerateToken(_configuration, userId, role);
         }
+
         private void SetAuthenticationHeader(string jwtToken)
         {
             if (!string.IsNullOrEmpty(jwtToken))

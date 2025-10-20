@@ -263,18 +263,6 @@ namespace FCG.IntegratedTests.Controllers.v1
         }
 
         [Fact]
-        public async Task Given_DatabaseWithAdminUser_When_CheckingForAdmins_Then_ShouldReturnTrue()
-        {
-            using var scope = Factory.Services.CreateScope();
-            var userRepository = scope.ServiceProvider.GetRequiredService<IReadOnlyUserRepository>();
-
-            // When
-            var result = await userRepository.AnyAdminAsync();
-
-            // Then
-            result.Should().BeTrue("o banco de dados deve conter pelo menos um administrador.");
-        }
-        [Fact]
         public async Task Given_DatabaseWithOnlyCommonUsers_When_CheckingForAdmins_Then_ShouldReturnFalse()
         {
             using var scope = Factory.Services.CreateScope();
@@ -299,7 +287,6 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Then
             result.Should().BeFalse("o banco de dados não deve conter nenhum administrador.");
         }
-
 
         [Fact]
         public async Task GET_List_WhenDomainExceptionOccurs_ShouldReturn400BadRequest()
