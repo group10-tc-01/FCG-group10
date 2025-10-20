@@ -211,7 +211,8 @@ jobs:
             -reports:"$(echo $coverage_files | tr ' ' ';')" \
             -targetdir:"./CoverageReports" \
             -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines" \
-            -filefilters:"-**/CommomTestsUtilities/**" \
+            -filefilters:"-**/tests/**;-**/FCG.UnitTests/**;-**/FCG.IntegratedTests/**;-**/FCG.FunctionalTests/**;-**/CommomTestsUtilities/**" \
+            -classfilters:"-FCG.UnitTests.*;-FCG.IntegratedTests.*;-FCG.FunctionalTests.*;-*.Tests.*;-*TestsUtilities.*" \
             -verbosity:Info
         else
           echo "No coverage files found, checking if tests ran at all..."
@@ -228,7 +229,8 @@ jobs:
               -reports:"$(echo $xml_files | tr ' \n' ';')" \
               -targetdir:"./CoverageReports" \
               -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines" \
-              -filefilters:"-**/CommomTestsUtilities/**" \
+              -filefilters:"-**/tests/**;-**/FCG.UnitTests/**;-**/FCG.IntegratedTests/**;-**/FCG.FunctionalTests/**;-**/CommomTestsUtilities/**" \
+              -classfilters:"-FCG.UnitTests.*;-FCG.IntegratedTests.*;-FCG.FunctionalTests.*;-*.Tests.*;-*TestsUtilities.*" \
               -verbosity:Info || echo "Failed to generate with XML files"
           fi
           
@@ -366,7 +368,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.token="$SONAR_TOKEN" \
           /d:sonar.cs.opencover.reportsPaths="./CoverageReports/OpenCover.xml" \
-          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/CommomTestsUtilities/**"
+          /d:sonar.coverage.exclusions="**/tests/**,**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/UnitTests/**,**/IntegratedTests/**,**/CommomTestsUtilities/**,**/*.Tests.*/**"
     
     - name: Build for SonarCloud
       run: dotnet build --configuration Release
