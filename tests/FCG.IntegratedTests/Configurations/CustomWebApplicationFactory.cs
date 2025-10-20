@@ -20,6 +20,7 @@ namespace FCG.IntegratedTests.Configurations
     {
         private DbConnection? _connection;
         public List<User> CreatedUsers { get; private set; } = [];
+        public List<User> CreatedAdminUsers { get; private set; } = [];
         public List<RefreshToken> CreatedRefreshTokens { get; private set; } = [];
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -91,7 +92,8 @@ namespace FCG.IntegratedTests.Configurations
             Log.Information($"Creating {itemsQuantity} items for integrated test");
 
             CreatedUsers = CreateUser(context, itemsQuantity);
-            CreatedRefreshTokens = CreateRefreshTokens(context, CreatedUsers);
+            CreatedAdminUsers = CreateAdminUsers(context, itemsQuantity);
+            CreatedRefreshTokens = CreateRefreshTokens(context, CreatedUsers.Concat(CreatedAdminUsers).ToList());
         }
 
         private List<User> CreateUser(FcgDbContext context, int itemsQuantity)
@@ -100,15 +102,32 @@ namespace FCG.IntegratedTests.Configurations
 
             for (int i = 1; i <= itemsQuantity; i++)
             {
-                var user = UserBuilder.Build();
+                var user = UserBuilder.BuildRegularUser();
                 users.Add(user);
             }
 
             context.Users.AddRange(users);
             context.SaveChanges();
-            Log.Information("Created {Count} users", users.Count);
+            Log.Information("Created {Count} regular users", users.Count);
 
             return users;
+        }
+
+        private List<User> CreateAdminUsers(FcgDbContext context, int itemsQuantity)
+        {
+            var adminUsers = new List<User>();
+
+            for (int i = 1; i <= itemsQuantity; i++)
+            {
+                var adminUser = UserBuilder.BuildAdmin();
+                adminUsers.Add(adminUser);
+            }
+
+            context.Users.AddRange(adminUsers);
+            context.SaveChanges();
+            Log.Information("Created {Count} admin users", adminUsers.Count);
+
+            return adminUsers;
         }
 
         public List<RefreshToken> CreateRefreshTokens(FcgDbContext context, List<User> users)

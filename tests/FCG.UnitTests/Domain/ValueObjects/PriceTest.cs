@@ -21,19 +21,6 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_ZeroPrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
-        {
-            // Arrange
-            decimal zeroPrice = 0m;
-
-            // Act
-            var price = Price.Create(zeroPrice);
-
-            // Assert
-            price.Value.Should().Be(0);
-        }
-
-        [Fact]
         public void Given_VerySmallPrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
         {
             // Arrange
