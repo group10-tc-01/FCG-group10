@@ -50,7 +50,6 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Data.Id.Should().NotBeEmpty();
             apiResponse.Data.Name.Should().Be(registerGameInput.Name);
 
-            // Verify game was saved in database
             await VerifyGameExistsInDatabase(registerGameInput.Name);
         }
 
