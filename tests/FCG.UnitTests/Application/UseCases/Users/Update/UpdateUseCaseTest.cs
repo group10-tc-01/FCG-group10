@@ -229,7 +229,7 @@ using FCG.Domain.ValueObjects;
 using FluentAssertions;
 using Moq;
 
-namespace FCG.Tests.Application.UseCases.Users
+namespace FCG.UnitTests.Application.UseCases.Users.Update
 {
     public class UpdateUserUseCaseTests
     {

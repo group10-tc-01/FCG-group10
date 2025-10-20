@@ -5,7 +5,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FluentAssertions;
 using Moq;
 
-namespace FCG.Tests.Application.UseCases.Users
+namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
 {
     public class GetAllUsersUseCaseTests
     {
