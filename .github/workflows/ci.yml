@@ -37,14 +37,6 @@ jobs:
     
     - name: Build solution
       run: dotnet build --no-restore --configuration Release
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: |
-          **/bin/Release/**
-          **/obj/**
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -59,27 +51,32 @@ jobs:
       with:
         dotnet-version: 8.0.x
     
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
+    - name: Restore and build (for tests)
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
     
     - name: Run unit tests with coverage
       run: |
         dotnet test tests/FCG.UnitTests \
-          --no-build \
           --configuration Release \
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults/UnitTests \
           --logger trx \
-          --verbosity normal \
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          --verbosity normal
+    
+    - name: Debug unit test artifacts
+      run: |
+        echo "=== Unit Test Results Structure ==="
+        ls -la ./TestResults/UnitTests/ || echo "No UnitTests directory"
+        find ./TestResults -name "*.xml" -type f -exec ls -la {} \; || echo "No XML files found"
+        find ./TestResults -name "*coverage*" -type f -exec ls -la {} \; || echo "No coverage files found"
     
     - name: Upload unit test results
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
-        path: ./TestResults/UnitTests/
+        path: ./TestResults/
 
   integration-tests:
     runs-on: ubuntu-latest
@@ -94,27 +91,32 @@ jobs:
       with:
         dotnet-version: 8.0.x
     
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
+    - name: Restore and build (for tests)
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
     
     - name: Run integration tests with coverage
       run: |
         dotnet test tests/FCG.IntegratedTests \
-          --no-build \
           --configuration Release \
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults/IntegrationTests \
           --logger trx \
-          --verbosity normal \
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          --verbosity normal
+    
+    - name: Debug integration test artifacts
+      run: |
+        echo "=== Integration Test Results Structure ==="
+        ls -la ./TestResults/IntegrationTests/ || echo "No IntegrationTests directory"
+        find ./TestResults -name "*.xml" -type f -exec ls -la {} \; || echo "No XML files found"
+        find ./TestResults -name "*coverage*" -type f -exec ls -la {} \; || echo "No coverage files found"
     
     - name: Upload integration test results
       uses: actions/upload-artifact@v4
       with:
         name: integration-test-results
-        path: ./TestResults/IntegrationTests/
+        path: ./TestResults/
 
   functional-tests:
     runs-on: ubuntu-latest
@@ -129,15 +131,14 @@ jobs:
       with:
         dotnet-version: 8.0.x
     
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
+    - name: Restore and build (for tests)
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
     
     - name: Run functional tests
       run: |
         dotnet test tests/FCG.FunctionalTests \
-          --no-build \
           --configuration Release \
           --logger trx \
           --verbosity normal
@@ -169,61 +170,94 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: unit-test-results
-        path: ./TestResults/UnitTests/
+        path: ./TestResults-Unit/
       continue-on-error: true
     
     - name: Download integration test results
       uses: actions/download-artifact@v4
       with:
-        name: integration-test-results
-        path: ./TestResults/IntegrationTests/
+        name: integration-test-results  
+        path: ./TestResults-Integration/
       continue-on-error: true
     
-    - name: List generated coverage files
+    - name: Debug downloaded artifacts
       run: |
-        echo "=== Listing all coverage files ==="
-        find ./TestResults -name "*.xml" -type f | head -20
-        echo "=== Detailed coverage files ==="
-        find . -name "*coverage*" -type f | head -20
+        echo "=== All Downloaded Files ==="
+        find . -name "*.xml" -type f -exec ls -la {} \; || echo "No XML files found"
+        echo "=== Coverage Files Specifically ==="
+        find . -name "*coverage*" -type f -exec ls -la {} \; || echo "No coverage files found"
+        echo "=== Directory Structure ==="
+        ls -laR ./TestResults-Unit/ || echo "No unit test results"
+        ls -laR ./TestResults-Integration/ || echo "No integration test results"
     
     - name: Generate coverage reports
       run: |
-        if [ -n "$(find ./TestResults -name "coverage.cobertura.xml" -type f)" ]; then
-          echo "Found Cobertura XML files"
+        # Find all coverage files with multiple patterns
+        coverage_files=""
+        
+        # Look for common coverage file patterns
+        for pattern in "coverage.cobertura.xml" "coverage.opencover.xml" "*.coverage.xml" "*coverage*.xml"; do
+          files=$(find . -name "$pattern" -type f 2>/dev/null || true)
+          if [ ! -z "$files" ]; then
+            echo "Found files with pattern $pattern:"
+            echo "$files"
+            coverage_files="$coverage_files $files"
+          fi
+        done
+        
+        if [ ! -z "$coverage_files" ]; then
+          echo "Using coverage files: $coverage_files"
           reportgenerator \
-            -reports:"./TestResults/**/coverage.cobertura.xml" \
+            -reports:"$(echo $coverage_files | tr ' ' ';')" \
             -targetdir:"./CoverageReports" \
             -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines" \
-            -filefilters:"-**/CommomTestsUtilities/**"
-        elif [ -n "$(find ./TestResults -name "*.xml" -type f)" ]; then
-          echo "Found XML coverage files"
-          reportgenerator \
-            -reports:"./TestResults/**/*.xml" \
-            -targetdir:"./CoverageReports" \
-            -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines" \
-            -filefilters:"-**/CommomTestsUtilities/**"
+            -filefilters:"-**/CommomTestsUtilities/**" \
+            -verbosity:Info
         else
-          echo "No coverage files found, generating empty report"
+          echo "No coverage files found, checking if tests ran at all..."
+          
+          # Look for any .xml files that might be coverage files
+          xml_files=$(find . -name "*.xml" -type f | grep -v "\.trx$" || true)
+          
+          if [ ! -z "$xml_files" ]; then
+            echo "Found XML files that might be coverage files:"
+            echo "$xml_files"
+            
+            # Try to generate report with all XML files
+            reportgenerator \
+              -reports:"$(echo $xml_files | tr ' \n' ';')" \
+              -targetdir:"./CoverageReports" \
+              -reporttypes:"Cobertura;OpenCover;HtmlInline_AzurePipelines" \
+              -filefilters:"-**/CommomTestsUtilities/**" \
+              -verbosity:Info || echo "Failed to generate with XML files"
+          fi
+          
+          # Fallback: create empty report
           mkdir -p ./CoverageReports
-          echo '<?xml version="1.0" encoding="UTF-8"?><coverage line-rate="0" branch-rate="0"></coverage>' > ./CoverageReports/Cobertura.xml
+          echo '<?xml version="1.0" encoding="UTF-8"?><coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="0" branches-covered="0" branches-valid="0" complexity="0" version="1.0" timestamp="0"></coverage>' > ./CoverageReports/Cobertura.xml
         fi
     
     - name: Parse coverage results
       id: coverage
       run: |
         if [ -f "./CoverageReports/Cobertura.xml" ]; then
-          coverage=$(grep -o 'line-rate="[^"]*"' ./CoverageReports/Cobertura.xml | head -1 | cut -d'"' -f2)
-          if [ ! -z "$coverage" ]; then
+          echo "=== Cobertura XML Content ==="
+          cat ./CoverageReports/Cobertura.xml
+          
+          # Extract line coverage from Cobertura XML
+          coverage=$(grep -o 'line-rate="[^"]*"' ./CoverageReports/Cobertura.xml | head -1 | cut -d'"' -f2 || echo "0")
+          
+          if [ ! -z "$coverage" ] && [ "$coverage" != "0" ]; then
             coverage_percent=$(echo "$coverage * 100" | bc -l | printf "%.0f" $(cat))
             echo "coverage_percent=$coverage_percent" >> $GITHUB_OUTPUT
             echo "Coverage: $coverage_percent%"
           else
             echo "coverage_percent=0" >> $GITHUB_OUTPUT
-            echo "Could not parse coverage from XML"
+            echo "Coverage parsing resulted in 0% or failed"
           fi
         else
           echo "coverage_percent=0" >> $GITHUB_OUTPUT
-          echo "Coverage file not found"
+          echo "Cobertura.xml file not found"
         fi
     
     - name: Check coverage threshold and comment
@@ -304,10 +338,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
+    - name: Restore and build for sonar
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
     
     - name: Download coverage reports
       uses: actions/download-artifact@v4
@@ -331,7 +365,7 @@ jobs:
           /o:"$SONAR_ORGANIZATION" \
           /d:sonar.host.url="https://sonarcloud.io" \
           /d:sonar.token="$SONAR_TOKEN" \
-          /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml,./CoverageReports/OpenCover.xml" \
+          /d:sonar.cs.opencover.reportsPaths="./CoverageReports/OpenCover.xml" \
           /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/CommomTestsUtilities/**"
     
     - name: Build for SonarCloud
