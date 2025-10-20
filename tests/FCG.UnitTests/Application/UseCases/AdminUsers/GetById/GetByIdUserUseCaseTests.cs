@@ -35,7 +35,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>()
-                .WithMessage($"Usuario com Id: {userId} nao encontrado.");
+                .WithMessage($"User with Id: {userId} was not found.");
         }
 
         [Fact]

@@ -20,7 +20,7 @@ namespace FCG.Application.UseCases.AdminUsers.GetById
 
             if (user == null)
             {
-                throw new NotFoundException($"Usuário com Id: {request.Id} não encontrado.");
+                throw new NotFoundException($"User with Id: {request.Id} was not found.");
             }
 
             var walletDto = user.Wallet == null ? null : new WalletDto
