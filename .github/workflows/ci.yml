@@ -63,7 +63,8 @@ jobs:
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults/UnitTests \
           --logger trx \
-          --verbosity normal
+          --verbosity normal \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
     
     - name: Debug unit test artifacts
       run: |
@@ -103,7 +104,8 @@ jobs:
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults/IntegrationTests \
           --logger trx \
-          --verbosity normal
+          --verbosity normal \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
     
     - name: Debug integration test artifacts
       run: |
@@ -320,7 +322,7 @@ jobs:
 
   sonar-analysis:
     runs-on: ubuntu-latest
-    needs: [build, coverage-analysis]
+    needs: [build, unit-tests, integration-tests]
     if: always() && needs.build.result == 'success'
     
     steps:
@@ -340,20 +342,59 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     
-    - name: Restore and build for sonar
+    - name: Install SonarScanner and ReportGenerator
       run: |
-        dotnet restore
-        dotnet build --configuration Release
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-reportgenerator-globaltool
     
-    - name: Download coverage reports
+    - name: Download unit test results
       uses: actions/download-artifact@v4
       with:
-        name: coverage-reports
-        path: ./CoverageReports/
+        name: unit-test-results
+        path: ./TestResults-Unit/
       continue-on-error: true
     
-    - name: Install SonarScanner
-      run: dotnet tool install --global dotnet-sonarscanner
+    - name: Download integration test results
+      uses: actions/download-artifact@v4
+      with:
+        name: integration-test-results  
+        path: ./TestResults-Integration/
+      continue-on-error: true
+    
+    - name: Process coverage for SonarCloud
+      run: |
+        echo "=== Processing coverage files for SonarCloud ==="
+        
+        # Find all coverage files
+        coverage_files=""
+        for pattern in "coverage.cobertura.xml" "coverage.opencover.xml" "*.coverage.xml" "*coverage*.xml"; do
+          files=$(find . -name "$pattern" -type f 2>/dev/null || true)
+          if [ ! -z "$files" ]; then
+            echo "Found files with pattern $pattern:"
+            echo "$files"
+            coverage_files="$coverage_files $files"
+          fi
+        done
+        
+        if [ ! -z "$coverage_files" ]; then
+          # Generate OpenCover format for SonarCloud
+          reportgenerator \
+            -reports:"$(echo $coverage_files | tr ' ' ';')" \
+            -targetdir:"./SonarCoverage" \
+            -reporttypes:"OpenCover" \
+            -filefilters:"-**/tests/**;-**/FCG.UnitTests/**;-**/FCG.IntegratedTests/**;-**/FCG.FunctionalTests/**;-**/CommomTestsUtilities/**" \
+            -classfilters:"-FCG.UnitTests.*;-FCG.IntegratedTests.*;-FCG.FunctionalTests.*;-*.Tests.*;-*TestsUtilities.*" \
+            -verbosity:Info
+          
+          echo "OpenCover report generated for SonarCloud:"
+          ls -la ./SonarCoverage/
+          
+          # Set the coverage path for SonarCloud
+          echo "COVERAGE_REPORTS=./SonarCoverage/OpenCover.xml" >> $GITHUB_ENV
+        else
+          echo "No coverage files found - SonarCloud will report 0% coverage"
+          echo "COVERAGE_REPORTS=" >> $GITHUB_ENV
+        fi
     
     - name: Begin SonarCloud analysis
       env:
@@ -362,16 +403,28 @@ jobs:
         SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
         SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
       run: |
-        dotnet sonarscanner begin \
-          /k:"$SONAR_PROJECT_KEY" \
-          /o:"$SONAR_ORGANIZATION" \
-          /d:sonar.host.url="https://sonarcloud.io" \
-          /d:sonar.token="$SONAR_TOKEN" \
-          /d:sonar.cs.opencover.reportsPaths="./CoverageReports/OpenCover.xml" \
+        # Build the sonar parameters
+        sonar_params=(
+          /k:"$SONAR_PROJECT_KEY"
+          /o:"$SONAR_ORGANIZATION"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.token="$SONAR_TOKEN"
           /d:sonar.coverage.exclusions="**/tests/**,**/Migrations/**,**/Program.cs,**/Startup.cs,**/FunctionalTests/**,**/UnitTests/**,**/IntegratedTests/**,**/CommomTestsUtilities/**,**/*.Tests.*/**"
+        )
+        
+        if [ ! -z "$COVERAGE_REPORTS" ] && [ -f "$COVERAGE_REPORTS" ]; then
+          echo "Using coverage reports: $COVERAGE_REPORTS"
+          sonar_params+=(/d:sonar.cs.opencover.reportsPaths="$COVERAGE_REPORTS")
+        else
+          echo "No coverage reports found - proceeding without coverage data"
+        fi
+        
+        dotnet sonarscanner begin "${sonar_params[@]}"
     
     - name: Build for SonarCloud
-      run: dotnet build --configuration Release
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
     
     - name: End SonarCloud analysis
       env:
