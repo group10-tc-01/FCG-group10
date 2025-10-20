@@ -25,7 +25,7 @@ namespace FCG.UnitTests.Application.Shared.Models
             pagedList.Items.Should().BeEquivalentTo(items);
         }
 
-        [Fact(DisplayName = "HasPrevious deve ser false quando página atual é a primeira")]
+        [Fact(DisplayName = "HasPrevious deve ser false quando pagina atual for a primeira")]
         public void HasPrevious_GivenFirstPage_ShouldBeFalse()
         {
             // Arrange & Act
@@ -35,7 +35,7 @@ namespace FCG.UnitTests.Application.Shared.Models
             pagedList.HasPrevious.Should().BeFalse();
         }
 
-        [Fact(DisplayName = "HasPrevious deve ser true quando página atual é maior que um")]
+        [Fact(DisplayName = "HasPrevious deve ser true quando pagina atual for maior que um")]
         public void HasPrevious_GivenPageGreaterThanOne_ShouldBeTrue()
         {
             // Arrange & Act
@@ -45,7 +45,7 @@ namespace FCG.UnitTests.Application.Shared.Models
             pagedList.HasPrevious.Should().BeTrue();
         }
 
-        [Fact(DisplayName = "HasNext deve ser false quando página atual é a última")]
+        [Fact(DisplayName = "HasNext deve ser false quando pagina atual for a ultima")]
         public void HasNext_GivenLastPage_ShouldBeFalse()
         {
             // Arrange & Act
@@ -55,7 +55,7 @@ namespace FCG.UnitTests.Application.Shared.Models
             pagedList.HasNext.Should().BeFalse();
         }
 
-        [Fact(DisplayName = "HasNext deve ser true quando página atual não é a última")]
+        [Fact(DisplayName = "HasNext deve ser true quando pagina atual nao for a ultima")]
         public void HasNext_GivenNotLastPage_ShouldBeTrue()
         {
             // Arrange & Act
@@ -65,7 +65,7 @@ namespace FCG.UnitTests.Application.Shared.Models
             pagedList.HasNext.Should().BeTrue();
         }
 
-        [Fact(DisplayName = "Deve calcular TotalPages corretamente para casos de divisão exata")]
+        [Fact(DisplayName = "Deve calcular TotalPages corretamente para casos de divsao exata")]
         public void Constructor_GivenExactDivision_ShouldCalculateTotalPagesCorrectly()
         {
             // Arrange & Act

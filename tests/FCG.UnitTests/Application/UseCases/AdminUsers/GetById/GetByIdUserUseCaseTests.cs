@@ -20,7 +20,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
             _useCase = new GetByIdUserUseCase(_userRepositoryMock.Object);
         }
 
-        [Fact(DisplayName = "Handle deve lançar NotFoundException quando usuário não existe")]
+        [Fact]
         public async Task Handle_GivenNonExistentUser_ShouldThrowNotFoundException()
         {
             // Arrange
@@ -35,10 +35,10 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
 
             // Assert
             await act.Should().ThrowAsync<NotFoundException>()
-                .WithMessage($"Usuário com Id: {userId} não encontrado.");
+                .WithMessage($"Usuario com Id: {userId} nao encontrado.");
         }
 
-        [Fact(DisplayName = "Handle deve retornar resposta com Wallet nulo quando usuário não possui wallet")]
+        [Fact]
         public async Task Handle_GivenUserWithoutWallet_ShouldReturnResponseWithNullWallet()
         {
             // Arrange
