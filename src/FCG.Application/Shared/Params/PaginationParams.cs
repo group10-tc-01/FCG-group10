@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Application.Shared.Params
 {
+    [ExcludeFromCodeCoverage]
     public class PaginationParams
     {
         [Range(1, int.MaxValue, ErrorMessage = "PageNumber deve ser maior que 0")]
