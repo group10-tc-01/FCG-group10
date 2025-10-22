@@ -8,7 +8,6 @@ using FCG.Application.UseCases.Users.Update.UsersDTO;
 
 namespace FCG.Application.UseCases.Users
 {
-
     public interface IUserManagementUseCase
     {
         Task<PagedListResponse<UserListResponse>> GetUserAsync(GetAllUserCaseQuery query);

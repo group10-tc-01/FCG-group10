@@ -1,6 +1,7 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update.UsersDTO;
+using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,6 @@ namespace FCG.WebApi.Controllers.v1
         }
 
         [HttpPut]
-        [Authorize]
         [ProducesResponseType(typeof(ApiResponse<RegisterUserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)

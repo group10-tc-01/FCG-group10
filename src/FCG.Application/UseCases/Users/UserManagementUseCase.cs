@@ -18,8 +18,6 @@ namespace FCG.Application.UseCases.Users
         private readonly GetByIdUserUseCase _getByIdUserHandler;
         private readonly RegisterUserUseCase _registerUserHandler;
         private readonly UpdateUserUseCase _updateUserHandler;
-
-
         public UserManagementUseCase(
                 GetAllUsersUseCase getAllUsersHandler,
                 GetByIdUserUseCase getByIdUserHandler,
@@ -36,17 +34,14 @@ namespace FCG.Application.UseCases.Users
         {
             return _getAllUsersHandler.Handle(query, CancellationToken.None);
         }
-
         public Task<UserDetailResponse> GetUserByIdAsync(GetByIdUserQuery request)
         {
             return _getByIdUserHandler.Handle(request, CancellationToken.None);
         }
-
         public Task<RegisterUserResponse> RegisterUserAsync(RegisterUserRequest request)
         {
             return _registerUserHandler.Handle(request, CancellationToken.None);
         }
-
         public Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest request)
         {
             return _updateUserHandler.Handle(request, CancellationToken.None);
