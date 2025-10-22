@@ -1,4 +1,5 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Infrastructure.Persistance;
@@ -21,7 +22,6 @@ namespace FCG.IntegratedTests.Controllers.v1
         public AdminControllerIntegrationTests(CustomWebApplicationFactory factory)
              : base(factory)
         {
-
         }
 
         [Fact]
@@ -160,8 +160,6 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Then
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
-
-
 
         [Fact]
         public async Task Given_NoToken_When_GettingUserDetails_Then_ShouldReturn401Unauthorized()
