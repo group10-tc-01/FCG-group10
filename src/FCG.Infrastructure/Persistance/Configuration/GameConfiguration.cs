@@ -12,7 +12,7 @@ namespace FCG.Infrastructure.Persistance.Configuration
         {
             base.Configure(builder);
 
-            builder.ToTable("Games");
+            builder.ToTable("Games", t => t.HasCheckConstraint("CK_Games_Price_GreaterThanZero", "Price > 0"));
 
             builder.OwnsOne(g => g.Name, nameBuilder =>
             {
@@ -20,6 +20,10 @@ namespace FCG.Infrastructure.Persistance.Configuration
                     .HasColumnName("Name")
                     .HasMaxLength(255)
                     .IsRequired();
+
+                nameBuilder.HasIndex(n => n.Value)
+                    .IsUnique()
+                    .HasDatabaseName("IX_Games_Name_Unique");
             });
 
             builder.Property(g => g.Description)

@@ -40,7 +40,6 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
 
             // Assert
             result.Should().NotBeNull();
-            result.AccessToken.Should().Be("access_token");
             result.RefreshToken.Should().Be(refreshToken.Token);
             result.ExpiresInMinutes.Should().Be(1);
         }

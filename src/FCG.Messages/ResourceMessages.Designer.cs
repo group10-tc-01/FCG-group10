@@ -61,6 +61,78 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The game category is required..
+        /// </summary>
+        public static string GameCategoryIsRequired {
+            get {
+                return ResourceManager.GetString("GameCategoryIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game category must be less than 100 characters..
+        /// </summary>
+        public static string GameCategoryMaxLength {
+            get {
+                return ResourceManager.GetString("GameCategoryMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game description is required..
+        /// </summary>
+        public static string GameDescriptionIsRequired {
+            get {
+                return ResourceManager.GetString("GameDescriptionIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game description must be less than 500 characters..
+        /// </summary>
+        public static string GameDescriptionMaxLength {
+            get {
+                return ResourceManager.GetString("GameDescriptionMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game with name {0} already exists..
+        /// </summary>
+        public static string GameNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("GameNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game name is required..
+        /// </summary>
+        public static string GameNameIsRequired {
+            get {
+                return ResourceManager.GetString("GameNameIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game name must be less than 255 characters..
+        /// </summary>
+        public static string GameNameMaxLength {
+            get {
+                return ResourceManager.GetString("GameNameMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game price must be greater than zero..
+        /// </summary>
+        public static string GamePriceMustBeGreaterThanZero {
+            get {
+                return ResourceManager.GetString("GamePriceMustBeGreaterThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid access level..
         /// </summary>
         public static string InvalidAccessLevel {
