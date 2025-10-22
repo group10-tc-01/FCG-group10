@@ -47,21 +47,6 @@ namespace FCG.UnitTests.Domain.Entities
         }
 
         [Fact]
-        public void Given_ZeroPrice_When_CreateLibraryGame_Then_ShouldCreateWithZeroPrice()
-        {
-            // Arrange
-            var libraryId = Guid.NewGuid();
-            var gameId = Guid.NewGuid();
-            var zeroPrice = 0m;
-
-            // Act
-            var libraryGame = LibraryGame.Create(libraryId, gameId, zeroPrice);
-
-            // Assert
-            libraryGame.PurchasePrice.Value.Should().Be(0m);
-        }
-
-        [Fact]
         public void Given_NegativePrice_When_CreateLibraryGame_Then_ShouldThrowDomainException()
         {
             // Arrange

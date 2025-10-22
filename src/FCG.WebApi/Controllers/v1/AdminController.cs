@@ -3,6 +3,7 @@ using FCG.Application.UseCases.AdminUsers.GetAllUsers;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
 using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

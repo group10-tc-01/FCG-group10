@@ -24,6 +24,8 @@ namespace FCG.IntegratedTests.Configurations
 
         }
 
+        #region POST Helpers
+
         protected async Task<HttpResponseMessage> DoPost<T>(string url, T content)
         {
             var json = JsonSerializer.Serialize(content);
@@ -51,7 +53,6 @@ namespace FCG.IntegratedTests.Configurations
             SetAuthenticationHeader(jwtToken);
             return await _httpClient.PostAsync(url, null);
         }
-
         protected async Task<User> AddUserToDatabaseAsync(string email, string password = "OriginalPass!1")
         {
             using var scope = Factory.Services.CreateScope();
@@ -79,6 +80,41 @@ namespace FCG.IntegratedTests.Configurations
             return TokenServiceBuilder.GenerateToken(_configuration, userId, role);
         }
 
+        #endregion
+
+        #region PATCH Helpers
+
+        protected async Task<HttpResponseMessage> DoPatch<T>(string url, T content)
+        {
+            var json = JsonSerializer.Serialize(content);
+            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"), url)
+            {
+                Content = stringContent
+            };
+            return await _httpClient.SendAsync(request);
+        }
+
+        protected async Task<HttpResponseMessage> DoAuthenticatedPatch<T>(string url, T content, string jwtToken)
+        {
+            SetAuthenticationHeader(jwtToken);
+            var json = JsonSerializer.Serialize(content);
+            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"), url)
+            {
+                Content = stringContent
+            };
+            return await _httpClient.SendAsync(request);
+        }
+
+        protected async Task<HttpResponseMessage> DoAuthenticatedPatchWithoutContent(string url, string jwtToken)
+        {
+            SetAuthenticationHeader(jwtToken);
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"), url);
+            return await _httpClient.SendAsync(request);
+        }
+
+        #endregion
         private void SetAuthenticationHeader(string jwtToken)
         {
             if (!string.IsNullOrEmpty(jwtToken))

@@ -117,6 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="GameCategoryIsRequired" xml:space="preserve">
+    <value>The game category is required.</value>
+  </data>
+  <data name="GameCategoryMaxLength" xml:space="preserve">
+    <value>The game category must be less than 100 characters.</value>
+  </data>
+  <data name="GameDescriptionIsRequired" xml:space="preserve">
+    <value>The game description is required.</value>
+  </data>
+  <data name="GameDescriptionMaxLength" xml:space="preserve">
+    <value>The game description must be less than 500 characters.</value>
+  </data>
+  <data name="GameNameAlreadyExists" xml:space="preserve">
+    <value>The game with name {0} already exists.</value>
+  </data>
+  <data name="GameNameIsRequired" xml:space="preserve">
+    <value>The game name is required.</value>
+  </data>
+  <data name="GameNameMaxLength" xml:space="preserve">
+    <value>The game name must be less than 255 characters.</value>
+  </data>
+  <data name="GamePriceMustBeGreaterThanZero" xml:space="preserve">
+    <value>The game price must be greater than zero.</value>
+  </data>
   <data name="InvalidAccessLevel" xml:space="preserve">
     <value>Invalid access level.</value>
   </data>
@@ -155,5 +179,11 @@
   </data>
   <data name="RefreshTokenDefaultReason" xml:space="preserve">
     <value>New refresh token generated.</value>
+  </data>
+  <data name="UserIdRequired" xml:space="preserve">
+    <value>User Id cannot be null or empty.</value>
+  </data>
+  <data name="InvalidUserRole" xml:space="preserve">
+    <value>The user's role is invalid.</value>
   </data>
 </root>

@@ -20,8 +20,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             _fcgDbContext.Wallets.Add(wallet);
             return Task.CompletedTask;
         }
-
-        public Task UpdateAsync(User user)
+        public Task UpdateAsync(User user, CancellationToken cancellationToken = default)
         {
             _fcgDbContext.Users.Update(user);
             return Task.CompletedTask;

@@ -397,7 +397,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
             var callOrder = new List<string>();
 
             _writeOnlyUserRepositoryMock
-                .Setup(x => x.UpdateAsync(It.IsAny<User>()))
+                .Setup(x => x.UpdateAsync(It.IsAny<User>(), CancellationToken.None))
                 .Callback(() => callOrder.Add("UpdateAsync"))
                 .Returns(Task.CompletedTask);
 

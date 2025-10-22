@@ -13,6 +13,11 @@ namespace FCG.Domain.ValueObjects
                 throw new DomainException("The price cannot be a negative value.");
             }
 
+            if (value == 0)
+            {
+                throw new DomainException("The price must be greaten than zero.");
+            }
+
             Value = value;
         }
 
