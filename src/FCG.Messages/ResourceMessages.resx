@@ -168,4 +168,10 @@
   <data name="RefreshTokenDefaultReason" xml:space="preserve">
     <value>New refresh token generated.</value>
   </data>
+  <data name="UserIdRequired" xml:space="preserve">
+    <value>User Id cannot be null or empty.</value>
+  </data>
+  <data name="InvalidUserRole" xml:space="preserve">
+    <value>The user's role is invalid.</value>
+  </data>
 </root>
