@@ -40,10 +40,8 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IWriteOnlyUserRepository, UserRepository>();
-
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
             services.AddScoped<IWriteOnlyGameRepository, GameRepository>();
             services.AddScoped<IReadOnlyGameRepository, GameRepository>();
         }
@@ -52,6 +50,9 @@ namespace FCG.Infrastructure.DependencyInjection
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
+
+
+
         }
     }
 }

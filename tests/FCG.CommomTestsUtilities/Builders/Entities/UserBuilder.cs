@@ -8,17 +8,23 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
     {
         public static User Build()
         {
-            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.ToString()!, f.Internet.Email(), GenerateValidPassword(f), f.PickRandom<Role>())).Generate();
+            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.FullName(), f.Internet.Email(), GenerateValidPassword(f), f.PickRandom<Role>())).Generate();
         }
 
         public static User BuildAdmin()
         {
-            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.ToString()!, f.Internet.Email(), GenerateValidPassword(f), Role.Admin)).Generate();
+            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.FullName(), f.Internet.Email(), GenerateValidPassword(f), Role.Admin)).Generate();
         }
 
         public static User BuildRegularUser()
         {
-            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.ToString()!, f.Internet.Email(), GenerateValidPassword(f), Role.User)).Generate();
+            return new Faker<User>().CustomInstantiator(f => User.Create(f.Name.FullName(), f.Internet.Email(), GenerateValidPassword(f), Role.User)).Generate();
+        }
+
+        public static User BuildWithData(string name, string email, Role role)
+        {
+            var faker = new Faker();
+            return User.Create(name, email, GenerateValidPassword(faker), role);
         }
 
         private static string GenerateValidPassword(Faker faker)

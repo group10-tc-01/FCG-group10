@@ -1,9 +1,11 @@
 ﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Application.UseCases.Users.Update.UsersDTO;
 using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
 using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace FCG.WebApi.Controllers.v1
 {
@@ -18,6 +20,16 @@ namespace FCG.WebApi.Controllers.v1
         {
             var output = await _mediator.Send(input, CancellationToken.None).ConfigureAwait(false);
             return Created(string.Empty, ApiResponse<RegisterUserResponse>.SuccesResponse(output));
+        }
+
+        [HttpPut]
+        [AuthenticatedUser]
+        [ProducesResponseType(typeof(ApiResponse<RegisterUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        {
+            var output = await _mediator.Send(request, CancellationToken.None).ConfigureAwait(false);
+            return Ok(ApiResponse<UpdateUserResponse>.SuccesResponse(output));
         }
 
         [HttpPatch("admin/update-role")]

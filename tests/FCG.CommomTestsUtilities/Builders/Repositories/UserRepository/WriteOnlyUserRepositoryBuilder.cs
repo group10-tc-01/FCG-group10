@@ -12,7 +12,7 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.UserRepository
 
         public static void SetupAddAsync()
         {
-            _mock.Setup(repo => repo.AddAsync(It.IsAny<User>()))
+            _mock.Setup(repo => repo.AddAsync(It.IsAny<User>(), It.IsAny<Wallet>()))
                 .Returns(Task.CompletedTask);
         }
 

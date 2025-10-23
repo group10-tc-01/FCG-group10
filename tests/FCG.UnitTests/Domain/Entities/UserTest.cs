@@ -65,19 +65,6 @@ namespace FCG.UnitTests.Domain.Entities
             act.Should().Throw<DomainException>().WithMessage("Invalid email format.");
         }
 
-        [Fact]
-        public void Given_WeakPassword_When_CreateUser_Then_ThrowsException()
-        {
-            // Arrange
-            var userBuilder = UserBuilder.Build();
-
-            const string weakPassword = "NoSpecialChar123";
-
-            // Act
-            Action act = () => User.Create(userBuilder.Name, userBuilder.Email, weakPassword, Role.Admin);
-
-            act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one special character.");
-        }
     }
+
 }

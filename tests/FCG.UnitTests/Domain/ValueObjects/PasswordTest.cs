@@ -6,6 +6,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 {
     public class PasswordTest
     {
+        
 
         [Fact]
         public void Given_ValidPassword_When_CreatePassword_Then_ShouldCreateSuccessfully()
@@ -117,6 +118,20 @@ namespace FCG.UnitTests.Domain.ValueObjects
             // Assert
             password.Value.Should().Be(longPassword);
         }
+        [Theory]
+        [InlineData(null, "Password cannot be null or empty.")]
+        [InlineData("1234567", "Password must be at least 8 characters long.")] // Falha 1: Comprimento
+        [InlineData("12345678!@#", "Password must contain at least one letter.")] // Falha 2: Falta Letra
+        [InlineData("ABCDEFGHI!", "Password must contain at least one number.")] // Falha 3: Falta Dígito
+        [InlineData("Abcdefgh123", "Password must contain at least one special character.")] // Falha 4: Falta Especial
+        public void PasswordCreate_GivenInvalidRequirements_ShouldThrowDomainException(string? invalidPassword, string expectedMessagePart)
+        {
+            // ARRANGE / ACT / ASSERT
+            var act = () => Password.Create(invalidPassword!);
+
+            act.Should().Throw<DomainException>()
+                .WithMessage($"*{expectedMessagePart}*");
+        }
 
         [Fact]
         public void Given_PasswordObject_When_ImplicitConvertToString_Then_ShouldReturnValue()
@@ -151,5 +166,21 @@ namespace FCG.UnitTests.Domain.ValueObjects
             var password2 = Password.Create("SecondPass123!");
             password1.Should().NotBe(password2);
         }
+
+            [Theory]
+            [InlineData(null)]
+            [InlineData("")]
+            [InlineData("   ")]
+        public void Given_NullOrEmptyHash_When_CreateFromHash_Then_ShouldThrowArgumentNullException(string invalidHash)
+{
+    // Act
+            Action act = () => Password.CreateFromHash(invalidHash);
+
+    // Assert
+            act.Should()
+               .Throw<ArgumentNullException>()
+               .WithMessage("*Stored hash value cannot be null or empty.*");
+}
+        
     }
 }

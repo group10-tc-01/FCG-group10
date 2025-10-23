@@ -4,7 +4,6 @@ using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Models;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
-using FCG.Domain.Entities;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FluentAssertions;
@@ -12,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace FCG.UnitTests.Application.UseCases.Authentication.Login
 {
-    public class LoginUseCaseTest
+    public class LoginUseCaseTest : IDisposable
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly ITokenService _tokenService;
@@ -21,37 +20,60 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
 
         public LoginUseCaseTest()
         {
+            ResetAllBuilders();
+
             _readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
             _tokenService = TokenServiceBuilder.Build();
             _passwordEncrypter = PasswordEncrypterServiceBuilder.Build();
-            _sut = new LoginUseCase(_readOnlyUserRepository, _tokenService, Options.Create(JwtSettingsBuilder.Build()), _passwordEncrypter);
+            _sut = new LoginUseCase(
+                _readOnlyUserRepository,
+                _tokenService,
+                Options.Create(JwtSettingsBuilder.Build()),
+                _passwordEncrypter
+            );
+        }
+
+        public void Dispose()
+        {
+            ResetAllBuilders();
         }
 
         [Fact]
         public async Task Given_ValidLogin_When_Handle_Then_ShouldReturnOutput()
         {
-            // Arrange
+            // Given
             var input = LoginInputBuilder.Build();
             var refreshToken = RefreshTokenBuilder.Build();
-            Setup(refreshToken);
+            var user = UserBuilder.Build();
 
-            // Act
+            var expectedAccessToken = "access_token";
+            var expectedRefreshToken = refreshToken.Token;
+            var expectedExpiresInMinutes = 1;
+
+            // Setup dos mocks
+            ReadOnlyUserRepositoryBuilder.SetupGetByEmailAsync(user);
+            PasswordEncrypterServiceBuilder.SetupIsValid(true);
+            TokenServiceBuilder.SetupGenerateAccessToken(expectedAccessToken);
+            TokenServiceBuilder.SetupGenerateRefreshToken(expectedRefreshToken);
+            TokenServiceBuilder.SetupSaveRefreshTokenAsync(refreshToken);
+
+            // When
             var result = await _sut.Handle(input, CancellationToken.None);
 
-            // Assert
+            // Then
             result.Should().NotBeNull();
+
+            result.AccessToken.Should().Be(expectedAccessToken);
+            //result.RefreshToken.Should().Be(expectedRefreshToken);
+            // result.ExpiresInMinutes.Should().Be(expectedExpiresInMinutes);
+
             result.RefreshToken.Should().Be(refreshToken.Token);
             result.ExpiresInMinutes.Should().Be(1);
+
         }
 
-        private static void Setup(RefreshToken refreshToken)
+        private static void ResetAllBuilders()
         {
-            var user = UserBuilder.Build();
-            ReadOnlyUserRepositoryBuilder.SetupGetByEmailAsync(user);
-            TokenServiceBuilder.SetupGenerateAccessToken("access_token");
-            TokenServiceBuilder.SetupGenerateRefreshToken("refresh_token");
-            TokenServiceBuilder.SetupSaveRefreshTokenAsync(refreshToken);
-            PasswordEncrypterServiceBuilder.SetupIsValid(true);
         }
     }
 }

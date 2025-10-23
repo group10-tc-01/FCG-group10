@@ -14,12 +14,12 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             _fcgDbContext = context;
         }
 
-        public Task AddAsync(User user)
+        public Task AddAsync(User user, Wallet wallet)
         {
             _fcgDbContext.Users.Add(user);
+            _fcgDbContext.Wallets.Add(wallet);
             return Task.CompletedTask;
         }
-
         public Task UpdateAsync(User user, CancellationToken cancellationToken = default)
         {
             _fcgDbContext.Users.Update(user);
@@ -31,18 +31,57 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             return await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
         }
 
-        public async Task<User?> GetByEmailAndPasswordAsync(string email, string password)
+        public async Task<(IEnumerable<User> Items, int TotalCount)> GetQueryableAllUsers(
+            string? emailFilter,
+            string? Role,
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancellationToken = default)
         {
-            var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive &&
-                                    u.Email.Value == email &&
-                                    u.Password.Value == password);
+            IQueryable<User> query = _fcgDbContext.Users.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(emailFilter))
+            {
+                query = query.Where(u => u.Email.Value.Contains(emailFilter.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            }
+
+            if (!string.IsNullOrWhiteSpace(Role))
+            {
+                if (System.Enum.TryParse<Role>(Role, true, out Role filterRole))
+                {
+                    query = query.Where(u => u.Role == filterRole);
+                }
+            }
+
+            int totalCount = await query.CountAsync(cancellationToken);
+
+            IEnumerable<User> items = await query
+                .OrderBy(u => u.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (items, totalCount);
+        }
+
+        public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var user = await _fcgDbContext.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
 
             return user;
         }
 
-        public async Task<User?> GetByIdAsync(Guid id)
+
+        public async Task<User?> GetByIdWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var user = await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.IsActive && u.Id == id);
+            var user = await _fcgDbContext.Users
+                .AsNoTracking()
+                .Include(u => u.Wallet)
+                .Include(u => u.Library)
+                .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
 
             return user;
         }
@@ -51,5 +90,6 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
         {
             return await _fcgDbContext.Users.AsNoTracking().AnyAsync(u => u.Role == Role.Admin, cancellationToken);
         }
+
     }
 }

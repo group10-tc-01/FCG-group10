@@ -4,7 +4,7 @@ namespace FCG.Domain.Repositories.UserRepository
 {
     public interface IWriteOnlyUserRepository
     {
-        Task AddAsync(User user);
+        Task AddAsync(Entities.User user, Entities.Wallet wallet);
         Task UpdateAsync(User user, CancellationToken cancellationToken = default);
     }
 }

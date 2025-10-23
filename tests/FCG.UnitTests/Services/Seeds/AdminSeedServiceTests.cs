@@ -18,8 +18,11 @@ namespace FCG.UnitTests.Services.Seeds
             builder.WriteOnlyRepoMock.Verify(
                 x => x.AddAsync(It.Is<User>(u =>
                     u.Email.Value == "admin@mail.com" &&
+
                     u.Role == Role.Admin
-                )),
+                ),
+                It.IsAny<Wallet>()
+                ),
                 Times.Once
             );
 
@@ -34,7 +37,7 @@ namespace FCG.UnitTests.Services.Seeds
 
             await service.SeedAsync();
 
-            builder.WriteOnlyRepoMock.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
+            builder.WriteOnlyRepoMock.Verify(x => x.AddAsync(It.IsAny<User>(), It.IsAny<Wallet>()), Times.Never);
             builder.UnitOfWorkMock.Verify(x => x.SaveChangesAsync(default), Times.Never);
         }
     }

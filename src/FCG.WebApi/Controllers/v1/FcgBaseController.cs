@@ -13,7 +13,6 @@ namespace FCG.WebApi.Controllers.v1
     public class FcgBaseController : ControllerBase
     {
         protected IMediator _mediator;
-
         public FcgBaseController(IMediator mediator) => _mediator = mediator;
     }
 }

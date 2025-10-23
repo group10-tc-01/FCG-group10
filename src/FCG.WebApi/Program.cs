@@ -29,7 +29,18 @@ namespace FCG.WebApi
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddSerilogLogging(builder.Configuration);
 
+
             var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FCG API v1");
+                    c.EnablePersistAuthorization();
+                });
+            }
 
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
