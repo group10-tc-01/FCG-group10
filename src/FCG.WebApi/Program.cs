@@ -1,8 +1,8 @@
 using FCG.Application.DependencyInjection;
-using FCG.Application.Services.Seeds;
 using FCG.Infrastructure.DependencyInjection;
 using FCG.Infrastructure.Logging;
 using FCG.Infrastructure.Persistance;
+using FCG.Infrastructure.Services.Seeds;
 using FCG.WebApi.DependencyInjection;
 using FCG.WebApi.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

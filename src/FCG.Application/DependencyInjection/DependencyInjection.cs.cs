@@ -1,4 +1,4 @@
-﻿using FCG.Application.Services.Seeds;
+﻿using FCG.Infrastructure.Services.Seeds;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;

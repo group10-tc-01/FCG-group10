@@ -1,9 +1,9 @@
-﻿using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
+﻿using FCG.Application.UseCases.AdminUsers.RoleManagement.RoleManagementDTO;
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 
-namespace FCG.Application.UseCases.Users.RoleManagement
+namespace FCG.Application.UseCases.AdminUsers.RoleManagement
 {
     public class RoleManagementUseCase : IRoleManagementUseCase
     {
@@ -20,7 +20,7 @@ namespace FCG.Application.UseCases.Users.RoleManagement
 
         public async Task<RoleManagementResponse> Handle(RoleManagementRequest request, CancellationToken cancellationToken)
         {
-            var user = await _readOnlyUserRepository.GetByIdAsync(request.UserId);
+            var user = await _readOnlyUserRepository.GetByIdAsync(request.UserId, cancellationToken);
 
             if (request.NewRole == Role.Admin)
                 user?.PromoteToAdmin();

@@ -1,7 +1,7 @@
-﻿using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
+﻿using FCG.Application.UseCases.AdminUsers.RoleManagement.RoleManagementDTO;
 using FCG.Domain.Enum;
 
-namespace FCG.CommomTestsUtilities.Builders.Inputs.Users.RoleManagement
+namespace FCG.CommomTestsUtilities.Builders.Inputs.RoleManagement
 {
     public static class RoleManagementInputBuilder
     {

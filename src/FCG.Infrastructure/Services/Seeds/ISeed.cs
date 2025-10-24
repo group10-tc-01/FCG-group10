@@ -1,4 +1,4 @@
-﻿namespace FCG.Application.Services.Seeds
+﻿namespace FCG.Infrastructure.Services.Seeds
 {
     public interface ISeed
     {

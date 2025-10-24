@@ -7,6 +7,7 @@
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+		<RunSettingsFilePath>C:\Users\lohha\Source\Repos\FCG-group10\tests\FCG.IntegratedTests\bin\Debug\net8.0\fine-code-coverage\coverage-tool-output\FCG.IntegratedTests-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
 	</PropertyGroup>
 
 	<ItemGroup>

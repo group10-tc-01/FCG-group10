@@ -1,9 +1,9 @@
-﻿using FCG.Application.UseCases.Users.RoleManagement;
-using FCG.CommomTestsUtilities.Builders.Inputs.Users.RoleManagement;
+﻿using FCG.Application.UseCases.AdminUsers.RoleManagement;
+using FCG.CommomTestsUtilities.Builders.Inputs.RoleManagement;
 using FCG.Messages;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.Users.RoleManagement
+namespace FCG.UnitTests.Application.UseCases.AdminUsers.RoleManagement
 {
     public class RoleManagementInputValidatorTest
     {

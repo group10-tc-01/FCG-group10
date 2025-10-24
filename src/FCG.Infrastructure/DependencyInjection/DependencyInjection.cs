@@ -8,6 +8,7 @@ using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Persistance.Repositories.GameRepository;
 using FCG.Infrastructure.Persistance.Repositories.UserRepository;
 using FCG.Infrastructure.Services.Authentication;
+using FCG.Infrastructure.Services.CurrentUser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,9 +51,7 @@ namespace FCG.Infrastructure.DependencyInjection
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
-
-
-
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
         }
     }
 }

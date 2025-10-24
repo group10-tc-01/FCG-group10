@@ -3,6 +3,7 @@ using FCG.Application.UseCases.AdminUsers.GetAllUsers;
 using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
 using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+using FCG.Application.UseCases.AdminUsers.RoleManagement.RoleManagementDTO;
 using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
@@ -38,6 +39,16 @@ namespace FCG.WebApi.Controllers.v1
             var query = new GetByIdUserQuery(id);
             var output = await _mediator.Send(query, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<UserDetailResponse>.SuccesResponse(output));
+        }
+
+        [HttpPatch("update-role")]
+        [AuthenticatedAdmin]
+        [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUserRole([FromBody] RoleManagementRequest input, CancellationToken cancellationToken)
+        {
+            var output = await _mediator.Send(input, cancellationToken);
+            return Ok(ApiResponse<RoleManagementResponse>.SuccesResponse(output));
         }
     }
 }

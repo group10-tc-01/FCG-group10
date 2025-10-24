@@ -1,5 +1,5 @@
-﻿using FCG.Application.UseCases.Users.RoleManagement;
-using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
+﻿using FCG.Application.UseCases.AdminUsers.RoleManagement;
+using FCG.Application.UseCases.AdminUsers.RoleManagement.RoleManagementDTO;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Repositories;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
@@ -9,7 +9,7 @@ using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.Users.RoleManagement
+namespace FCG.UnitTests.Application.UseCases.AdminUsers.RoleManagement
 {
     public class RoleManagementUseCaseTests
     {

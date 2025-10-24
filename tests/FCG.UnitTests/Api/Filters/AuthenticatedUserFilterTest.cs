@@ -18,13 +18,15 @@ namespace FCG.UnitTests.Api.Filters
     {
         private readonly Mock<ITokenService> _tokenServiceMock;
         private readonly Mock<IReadOnlyUserRepository> _readOnlyUserRepositoryMock;
+        private readonly Mock<ICurrentUserService> _currentUserService;
         private readonly AuthenticatedUserFilter _sut;
 
         public AuthenticatedUserFilterTest()
         {
             _tokenServiceMock = new Mock<ITokenService>();
             _readOnlyUserRepositoryMock = new Mock<IReadOnlyUserRepository>();
-            _sut = new AuthenticatedUserFilter(_tokenServiceMock.Object, _readOnlyUserRepositoryMock.Object);
+            _currentUserService = new Mock<ICurrentUserService>();
+            _sut = new AuthenticatedUserFilter(_tokenServiceMock.Object, _readOnlyUserRepositoryMock.Object, _currentUserService.Object);
         }
 
         [Fact]
