@@ -15,7 +15,7 @@ namespace FCG.Infrastructure.Persistance
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<LibraryGame> LibraryGames { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-
+        public DbSet<UserGame> UserGames { get; set; }
         public FcgDbContext(DbContextOptions<FcgDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

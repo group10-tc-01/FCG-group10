@@ -14,6 +14,7 @@ namespace FCG.Domain.Entities
         public Library? Library { get; }
         public Wallet? Wallet { get; }
         public ICollection<RefreshToken>? RefreshTokens { get; }
+        public ICollection<UserGame>? UserGames { get; }
 
         private User(Name name, Email email, Password password, Role role)
         {

@@ -12,7 +12,7 @@ namespace FCG.Domain.Entities
 
         public ICollection<Promotion>? Promotions { get; }
         public ICollection<LibraryGame>? LibraryGames { get; }
-
+        public ICollection<UserGame>? UserGames { get; }
         private Game(Name name, string description, Price price, string category)
         {
             if (string.IsNullOrWhiteSpace(description))
