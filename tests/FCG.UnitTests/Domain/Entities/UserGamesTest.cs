@@ -40,8 +40,8 @@ namespace FCG.UnitTests.Domain.Entities
             userGame.UserId.Should().Be(userId);
             userGame.GameId.Should().Be(gameId);
             userGame.PurchaseDate.Should().Be(purchaseDate);
-            userGame.Status.Should().Be(GameStatus.Active); // Valida a regra de negócio
-            userGame.Id.Should().NotBe(Guid.Empty); // Valida que a BaseEntity foi chamada
+            userGame.Status.Should().Be(GameStatus.Active);
+            userGame.Id.Should().NotBe(Guid.Empty);
         }
         [Fact]
         public void Create_GivenEmptyUserId_Should_ThrowDomainException()

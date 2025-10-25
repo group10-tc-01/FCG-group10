@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Domain.Entities
 {
@@ -9,9 +10,13 @@ namespace FCG.Domain.Entities
         public Guid GameId { get; private set; }
         public DateTime PurchaseDate { get; private set; }
         public GameStatus Status { get; private set; }
-        public User User { get; private set; }
-        public Game Game { get; private set; }
 
+        [ExcludeFromCodeCoverage]
+        public User User { get; private set; } = null!;
+        [ExcludeFromCodeCoverage]
+        public Game Game { get; private set; } = null!;
+
+        [ExcludeFromCodeCoverage]
         private UserGame()
         {
         }
