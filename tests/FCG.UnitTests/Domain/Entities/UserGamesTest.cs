@@ -24,7 +24,7 @@ namespace FCG.UnitTests.Domain.Entities
                 .WithMessage("Purchase date cannot be in the future.");
         }
         [Fact]
-        public void Create_GivenValidParameters_Should_ReturnNewUserGameWithActiveStatus_And_RaiseDomainEvent() // 1. Nome do teste atualizado
+        public void Create_GivenValidParameters_Should_ReturnNewUserGameWithActiveStatus_And_RaiseDomainEvent()
         {
             // Given (Arrange)
             var userId = Guid.NewGuid();

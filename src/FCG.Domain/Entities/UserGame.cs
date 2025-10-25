@@ -1,7 +1,6 @@
 ﻿using FCG.Domain.Enum;
-using FCG.Domain.Exceptions;
-using System.Diagnostics.CodeAnalysis;
 using FCG.Domain.Events.UserGame;
+using FCG.Domain.Exceptions;
 
 namespace FCG.Domain.Entities
 {
