@@ -1,6 +1,7 @@
 ﻿using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using System.Diagnostics.CodeAnalysis;
+using FCG.Domain.Events.UserGame;
 
 namespace FCG.Domain.Entities
 {
@@ -10,13 +11,8 @@ namespace FCG.Domain.Entities
         public Guid GameId { get; private set; }
         public DateTime PurchaseDate { get; private set; }
         public GameStatus Status { get; private set; }
-
-        [ExcludeFromCodeCoverage]
         public User User { get; private set; } = null!;
-        [ExcludeFromCodeCoverage]
         public Game Game { get; private set; } = null!;
-
-        [ExcludeFromCodeCoverage]
         private UserGame()
         {
         }
@@ -44,7 +40,10 @@ namespace FCG.Domain.Entities
                 throw new DomainException("Purchase date cannot be in the future.");
             }
 
-            return new UserGame(userId, gameId, purchaseDate, GameStatus.Active);
+            var userGame = new UserGame(userId, gameId, purchaseDate, GameStatus.Active);
+            userGame.AddDomainEvent(new UserGameCreatedEvent(userGame.UserId, userGame.GameId));
+            return userGame;
         }
+
     }
 }
