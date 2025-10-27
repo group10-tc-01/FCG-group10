@@ -30,7 +30,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 User.Create("User C", "userc@test.com", "Password@123", Role.User)
             };
 
-            var query = new GetAllUserCaseQuery
+            var query = new GetAllUserCaseRequest
             {
                 PageNumber = 1,
                 PageSize = 10
@@ -64,7 +64,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
         public async Task Given_NoUsersFound_When_HandlingQuery_Then_ShouldReturnEmptyPagedList()
         {
             // Given
-            var query = new GetAllUserCaseQuery
+            var query = new GetAllUserCaseRequest
             {
                 PageNumber = 1,
                 PageSize = 10
@@ -105,7 +105,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 User.Create("User B", "userb@test.com", "Password@123", Role.Admin)
             };
 
-            var query = new GetAllUserCaseQuery
+            var query = new GetAllUserCaseRequest
             {
                 PageNumber = 1,
                 PageSize = 10,
@@ -147,7 +147,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 User.Create("User C", "userc@test.com", "Password@123", Role.User)
             };
 
-            var query = new GetAllUserCaseQuery
+            var query = new GetAllUserCaseRequest
             {
                 PageNumber = 2,
                 PageSize = 2
@@ -188,7 +188,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 User.Create("User C", "userc@test.com", "Password@123", Role.User)
             };
 
-            var query = new GetAllUserCaseQuery
+            var query = new GetAllUserCaseRequest
             {
                 PageNumber = 1,
                 PageSize = 10,

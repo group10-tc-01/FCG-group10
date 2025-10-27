@@ -2,8 +2,7 @@
 {
     public class UpdateUserResponse
     {
-        public Guid Id { get; set; }
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public string Message { get; set; } = string.Empty;
+        public Guid Id { get; init; }
+        public DateTime UpdatedAt { get; init; } = DateTime.UtcNow;
     }
 }

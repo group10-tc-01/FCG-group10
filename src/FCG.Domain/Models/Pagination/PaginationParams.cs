@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace FCG.Application.Shared.Params
+namespace FCG.Domain.Models.Pagination
 {
     [ExcludeFromCodeCoverage]
     public class PaginationParams

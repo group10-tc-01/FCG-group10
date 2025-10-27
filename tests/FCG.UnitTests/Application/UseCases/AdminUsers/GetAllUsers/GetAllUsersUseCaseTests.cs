@@ -23,7 +23,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
         public async Task Handle_GivenNoUsers_ShouldReturnEmptyPagedList()
         {
             // Arrange
-            var request = new GetAllUserCaseQuery();
+            var request = new GetAllUserCaseRequest();
             _userRepositoryMock.Setup(r => r.GetQueryableAllUsers(
                 It.IsAny<string?>(),
                 It.IsAny<string?>(),
@@ -46,7 +46,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
         public async Task Handle_GivenExistingUsers_ShouldReturnPagedListWithUsers()
         {
             // Arrange
-            var request = new GetAllUserCaseQuery();
+            var request = new GetAllUserCaseRequest();
             var users = new List<User>
             {
                 UserBuilder.BuildWithData("User1", "user1@test.com", Role.User),
@@ -79,7 +79,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
         public async Task Handle_ShouldMapUserPropertiesCorrectly()
         {
             // Arrange
-            var request = new GetAllUserCaseQuery();
+            var request = new GetAllUserCaseRequest();
             var user = UserBuilder.BuildWithData("Test User", "test@example.com", Role.Admin);
             var users = new List<User> { user };
 

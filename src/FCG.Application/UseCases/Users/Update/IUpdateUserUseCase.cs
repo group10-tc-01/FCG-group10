@@ -2,7 +2,5 @@
 
 namespace FCG.Application.UseCases.Users.Update
 {
-    public interface IUpdateUserUseCase : IRequestHandler<UpdateUserRequest, UpdateUserResponse>
-    {
-    }
+    public interface IUpdateUserUseCase : IRequestHandler<UpdateUserRequest, UpdateUserResponse> { }
 }

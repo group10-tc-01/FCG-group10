@@ -29,7 +29,6 @@ namespace FCG.WebApi.DependencyInjection
             services.AddLowerCaseUrl();
             services.AddSwaggerConfiguration();
 
-
             return services;
         }
 
@@ -40,10 +39,7 @@ namespace FCG.WebApi.DependencyInjection
                 options.DefaultApiVersion = new ApiVersion(1, 0);
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.ReportApiVersions = true;
-                options.ApiVersionReader = ApiVersionReader.Combine(
-                    new UrlSegmentApiVersionReader(),
-                    new HeaderApiVersionReader("X-Api-Version")
-                );
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
             }).AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";

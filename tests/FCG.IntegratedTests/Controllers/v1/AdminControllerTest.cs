@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+﻿using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;

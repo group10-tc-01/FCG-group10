@@ -19,39 +19,14 @@ namespace FCG.Infrastructure.Persistance.Repositories
             await _fcgDbContext.Users.AddAsync(user);
         }
 
-        public Task UpdateAsync(User user, CancellationToken cancellationToken = default)
-        {
-            _fcgDbContext.Users.Update(user);
-            return Task.CompletedTask;
-        }
-
         public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
         {
             return await _fcgDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
         }
 
-        public async Task<(IEnumerable<User> Items, int TotalCount)> GetQueryableAllUsers(
-            string? emailFilter,
-            string? Role,
-            int pageNumber,
-            int pageSize,
-            CancellationToken cancellationToken = default)
+        public async Task<(IEnumerable<User> items, int totalCount)> GetAllUsersAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default)
         {
             IQueryable<User> query = _fcgDbContext.Users.AsNoTracking();
-
-            if (!string.IsNullOrWhiteSpace(emailFilter))
-            {
-                query = query.Where(u => u.Email.Value.Contains(emailFilter.Trim(), StringComparison.OrdinalIgnoreCase));
-
-            }
-
-            if (!string.IsNullOrWhiteSpace(Role))
-            {
-                if (Enum.TryParse(Role, true, out Role filterRole))
-                {
-                    query = query.Where(u => u.Role == filterRole);
-                }
-            }
 
             int totalCount = await query.CountAsync(cancellationToken);
 
@@ -66,13 +41,10 @@ namespace FCG.Infrastructure.Persistance.Repositories
 
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var user = await _fcgDbContext.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
+            var user = await _fcgDbContext.Users.FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
 
             return user;
         }
-
 
         public async Task<User?> GetByIdWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
         {
@@ -89,6 +61,5 @@ namespace FCG.Infrastructure.Persistance.Repositories
         {
             return await _fcgDbContext.Users.AsNoTracking().AnyAsync(u => u.Role == Role.Admin, cancellationToken);
         }
-
     }
 }

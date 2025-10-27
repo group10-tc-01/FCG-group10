@@ -1,41 +1,47 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+﻿using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
-using MediatR;
 
 namespace FCG.Application.UseCases.AdminUsers.GetById
 {
-    public class GetByIdUserUseCase : IRequestHandler<GetByIdUserQuery, UserDetailResponse>
+    public class GetByIdUserUseCase : IGetUserByIdUseCase
     {
-        private readonly IReadOnlyUserRepository _userRepository;
+        private readonly IReadOnlyUserRepository _readOnlyUserRepository;
 
         public GetByIdUserUseCase(IReadOnlyUserRepository userRepository)
         {
-            _userRepository = userRepository;
+            _readOnlyUserRepository = userRepository;
         }
 
-        public async Task<UserDetailResponse> Handle(GetByIdUserQuery request, CancellationToken cancellationToken)
+        public async Task<GetUserByIdResponse> Handle(GetUserByIdRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdWithDetailsAsync(request.Id, cancellationToken);
+            var user = await _readOnlyUserRepository.GetByIdWithDetailsAsync(request.Id, cancellationToken);
 
             if (user == null)
             {
                 throw new NotFoundException($"User with Id: {request.Id} was not found.");
             }
 
+            var response = MapUserToDetailResponse(user);
+
+            return response;
+        }
+
+        private static GetUserByIdResponse MapUserToDetailResponse(User user)
+        {
             var walletDto = user.Wallet == null ? null : new WalletDto
             {
                 Id = user.Wallet.Id,
                 Balance = user.Wallet.Balance
-
             };
+
             var libraryDto = user.Library == null ? null : new LibraryDto
             {
                 Id = user.Library.Id,
                 CreatedAt = user.Library.CreatedAt
             };
 
-            var response = new UserDetailResponse
+            return new GetUserByIdResponse
             {
                 Id = user.Id,
                 Name = user.Name.Value,
@@ -45,8 +51,6 @@ namespace FCG.Application.UseCases.AdminUsers.GetById
                 Library = libraryDto,
                 CreatedAt = user.CreatedAt
             };
-
-            return response;
         }
     }
 }

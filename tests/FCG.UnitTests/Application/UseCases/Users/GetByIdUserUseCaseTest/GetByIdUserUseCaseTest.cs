@@ -12,12 +12,12 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
     public class GetByIdUserUseCaseTest
     {
         private readonly Mock<IReadOnlyUserRepository> _userRepositoryMock;
-        private readonly GetByIdUserUseCase _useCase;
+        private readonly GetUserByIdUseCase _useCase;
 
         public GetByIdUserUseCaseTest()
         {
             _userRepositoryMock = new Mock<IReadOnlyUserRepository>();
-            _useCase = new GetByIdUserUseCase(_userRepositoryMock.Object);
+            _useCase = new GetUserByIdUseCase(_userRepositoryMock.Object);
         }
 
         [Fact]

@@ -1,12 +1,9 @@
-﻿using FCG.Application.Shared.Models;
-using FCG.Application.UseCases.AdminUsers.GetAllUsers;
-using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
+﻿using FCG.Application.UseCases.AdminUsers.GetAllUsers;
 using FCG.Application.UseCases.AdminUsers.GetById;
-using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+using FCG.Domain.Models.Pagination;
 using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FCG.WebApi.Controllers.v1
@@ -18,26 +15,26 @@ namespace FCG.WebApi.Controllers.v1
         public AdminController(IMediator mediator) : base(mediator) { }
 
         [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<List<UserListResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<GetAllUsersResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUser([FromQuery] GetAllUserCaseQuery queryPagination)
+        [AuthenticatedAdmin]
+        public async Task<IActionResult> GetUser([FromQuery] GetAllUserCaseRequest queryPagination)
         {
             var output = await _mediator.Send(queryPagination, CancellationToken.None).ConfigureAwait(false);
-            return Ok(ApiResponse<PagedListResponse<UserListResponse>>.SuccesResponse(output));
+            return Ok(ApiResponse<PagedListResponse<GetAllUsersResponse>>.SuccesResponse(output));
         }
 
         [HttpGet(("{id}"))]
-        [ProducesResponseType(typeof(ApiResponse<UserDetailResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<GetUserByIdResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [Authorize(Roles = "Admin")]
+        [AuthenticatedAdmin]
         public async Task<IActionResult> GetUserById([FromRoute] Guid id)
         {
-            var query = new GetByIdUserQuery(id);
+            var query = new GetUserByIdRequest(id);
             var output = await _mediator.Send(query, CancellationToken.None).ConfigureAwait(false);
-            return Ok(ApiResponse<UserDetailResponse>.SuccesResponse(output));
+            return Ok(ApiResponse<GetUserByIdResponse>.SuccesResponse(output));
         }
     }
 }

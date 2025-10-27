@@ -37,6 +37,8 @@ namespace FCG.Application.UseCases.Users.Register
 
         public async Task<RegisterUserResponse> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
         {
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
             try
             {
                 var existingUser = await _readOnlyUserRepository.GetByEmailAsync(request.Email, cancellationToken);
@@ -72,7 +74,7 @@ namespace FCG.Application.UseCases.Users.Register
             await _writeOnlyUserRepository.AddAsync(user);
             await _writeOnlyWalletRepository.AddAsync(wallet);
             await _writeOnlyLibraryRepository.AddAsync(library);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
         }
     }
 }

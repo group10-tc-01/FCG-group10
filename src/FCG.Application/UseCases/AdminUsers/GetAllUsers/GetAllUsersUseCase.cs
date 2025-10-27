@@ -1,11 +1,9 @@
-﻿using FCG.Application.Shared.Models;
-using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
+﻿using FCG.Domain.Models.Pagination;
 using FCG.Domain.Repositories.UserRepository;
-using MediatR;
 
 namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
 {
-    public sealed class GetAllUsersUseCase : IRequestHandler<GetAllUserCaseQuery, PagedListResponse<UserListResponse>>
+    public class GetAllUsersUseCase : IGetAllUsersUseCase
     {
         private readonly IReadOnlyUserRepository _userRepository;
 
@@ -14,13 +12,9 @@ namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
             _userRepository = userRepository;
         }
 
-        public async Task<PagedListResponse<UserListResponse>> Handle(
-            GetAllUserCaseQuery request,
-            CancellationToken cancellationToken)
+        public async Task<PagedListResponse<GetAllUsersResponse>> Handle(GetAllUserCaseRequest request, CancellationToken cancellationToken)
         {
-            var (users, totalCount) = await _userRepository.GetQueryableAllUsers(
-                request.Email,
-                request.Role,
+            var (users, totalCount) = await _userRepository.GetAllUsersAsync(
                 request.PageNumber,
                 request.PageSize,
                 cancellationToken
@@ -28,14 +22,15 @@ namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
 
             if (totalCount == 0)
             {
-                return new PagedListResponse<UserListResponse>(
-                    new List<UserListResponse>(),
+                return new PagedListResponse<GetAllUsersResponse>(
+                    new List<GetAllUsersResponse>(),
                     0,
                     request.PageNumber,
                     request.PageSize
                 );
             }
-            var items = users.Select(u => new UserListResponse
+
+            var items = users.Select(u => new GetAllUsersResponse
             {
                 Id = u.Id,
                 Name = u.Name.Value,
@@ -44,16 +39,12 @@ namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
                 Role = u.Role.ToString()
             }).ToList();
 
-            return new PagedListResponse<UserListResponse>(
+            return new PagedListResponse<GetAllUsersResponse>(
                 items,
                 totalCount,
                 request.PageNumber,
                 request.PageSize
             );
         }
-
-
     }
-
-
 }
