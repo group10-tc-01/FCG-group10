@@ -1,5 +1,6 @@
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities

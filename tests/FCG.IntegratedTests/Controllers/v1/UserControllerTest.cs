@@ -60,23 +60,23 @@ namespace FCG.IntegratedTests.Controllers.v1
         [Fact]
         public async Task PUT_UpdateUser_GivenValidTokenAndData_ShouldReturn200AndVerifyUpdate()
         {
-            // ARRANGE (GIVEN)
+            // Arrange
             var userToUpdate = await AddUserToDatabaseAsync("user.update@test.com");
 
             var userToken = GenerateToken(userToUpdate.Id, "User");
 
-            var request = new UpdateUserRequest
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = userToUpdate.Id,
                 CurrentPassword = "OriginalPass!1",
                 NewPassword = "UpdatedPass!2"
             };
+            var request = new UpdateUserRequest(userToUpdate.Id, bodyRequest);
 
-            var response = await DoAuthenticatedPut("/api/v1/users", request, userToken);
+            // Act
+            var response = await DoAuthenticatedPut($"/api/v1/users/{userToUpdate.Id}", request, userToken);
 
-            // ASSERT (THEN)
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace FCG.IntegratedTests.Controllers.v1
                 });
             apiResponse!.Success.Should().BeFalse();
 
-            apiResponse.ErrorMessages.Should().Contain(e => e.Contains("Email já está em uso"));
+            apiResponse.ErrorMessages.Should().Contain(e => e.Contains("Email is already in use"));
 
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
@@ -195,13 +195,13 @@ namespace FCG.IntegratedTests.Controllers.v1
         [Fact]
         public async Task POST_Register_GivenMalformedJson_ShouldReturn400BadRequest()
         {
-            // ARRANGE (GIVEN)
+            // Arrange
             var jsonContent = new StringContent("{ \"Nome\": 123 }", Encoding.UTF8, "application/json");
 
-            // ACT (WHEN)
+            // Act
             var response = await DoPost("/api/v1/users/register", jsonContent);
 
-            // ASSERT (THEN)
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
@@ -322,3 +322,4 @@ namespace FCG.IntegratedTests.Controllers.v1
         #endregion
     }
 }
+

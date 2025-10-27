@@ -2,6 +2,7 @@ using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
@@ -9,24 +10,24 @@ namespace FCG.UnitTests.Domain.Entities
     public class UserTests
     {
         [Fact]
-        public void Given_ValidUserParameters_When_Create_Then_UserIsInstantiatedCorrectly()
+        public void Given_ValidUserParameters_When_Create_Then_ShouldInstantiateUserCorrectly()
         {
-
+            // Arrange
             var userBuilder = UserBuilder.Build();
-
             var rawPassword = userBuilder.Password;
+
+            // Act
             var user = User.Create(userBuilder.Name, userBuilder.Email, rawPassword, Role.Admin);
 
-
+            // Assert
             user.Should().NotBeNull();
             user.Id.Should().NotBe(Guid.Empty);
             user.Name.Should().Be(userBuilder.Name);
             user.Email.Should().Be(userBuilder.Email);
         }
 
-
         [Fact]
-        public void Given_TwoUsersWithSameData_When_Created_Then_TheyHaveDifferentIds()
+        public void Given_TwoUsersWithSameData_When_Create_Then_ShouldHaveDifferentIds()
         {
             // Arrange
             var userBuilder = UserBuilder.Build();
@@ -40,31 +41,25 @@ namespace FCG.UnitTests.Domain.Entities
         }
 
         [Fact]
-        public void Given_InvalidName_When_CreateUser_Then_ThrowsException()
+        public void Given_InvalidName_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var userBuilder = UserBuilder.Build();
+            var act = () => User.Create(null!, userBuilder.Email, userBuilder.Password, Role.Admin);
 
-            // Act
-            Action act = () => User.Create(null, userBuilder.Email, userBuilder.Password, Role.Admin);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_InvalidEmail_When_CreateUser_Then_ThrowsException()
+        public void Given_InvalidEmail_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var userBuilder = UserBuilder.Build();
+            var act = () => User.Create(userBuilder.Name, "invalid-email", userBuilder.Password, Role.Admin);
 
-            // Act
-            Action act = () => User.Create(userBuilder.Name, "invalid-email", userBuilder.Password, Role.Admin);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.InvalidEmailFormat);
         }
-
     }
-
 }

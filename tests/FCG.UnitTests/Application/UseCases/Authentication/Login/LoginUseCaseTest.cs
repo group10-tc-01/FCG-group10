@@ -4,6 +4,7 @@ using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Models;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
+using FCG.Domain.Entities;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FluentAssertions;
@@ -41,14 +42,13 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
         [Fact]
         public async Task Given_ValidLogin_When_Handle_Then_ShouldReturnOutput()
         {
-            // Given
+            // Arrange
             var input = LoginInputBuilder.Build();
-            var refreshToken = RefreshTokenBuilder.Build();
             var user = UserBuilder.Build();
 
-            var expectedAccessToken = "access_token";
-            var expectedRefreshToken = refreshToken.Token;
-            var expectedExpiresInMinutes = 1;
+            var expectedAccessToken = "new_access_token";
+            var expectedRefreshToken = "new_refresh_token";
+            var refreshToken = RefreshToken.Create(expectedRefreshToken, user.Id, TimeSpan.FromDays(7));
 
             // Setup dos mocks
             ReadOnlyUserRepositoryBuilder.SetupGetByEmailAsync(user);
@@ -57,17 +57,13 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
             TokenServiceBuilder.SetupGenerateRefreshToken(expectedRefreshToken);
             TokenServiceBuilder.SetupSaveRefreshTokenAsync(refreshToken);
 
-            // When
+            // Act
             var result = await _sut.Handle(input, CancellationToken.None);
 
-            // Then
+            // Assert
             result.Should().NotBeNull();
-
             result.AccessToken.Should().Be(expectedAccessToken);
-            //result.RefreshToken.Should().Be(expectedRefreshToken);
-            // result.ExpiresInMinutes.Should().Be(expectedExpiresInMinutes);
-
-            result.RefreshToken.Should().Be(refreshToken.Token);
+            result.RefreshToken.Should().Be(expectedRefreshToken);
             result.ExpiresInMinutes.Should().Be(1);
 
         }

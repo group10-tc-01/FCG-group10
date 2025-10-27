@@ -1,12 +1,12 @@
-using FCG.Application.UseCases.AdminUsers.GetById;
+using FCG.Application.UseCases.Admin.GetById;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById.GetUserDTO
+namespace FCG.UnitTests.Application.UseCases.Admin.GetById.GetUserDTO
 {
     public class UserDetailResponseTests
     {
-        [Fact(DisplayName = "Deve criar UserDetailResponse com propriedades corretas")]
-        public void CreateUserDetailResponse_ShouldSetPropertiesCorrectly()
+        [Fact]
+        public void Given_ValidProperties_When_CreateUserDetailResponse_Then_ShouldSetAllPropertiesCorrectly()
         {
             // Arrange
             var id = Guid.NewGuid();

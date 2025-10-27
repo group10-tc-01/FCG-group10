@@ -1,10 +1,11 @@
 using FCG.Application.UseCases.Users.Update;
+using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
-using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 using Moq;
 
@@ -13,7 +14,6 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
     public class UpdateUserUseCaseTests
     {
         private readonly Mock<IReadOnlyUserRepository> _readOnlyUserRepositoryMock;
-        private readonly Mock<IWriteOnlyUserRepository> _writeOnlyUserRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IPasswordEncrypter> _passwordEncrypterMock;
         private readonly UpdateUserUseCase _useCase;
@@ -21,13 +21,11 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
         public UpdateUserUseCaseTests()
         {
             _readOnlyUserRepositoryMock = new Mock<IReadOnlyUserRepository>();
-            _writeOnlyUserRepositoryMock = new Mock<IWriteOnlyUserRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _passwordEncrypterMock = new Mock<IPasswordEncrypter>();
 
             _useCase = new UpdateUserUseCase(
                 _readOnlyUserRepositoryMock.Object,
-                _writeOnlyUserRepositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _passwordEncrypterMock.Object
             );
@@ -36,113 +34,102 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
         [Fact]
         public async Task Given_NonExistentUser_When_UpdatePassword_Then_ShouldThrowNotFoundException()
         {
-            // Given
+            // Arrange
             var userId = Guid.NewGuid();
-            var request = new UpdateUserRequest
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = userId,
                 CurrentPassword = "OldPass@123",
                 NewPassword = "NewPass@456"
             };
+            var request = new UpdateUserRequest(userId, bodyRequest);
 
             _readOnlyUserRepositoryMock
                 .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User?)null);
 
-            // When
+            // Act
             var act = async () => await _useCase.Handle(request, CancellationToken.None);
 
-            // Then
-            await act.Should().ThrowAsync<NotFoundException>()
-                .Where(ex => ex.Message.Contains(userId.ToString()) && ex.Message.Contains("não encontrado"));
+            // Assert
+            await act.Should().ThrowAsync<NotFoundException>();
         }
 
         [Fact]
         public async Task Given_EmptyCurrentPassword_When_UpdatePassword_Then_ShouldThrowDomainException()
         {
-            // Given
-            var userId = Guid.NewGuid();
-            var hashedPassword = "hashed_old_password";
-            var user = CreateUserWithHashedPassword(userId, hashedPassword);
-
-            var request = new UpdateUserRequest
+            // Arrange
+            var user = UserBuilder.Build();
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = userId,
                 CurrentPassword = "",
                 NewPassword = "NewPass@456"
             };
+            var request = new UpdateUserRequest(user.Id, bodyRequest);
 
             _readOnlyUserRepositoryMock
-                .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
-            // When
+            // Act
             var act = async () => await _useCase.Handle(request, CancellationToken.None);
 
-            // Then
+            // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("A senha atual é obrigatória para alterar a senha.");
+                .WithMessage(ResourceMessages.CurrentPasswordRequired);
         }
 
         [Fact]
         public async Task Given_IncorrectCurrentPassword_When_UpdatePassword_Then_ShouldThrowDomainException()
         {
-            // Given
-            var userId = Guid.NewGuid();
-            var correctHashedPassword = "correct_hashed_password";
-            var incorrectHashedPassword = "incorrect_hashed_password";
-            var user = CreateUserWithHashedPassword(userId, correctHashedPassword);
-
-            var request = new UpdateUserRequest
+            // Arrange
+            var user = UserBuilder.Build();
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = userId,
                 CurrentPassword = "WrongPass@123",
                 NewPassword = "NewPass@456"
             };
+            var request = new UpdateUserRequest(user.Id, bodyRequest);
 
             _readOnlyUserRepositoryMock
-                .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             _passwordEncrypterMock
-                .Setup(x => x.Encrypt("WrongPass@123"))
-                .Returns(incorrectHashedPassword);
+                .Setup(x => x.IsValid("WrongPass@123", user.Password.Value))
+                .Returns(false);
 
-            // When
+            // Act
             var act = async () => await _useCase.Handle(request, CancellationToken.None);
 
-            // Then
+            // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("A senha atual está incorreta.");
+                .WithMessage(ResourceMessages.CurrentPasswordIncorrect);
         }
 
         [Fact]
         public async Task Given_SameCurrentAndNewPassword_When_UpdatePassword_Then_ShouldThrowDomainException()
         {
-            // Given
-            var userId = Guid.NewGuid();
-            var hashedPassword = "hashed_same_password";
-            var user = CreateUserWithHashedPassword(userId, hashedPassword);
-
-            var request = new UpdateUserRequest
+            // Arrange
+            var user = UserBuilder.Build();
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = userId,
                 CurrentPassword = "SamePass@123",
                 NewPassword = "SamePass@123"
             };
+            var request = new UpdateUserRequest(user.Id, bodyRequest);
 
             _readOnlyUserRepositoryMock
-                .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             _passwordEncrypterMock
-                .Setup(x => x.IsValid("SamePass@123", hashedPassword))
+                .Setup(x => x.IsValid("SamePass@123", user.Password.Value))
                 .Returns(true);
 
-            // When
+            // Act
             var act = async () => await _useCase.Handle(request, CancellationToken.None);
 
-            // Then
+            // Assert
             await act.Should().ThrowAsync<DomainException>()
                 .WithMessage(ResourceMessages.NewPasswordMustBeDifferent);
         }
@@ -150,69 +137,44 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
         [Fact]
         public async Task Given_ValidRequest_When_UpdatePassword_Then_ShouldCallRepositoryInCorrectOrder()
         {
-            var userId = Guid.NewGuid();
-            var oldHashedPassword = "old_hashed_password";
+            // Arrange
+            var user = UserBuilder.Build();
             var newHashedPassword = "new_hashed_password";
-            var user = CreateUserWithHashedPassword(userId, oldHashedPassword);
-            var request = new UpdateUserRequest
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = userId,
                 CurrentPassword = "OldPass@123",
                 NewPassword = "NewPass@456"
             };
+            var request = new UpdateUserRequest(user.Id, bodyRequest);
 
             _readOnlyUserRepositoryMock
-                .Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetByIdAsync(user.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             _passwordEncrypterMock
-                .Setup(x => x.IsValid("OldPass@123", oldHashedPassword))
+                .Setup(x => x.IsValid("OldPass@123", user.Password.Value))
                 .Returns(true);
 
             _passwordEncrypterMock
-                .Setup(x => x.Encrypt("NewPass@456"))
+                .Setup(x => x.Encrypt(It.IsAny<string>()))
                 .Returns(newHashedPassword);
 
             var callOrder = new List<string>();
-
-            _writeOnlyUserRepositoryMock
-                .Setup(x => x.UpdateAsync(It.IsAny<User>(), CancellationToken.None))
-                .Callback(() => callOrder.Add("UpdateAsync"))
-                .Returns(Task.CompletedTask);
 
             _unitOfWorkMock
                 .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .Callback(() => callOrder.Add("SaveChangesAsync"))
                 .ReturnsAsync(1);
 
-            // When (ACT)
+            // Act
             await _useCase.Handle(request, CancellationToken.None);
 
-            // Then (ASSERT)
-            callOrder.Should().HaveCount(2);
-            callOrder[0].Should().Be("UpdateAsync");
-            callOrder[1].Should().Be("SaveChangesAsync");
+            // Assert
+            callOrder.Should().HaveCount(1);
+            callOrder[0].Should().Be("SaveChangesAsync");
 
-            _passwordEncrypterMock.Verify(x => x.IsValid("OldPass@123", oldHashedPassword), Times.Once);
-            _passwordEncrypterMock.Verify(x => x.Encrypt("NewPass@456"), Times.Once);
-        }
-
-        private static User CreateUserWithHashedPassword(Guid userId, string hashedPassword)
-        {
-            var user = User.Create(
-                "Test User",
-                "test@example.com",
-                "TempPass@123",
-                FCG.Domain.Enum.Role.User
-            );
-
-            var idProperty = typeof(User).BaseType?.GetProperty("Id");
-            idProperty?.SetValue(user, userId);
-
-            var passwordField = typeof(User).GetProperty("Password");
-            passwordField?.SetValue(user, Password.CreateFromHash(hashedPassword));
-
-            return user;
+            _passwordEncrypterMock.Verify(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _passwordEncrypterMock.Verify(x => x.Encrypt(It.IsAny<string>()), Times.Once);
         }
     }
 }

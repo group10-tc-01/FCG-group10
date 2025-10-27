@@ -5,21 +5,21 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update.UsersDTO
 {
     public class UpdateUserRequestTests
     {
-        [Fact(DisplayName = "Deve criar UpdateUserRequest com propriedades corretas")]
-        public void CreateUpdateUserRequest_ShouldSetPropertiesCorrectly()
+        [Fact]
+        public void Given_ValidProperties_When_CreateUpdateUserRequest_Then_ShouldSetAllPropertiesCorrectly()
         {
             // Arrange
             var id = Guid.NewGuid();
             var currentPassword = "CurrentPass@123";
             var newPassword = "NewPass@456";
-
-            // Act
-            var request = new UpdateUserRequest
+            var bodyRequest = new UpdateUserBodyRequest
             {
-                Id = id,
                 CurrentPassword = currentPassword,
                 NewPassword = newPassword
             };
+
+            // Act
+            var request = new UpdateUserRequest(id, bodyRequest);
 
             // Assert
             request.Id.Should().Be(id);

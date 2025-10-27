@@ -10,7 +10,7 @@ namespace FCG.UnitTests.Domain.Entities
     public class GameTests
     {
         [Fact]
-        public void Given_ValidGameParameters_When_CreateMethodIsCalled_Then_GameIsInstantiatedCorrectly()
+        public void Given_ValidGameParameters_When_Create_Then_ShouldInstantiateGameCorrectly()
         {
             // Arrange
             var gameEntity = GameBuilder.Build();
@@ -28,58 +28,47 @@ namespace FCG.UnitTests.Domain.Entities
         }
 
         [Fact]
-        public void Given_InvalidName_When_CreateGame_Then_ThrowsException()
+        public void Given_InvalidName_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var gameEntity = GameBuilder.Build();
+            var actShortName = () => Game.Create(Name.Create("A"), gameEntity.Description, Price.Create(gameEntity.Price), gameEntity.Category);
+            var actNullName = () => Game.Create(Name.Create(""), gameEntity.Description, Price.Create(gameEntity.Price), gameEntity.Category);
 
             // Act & Assert
-            Action actShortName = () => Game.Create(Name.Create("A"), gameEntity.Description, Price.Create(gameEntity.Price),
-                gameEntity.Category
-            );
-
             actShortName.Should().Throw<DomainException>()
                 .WithMessage(ResourceMessages.NameMinimumLength);
-
-            Action actNullName = () => Game.Create(
-                Name.Create(""),
-                gameEntity.Description,
-                Price.Create(gameEntity.Price),
-                gameEntity.Category
-            );
 
             actNullName.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_NullOrEmptyDescription_When_CreateGame_Then_ShouldThrowDomainException()
+        public void Given_NullOrEmptyDescription_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var name = Name.Create("Test Game");
             var price = Price.Create(59.99m);
             var category = "Action";
+            var actNullDescription = () => Game.Create(name, "", price, category);
+            var actEmptyDescription = () => Game.Create(name, string.Empty, price, category);
 
             // Act & Assert
-            Action actNullDescription = () => Game.Create(name, "", price, category);
             actNullDescription.Should().Throw<DomainException>().WithMessage(ResourceMessages.DescriptionCannotBeNullOrEmpty);
-
-            Action actEmptyDescription = () => Game.Create(name, string.Empty, price, category);
             actEmptyDescription.Should().Throw<DomainException>().WithMessage(ResourceMessages.DescriptionCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_NullOrEmptyCategory_When_CreateGame_Then_ShouldThrowDomainException()
+        public void Given_NullOrEmptyCategory_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var name = Name.Create("Test Game");
             var description = "Test Description";
             var price = Price.Create(59.99m);
+            var actNullCategory = () => Game.Create(name, description, price, "");
+            var actEmptyCategory = () => Game.Create(name, description, price, string.Empty);
 
             // Act & Assert
-            Action actNullCategory = () => Game.Create(name, description, price, "");
             actNullCategory.Should().Throw<DomainException>().WithMessage(ResourceMessages.CategoryCannotBeNullOrEmpty);
-
-            Action actEmptyCategory = () => Game.Create(name, description, price, string.Empty);
             actEmptyCategory.Should().Throw<DomainException>().WithMessage(ResourceMessages.CategoryCannotBeNullOrEmpty);
         }
     }

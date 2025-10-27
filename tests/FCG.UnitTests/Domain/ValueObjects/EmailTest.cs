@@ -8,7 +8,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
     public class EmailTests
     {
         [Fact]
-        public void Given_ValidEmail_When_CreateEmail_Then_ShouldCreateSuccessfully()
+        public void Given_ValidEmail_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string validEmail = "user@example.com";
@@ -22,7 +22,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_EmailWithSubdomain_When_CreateEmail_Then_ShouldCreateSuccessfully()
+        public void Given_EmailWithSubdomain_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string emailWithSubdomain = "user@mail.example.com";
@@ -35,7 +35,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_EmailWithPlusSign_When_CreateEmail_Then_ShouldCreateSuccessfully()
+        public void Given_EmailWithPlusSign_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string emailWithPlus = "user+tag@example.com";
@@ -48,80 +48,68 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_NullEmail_When_CreateEmail_Then_ShouldThrowDomainException()
+        public void Given_NullEmail_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
-            string nullEmail = null;
+            string? nullEmail = null;
+            var act = () => Email.Create(nullEmail!);
 
-            // Act
-            Action act = () => Email.Create(nullEmail);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.EmailCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_EmptyEmail_When_CreateEmail_Then_ShouldThrowDomainException()
+        public void Given_EmptyEmail_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string emptyEmail = string.Empty;
+            var act = () => Email.Create(emptyEmail);
 
-            // Act
-            Action act = () => Email.Create(emptyEmail);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.EmailCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_WhitespaceEmail_When_CreateEmail_Then_ShouldThrowDomainException()
+        public void Given_WhitespaceEmail_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string whitespaceEmail = "   ";
+            var act = () => Email.Create(whitespaceEmail);
 
-            // Act
-            Action act = () => Email.Create(whitespaceEmail);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.EmailCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_InvalidEmailFormat_When_CreateEmail_Then_ShouldThrowDomainException()
+        public void Given_InvalidEmailFormat_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string invalidEmail = "invalid-email";
+            var act = () => Email.Create(invalidEmail);
 
-            // Act
-            Action act = () => Email.Create(invalidEmail);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.InvalidEmailFormat);
         }
 
         [Fact]
-        public void Given_EmailWithoutAtSymbol_When_CreateEmail_Then_ShouldThrowDomainException()
+        public void Given_EmailWithoutAtSymbol_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string emailWithoutAt = "userexample.com";
+            var act = () => Email.Create(emailWithoutAt);
 
-            // Act
-            Action act = () => Email.Create(emailWithoutAt);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.InvalidEmailFormat);
         }
 
         [Fact]
-        public void Given_EmailLongerThan255Characters_When_CreateEmail_Then_ShouldThrowDomainException()
+        public void Given_EmailLongerThan255Characters_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string longEmail = new string('a', 256) + "@example.com";
+            var act = () => Email.Create(longEmail);
 
-            // Act
-            Action act = () => Email.Create(longEmail);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>().WithMessage(ResourceMessages.EmailCannotExceed255Characters);
         }
 
@@ -152,7 +140,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_EmailObject_When_CallToString_Then_ShouldReturnValue()
+        public void Given_EmailObject_When_ToStringCalled_Then_ShouldReturnValue()
         {
             // Arrange
             var email = Email.Create("tostring@example.com");
