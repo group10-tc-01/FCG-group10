@@ -2,10 +2,11 @@
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
+using FCG.Domain.Services;
 
-namespace FCG.Application.Services.Seeds
+namespace FCG.Infrastructure.Services
 {
-    public class AdminSeedService : ISeed
+    public class AdminSeedService : IAdminSeedService
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly IWriteOnlyUserRepository _writeOnlyUserRepository;

@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using FCG.Application.UseCases.Authentication.Login;
-using FCG.Application.UseCases.Users;
 using FCG.Domain.Models.Authenticaiton;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.Filter;
@@ -14,9 +13,6 @@ using Microsoft.OpenApi.Models;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
-using FCG.Application.UseCases.AdminUsers.GetById;
-using FCG.Application.UseCases.AdminUsers.GetAllUsers;
-using FCG.Application.UseCases.Users.Register;
 
 namespace FCG.WebApi.DependencyInjection
 {

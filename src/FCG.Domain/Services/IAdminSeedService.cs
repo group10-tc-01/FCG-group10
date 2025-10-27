@@ -1,6 +1,6 @@
-﻿namespace FCG.Application.Services.Seeds
+﻿namespace FCG.Domain.Services
 {
-    public interface ISeed
+    public interface IAdminSeedService
     {
         Task SeedAsync(CancellationToken cancellationToken = default);
     }

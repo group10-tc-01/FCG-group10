@@ -7,10 +7,13 @@ using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
+using FCG.Infrastructure.Services;
 using FCG.Infrastructure.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Infrastructure.DependencyInjection
@@ -23,11 +26,12 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddSqlServer(configuration);
             services.AddRepositories();
             services.AddServices();
+            services.AddSerilogLogging(configuration);
 
             return services;
         }
 
-        public static void AddSqlServer(this IServiceCollection services, IConfiguration configuration)
+        private static void AddSqlServer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<FcgDbContext>(options =>
             {
@@ -35,7 +39,7 @@ namespace FCG.Infrastructure.DependencyInjection
             });
         }
 
-        public static void AddRepositories(this IServiceCollection services)
+        private static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -51,10 +55,27 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IWriteOnlyWalletRepository, WalletRepository>();
         }
 
-        public static void AddServices(this IServiceCollection services)
+        private static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
+            services.AddScoped<IAdminSeedService, AdminSeedService>();
+        }
+
+        private static void AddSerilogLogging(this IServiceCollection services, IConfiguration configuration)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Seq(configuration["Serilog:SeqUrl"] ?? "http://localhost:5341")
+                .CreateLogger();
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddSerilog();
+            });
         }
     }
 }
