@@ -1,5 +1,6 @@
-﻿using FCG.Application.UseCases.Games.Register;
-using FCG.Domain.Services;
+﻿using FCG.Application.Shared.Models;
+using FCG.Application.UseCases.Games.GetAll;
+using FCG.Application.UseCases.Games.Register;
 using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FCG.WebApi.Controllers.v1
 {
-    public class GamesController(IMediator mediator, ICurrentUserService currentUserService) : FcgBaseController(mediator, currentUserService)
+    public class GamesController(IMediator mediator) : FcgBaseController(mediator)
     {
         [HttpPost]
         [AuthenticatedAdmin]
@@ -21,11 +22,10 @@ namespace FCG.WebApi.Controllers.v1
 
         [HttpGet]
         [AuthenticatedUser]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllGamesInput input)
         {
-            var user = await _currentUserService.GetUserAsync();
-
-            return Ok(user);
+            var output = await _mediator.Send(input, CancellationToken.None);
+            return Ok(ApiResponse<PagedListResponse<GetAllGamesOutput>>.SuccesResponse(output));
         }
     }
 }

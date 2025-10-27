@@ -10,13 +10,10 @@ namespace FCG.WebApi.Filter
     {
         private readonly ITokenService _tokenService;
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
-        private readonly ICurrentUserService _currentUserService;
-
-        public AuthenticatedUserFilter(ITokenService tokenService, IReadOnlyUserRepository readOnlyUserRepository, ICurrentUserService currentUserService)
+        public AuthenticatedUserFilter(ITokenService tokenService, IReadOnlyUserRepository readOnlyUserRepository)
         {
             _tokenService = tokenService;
             _readOnlyUserRepository = readOnlyUserRepository;
-            _currentUserService = currentUserService;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -31,8 +28,6 @@ namespace FCG.WebApi.Filter
             {
                 throw new UnauthorizedException(ResourceMessages.InvalidToken);
             }
-
-            _currentUserService.UserId = userId;
         }
 
         private static string GetToken(AuthorizationFilterContext context)
