@@ -2,7 +2,7 @@
 using FCG.Domain.Repositories.GamesRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG.Infrastructure.Persistance.Repositories.GameRepository
+namespace FCG.Infrastructure.Persistance.Repositories
 {
     public class GameRepository : IWriteOnlyGameRepository, IReadOnlyGameRepository
     {
@@ -13,10 +13,9 @@ namespace FCG.Infrastructure.Persistance.Repositories.GameRepository
             _fcgDbContext = context;
         }
 
-        public Task AddAsync(Game game)
+        public async Task AddAsync(Game game)
         {
-            _fcgDbContext.Games.Add(game);
-            return Task.CompletedTask;
+            await _fcgDbContext.Games.AddAsync(game);
         }
 
         public async Task<Game?> GetByNameAsync(string name)

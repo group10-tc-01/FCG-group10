@@ -1,5 +1,4 @@
 ﻿using FCG.Application.UseCases.Users.RoleManagement;
-using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Repositories;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;

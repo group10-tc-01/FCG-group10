@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Application.UseCases.Users.Register;
 
 namespace FCG.CommomTestsUtilities.Builders.Inputs
 {

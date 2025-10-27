@@ -1,8 +1,8 @@
-using FCG.Application.UseCases.Users.Register.UsersDTO;
-using FCG.Application.UseCases.Users.Update.UsersDTO;
 using FCG.Application.UseCases.Authentication.Login;
-using FCG.Application.UseCases.Users.Register.UsersDTO;
-using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
+using FCG.Application.UseCases.Users.Register;
+using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Application.UseCases.Users.RoleManagement;
+using FCG.Application.UseCases.Users.Update;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Inputs;
 using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;

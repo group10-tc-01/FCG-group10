@@ -1,5 +1,4 @@
 using FCG.Application.UseCases.Users.Register;
-using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.UseCases.Users.Register

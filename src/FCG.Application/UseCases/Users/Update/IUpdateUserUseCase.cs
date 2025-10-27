@@ -1,5 +1,4 @@
-﻿using FCG.Application.UseCases.Users.Update.UsersDTO;
-using MediatR;
+﻿using MediatR;
 
 namespace FCG.Application.UseCases.Users.Update
 {

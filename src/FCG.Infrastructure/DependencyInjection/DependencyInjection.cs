@@ -1,12 +1,12 @@
 ﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
+using FCG.Domain.Repositories.LibraryRepository;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Domain.Repositories.UserRepository;
+using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
-using FCG.Infrastructure.Persistance.Repositories.GameRepository;
-using FCG.Infrastructure.Persistance.Repositories.UserRepository;
 using FCG.Infrastructure.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,21 +38,23 @@ namespace FCG.Infrastructure.DependencyInjection
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddScoped<IReadOnlyUserRepository, UserRepository>();
             services.AddScoped<IWriteOnlyUserRepository, UserRepository>();
-            services.AddScoped<IReadOnlyUserRepository, UserRepository>();
+
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
             services.AddScoped<IWriteOnlyGameRepository, GameRepository>();
             services.AddScoped<IReadOnlyGameRepository, GameRepository>();
+
+            services.AddScoped<IWriteOnlyLibraryRepository, LibraryRepository>();
+            services.AddScoped<IWriteOnlyWalletRepository, WalletRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
-
-
-
         }
     }
 }

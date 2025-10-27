@@ -1,4 +1,4 @@
-using FCG.Application.UseCases.Users.Update.UsersDTO;
+using FCG.Application.UseCases.Users.Update;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.UseCases.Users.Update.UsersDTO

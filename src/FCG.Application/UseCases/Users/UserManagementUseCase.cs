@@ -4,9 +4,8 @@ using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
 using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
 using FCG.Application.UseCases.Users.Register;
-using FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update;
-using FCG.Application.UseCases.Users.Update.UsersDTO;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Application.UseCases.Users

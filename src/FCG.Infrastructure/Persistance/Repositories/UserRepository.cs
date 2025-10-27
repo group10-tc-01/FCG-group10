@@ -3,7 +3,7 @@ using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
+namespace FCG.Infrastructure.Persistance.Repositories
 {
     public class UserRepository : IReadOnlyUserRepository, IWriteOnlyUserRepository
     {
@@ -14,12 +14,11 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
             _fcgDbContext = context;
         }
 
-        public Task AddAsync(User user, Wallet wallet)
+        public async Task AddAsync(User user)
         {
-            _fcgDbContext.Users.Add(user);
-            _fcgDbContext.Wallets.Add(wallet);
-            return Task.CompletedTask;
+            await _fcgDbContext.Users.AddAsync(user);
         }
+
         public Task UpdateAsync(User user, CancellationToken cancellationToken = default)
         {
             _fcgDbContext.Users.Update(user);
@@ -48,7 +47,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.UserRepository
 
             if (!string.IsNullOrWhiteSpace(Role))
             {
-                if (System.Enum.TryParse<Role>(Role, true, out Role filterRole))
+                if (Enum.TryParse(Role, true, out Role filterRole))
                 {
                     query = query.Where(u => u.Role == filterRole);
                 }

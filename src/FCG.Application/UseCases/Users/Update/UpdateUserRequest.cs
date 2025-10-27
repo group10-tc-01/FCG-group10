@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace FCG.Application.UseCases.Users.Update.UsersDTO
+namespace FCG.Application.UseCases.Users.Update
 {
     public class UpdateUserRequest : IRequest<UpdateUserResponse>
     {

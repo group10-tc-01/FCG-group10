@@ -1,5 +1,4 @@
-﻿using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
-using FCG.Domain.Enum;
+﻿using FCG.Domain.Enum;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 

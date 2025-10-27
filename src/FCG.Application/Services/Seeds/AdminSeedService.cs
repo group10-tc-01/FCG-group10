@@ -25,7 +25,7 @@ namespace FCG.Application.Services.Seeds
             {
                 var admin = User.Create("admin", "admin@mail.com", "admin@123", Role.Admin);
                 var wallet = Wallet.Create(admin.Id);
-                await _writeOnlyUserRepository.AddAsync(admin, wallet);
+                await _writeOnlyUserRepository.AddAsync(admin);
                 await _uow.SaveChangesAsync(cancellationToken);
             }
         }

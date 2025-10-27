@@ -1,5 +1,4 @@
-﻿using FCG.Application.UseCases.Users.Update.UsersDTO;
-using FCG.Domain.Exceptions;
+﻿using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
