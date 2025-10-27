@@ -1,4 +1,4 @@
-﻿namespace FCG.Application.UseCases.AdminUsers.GetById
+﻿namespace FCG.Application.UseCases.Admin.GetById
 {
     public class WalletDto
     {

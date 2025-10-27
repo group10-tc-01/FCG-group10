@@ -1,4 +1,5 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetAllUsers;
+﻿using FCG.Application.UseCases.Admin.GetAllUsers;
+using FCG.Application.UseCases.Admin.GetById;
 using FCG.Application.UseCases.AdminUsers.GetById;
 using FCG.Domain.Models.Pagination;
 using FCG.WebApi.Attributes;

@@ -2,7 +2,7 @@
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 
-namespace FCG.Application.UseCases.AdminUsers.GetById
+namespace FCG.Application.UseCases.Admin.GetById
 {
     public class GetUserByIdUseCase : IGetUserByIdUseCase
     {

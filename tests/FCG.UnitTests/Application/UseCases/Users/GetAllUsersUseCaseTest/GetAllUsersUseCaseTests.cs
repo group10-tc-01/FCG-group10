@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetAllUsers;
+﻿using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace FCG.Application.UseCases.AdminUsers.GetById
+namespace FCG.Application.UseCases.Admin.GetById
 {
     [ExcludeFromCodeCoverage]
     public class LibraryDto

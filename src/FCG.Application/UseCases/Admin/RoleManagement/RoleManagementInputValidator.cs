@@ -2,7 +2,7 @@
 using FCG.Messages;
 using FluentValidation;
 
-namespace FCG.Application.UseCases.AdminUsers.RoleManagement
+namespace FCG.Application.UseCases.Admin.RoleManagement
 {
     public class RoleManagementInputValidator : AbstractValidator<RoleManagementRequest>
     {

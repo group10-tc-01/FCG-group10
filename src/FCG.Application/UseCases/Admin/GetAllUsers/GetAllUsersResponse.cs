@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
+namespace FCG.Application.UseCases.Admin.GetAllUsers
 {
     [ExcludeFromCodeCoverage]
     public class GetAllUsersResponse

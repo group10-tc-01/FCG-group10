@@ -1,7 +1,7 @@
 ﻿using FCG.Domain.Models.Pagination;
 using FCG.Domain.Repositories.UserRepository;
 
-namespace FCG.Application.UseCases.AdminUsers.GetAllUsers
+namespace FCG.Application.UseCases.Admin.GetAllUsers
 {
     public class GetAllUsersUseCase : IGetAllUsersUseCase
     {

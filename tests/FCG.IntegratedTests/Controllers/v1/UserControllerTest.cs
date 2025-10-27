@@ -1,4 +1,4 @@
-using FCG.Application.UseCases.AdminUsers.RoleManagement;
+using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.Application.UseCases.Authentication.Login;
 using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;

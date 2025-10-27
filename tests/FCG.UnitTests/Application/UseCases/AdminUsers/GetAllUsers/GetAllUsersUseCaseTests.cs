@@ -1,4 +1,4 @@
-using FCG.Application.UseCases.AdminUsers.GetAllUsers;
+using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;

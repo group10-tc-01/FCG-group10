@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetById;
+﻿using FCG.Application.UseCases.Admin.GetById;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Infrastructure.Persistance;
