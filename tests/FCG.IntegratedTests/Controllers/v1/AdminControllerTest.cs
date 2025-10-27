@@ -1,5 +1,4 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById;
-using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Infrastructure.Persistance;
@@ -215,9 +214,8 @@ namespace FCG.IntegratedTests.Controllers.v1
                 {
                     var mockRepo = new Mock<IReadOnlyUserRepository>();
 
-                    mockRepo.Setup(repo => repo.GetQueryableAllUsers(
-                            It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                        .ThrowsAsync(new Exception("Simulação de falha de serviço não mapeada."));
+                    mockRepo.Setup(repo => repo.GetAllUsersAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("Simulação de falha de serviço não mapeada."));
 
                     services.RemoveAll<IReadOnlyUserRepository>();
                     services.AddScoped<IReadOnlyUserRepository>(sp => mockRepo.Object);
@@ -253,7 +251,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             // ASSERT (THEN)
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<UserDetailResponse>>();
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<GetUserByIdResponse>>();
 
             apiResponse.Should().NotBeNull("a resposta da API não deve ser nula.");
             apiResponse!.Data.Id.Should().Be(userToFind.Id);
@@ -300,8 +298,7 @@ namespace FCG.IntegratedTests.Controllers.v1
                 {
                     var mockRepo = new Mock<IReadOnlyUserRepository>();
 
-                    mockRepo.Setup(repo => repo.GetQueryableAllUsers(
-                        It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                    mockRepo.Setup(repo => repo.GetAllUsersAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                         .ThrowsAsync(new DomainException(domainExceptionMessage));
 
                     services.RemoveAll<IReadOnlyUserRepository>();

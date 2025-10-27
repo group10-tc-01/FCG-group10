@@ -1,4 +1,4 @@
-﻿using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
@@ -49,7 +49,7 @@ namespace FCG.UnitTests.Domain.Entities
             Action act = () => User.Create(null, userBuilder.Email, userBuilder.Password, Role.Admin);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace FCG.UnitTests.Domain.Entities
             Action act = () => User.Create(userBuilder.Name, "invalid-email", userBuilder.Password, Role.Admin);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Invalid email format.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.InvalidEmailFormat);
         }
 
     }

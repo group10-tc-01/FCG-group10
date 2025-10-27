@@ -16,12 +16,6 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.UserRepository
                 .Returns(Task.CompletedTask);
         }
 
-        public static void SetupUpdateAsync()
-        {
-            _mock.Setup(repo => repo.UpdateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-        }
-
         public static void Reset()
         {
             _mock.Reset();

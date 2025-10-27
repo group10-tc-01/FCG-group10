@@ -25,7 +25,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
         {
             // Arrange
             var userId = Guid.NewGuid();
-            var query = new GetByIdUserQuery(userId);
+            var query = new GetUserByIdRequest(userId);
 
             _userRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(userId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((User?)null);
@@ -43,7 +43,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
         {
             // Arrange
             var userId = Guid.NewGuid();
-            var query = new GetByIdUserQuery(userId);
+            var query = new GetUserByIdRequest(userId);
             var user = UserBuilder.BuildWithData("Test User", "test@example.com", Role.User);
 
             _userRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(userId, It.IsAny<CancellationToken>()))

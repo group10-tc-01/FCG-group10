@@ -4,11 +4,11 @@ using FCG.Domain.Repositories.UserRepository;
 
 namespace FCG.Application.UseCases.AdminUsers.GetById
 {
-    public class GetByIdUserUseCase : IGetUserByIdUseCase
+    public class GetUserByIdUseCase : IGetUserByIdUseCase
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
 
-        public GetByIdUserUseCase(IReadOnlyUserRepository userRepository)
+        public GetUserByIdUseCase(IReadOnlyUserRepository userRepository)
         {
             _readOnlyUserRepository = userRepository;
         }

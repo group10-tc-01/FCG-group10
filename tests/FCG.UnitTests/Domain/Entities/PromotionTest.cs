@@ -1,4 +1,4 @@
-﻿using FCG.Domain.Entities;
+using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FluentAssertions;
 
@@ -28,7 +28,7 @@ namespace FCG.UnitTests.Domain.Entities
             promotion.StartDate.Should().Be(startDate);
             promotion.EndDate.Should().Be(endDate);
 
-            // Verifica o valor de precisão
+            // Verifica o valor de precis�o
             promotionPrecise.Discount.Value.Should().Be(preciseDiscount);
         }
 
@@ -65,7 +65,7 @@ namespace FCG.UnitTests.Domain.Entities
 
             // Assert
             act.Should().Throw<DomainException>()
-               .WithMessage("End date must be on or after the start date.");
+               .WithMessage(ResourceMessages.PromotionEndDateMustBeAfterStartDate);
         }
 
         [Fact]
@@ -84,9 +84,9 @@ namespace FCG.UnitTests.Domain.Entities
 
             // Assert
             actNegative.Should().Throw<DomainException>()
-                       .WithMessage("Discount must be between 0 and 100.");
+                       .WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
             actAbove100.Should().Throw<DomainException>()
-                       .WithMessage("Discount must be between 0 and 100.");
+                       .WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
         }
 
         [Fact]

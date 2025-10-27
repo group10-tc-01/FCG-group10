@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Exceptions;
+using FCG.Messages;
 
 namespace FCG.Domain.ValueObjects
 {
@@ -10,12 +11,12 @@ namespace FCG.Domain.ValueObjects
         {
             if (value < 0)
             {
-                throw new DomainException("The price cannot be a negative value.");
+                throw new DomainException(ResourceMessages.PriceCannotBeNegative);
             }
 
             if (value == 0)
             {
-                throw new DomainException("The price must be greaten than zero.");
+                throw new DomainException(ResourceMessages.PriceMustBeGreaterThanZero);
             }
 
             Value = value;

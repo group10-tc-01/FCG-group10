@@ -3,6 +3,7 @@ using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 
 namespace FCG.Application.UseCases.Users.Update
 {
@@ -27,7 +28,7 @@ namespace FCG.Application.UseCases.Users.Update
 
             if (userToUpdate is null)
             {
-                throw new NotFoundException($"Usuário com ID {request.Id} não encontrado para atualização.");
+                throw new NotFoundException(string.Format(ResourceMessages.UserNotFoundForUpdate, request.Id));
             }
 
             string hashedPassword = userToUpdate.Password.Value;
@@ -36,17 +37,17 @@ namespace FCG.Application.UseCases.Users.Update
             {
                 if (string.IsNullOrWhiteSpace(request.CurrentPassword))
                 {
-                    throw new DomainException("A senha atual é obrigatória para alterar a senha.");
+                    throw new DomainException(ResourceMessages.CurrentPasswordRequired);
                 }
 
                 if (!_passwordEncrypter.IsValid(request.CurrentPassword, userToUpdate.Password.Value))
                 {
-                    throw new DomainException("A senha atual está incorreta.");
+                    throw new DomainException(ResourceMessages.CurrentPasswordIncorrect);
                 }
 
                 if (request.CurrentPassword == request.NewPassword)
                 {
-                    throw new DomainException("A nova senha deve ser diferente da senha atual.");
+                    throw new DomainException(ResourceMessages.NewPasswordMustBeDifferent);
                 }
 
                 Password newPasswordVo = Password.Create(request.NewPassword);

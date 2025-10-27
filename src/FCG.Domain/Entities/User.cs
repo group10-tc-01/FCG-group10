@@ -2,6 +2,7 @@
 using FCG.Domain.Events.User;
 using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 
 namespace FCG.Domain.Entities
 {
@@ -40,7 +41,7 @@ namespace FCG.Domain.Entities
         public void PromoteToAdmin()
         {
             if (Role == Role.Admin)
-                throw new DomainException("User is already an Admin.");
+                throw new DomainException(ResourceMessages.UserAlreadyAdmin);
 
             Role = Role.Admin;
         }
@@ -48,7 +49,7 @@ namespace FCG.Domain.Entities
         public void DemoteToUser()
         {
             if (Role == Role.User)
-                throw new DomainException("User is already a User.");
+                throw new DomainException(ResourceMessages.UserAlreadyUser);
 
             Role = Role.User;
         }

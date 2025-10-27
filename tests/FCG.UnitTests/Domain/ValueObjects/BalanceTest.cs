@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 using System.Globalization;
 
@@ -44,7 +45,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Balance.Create(negativeAmount);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Balance cannot be negative.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.BalanceCannotBeNegative);
         }
 
         [Fact]

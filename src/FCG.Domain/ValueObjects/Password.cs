@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Exceptions;
+using FCG.Messages;
 
 namespace FCG.Domain.ValueObjects
 {
@@ -14,19 +15,19 @@ namespace FCG.Domain.ValueObjects
         public static Password Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new DomainException("Password cannot be null or empty.");
+                throw new DomainException(ResourceMessages.PasswordCannotBeNullOrEmpty);
 
             if (value.Length < 8)
-                throw new DomainException("Password must be at least 8 characters long.");
+                throw new DomainException(ResourceMessages.PasswordMinimumLength);
 
             if (!ContainsLetter(value))
-                throw new DomainException("Password must contain at least one letter.");
+                throw new DomainException(ResourceMessages.PasswordMustContainLetter);
 
             if (!ContainsDigit(value))
-                throw new DomainException("Password must contain at least one number.");
+                throw new DomainException(ResourceMessages.PasswordMustContainNumber);
 
             if (!ContainsSpecialCharacter(value))
-                throw new DomainException("Password must contain at least one special character.");
+                throw new DomainException(ResourceMessages.PasswordMustContainSpecialCharacter);
 
             return new Password(value);
         }
@@ -34,7 +35,7 @@ namespace FCG.Domain.ValueObjects
         public static Password CreateFromHash(string hashValue)
         {
             if (string.IsNullOrWhiteSpace(hashValue))
-                throw new ArgumentNullException(nameof(hashValue), "Stored hash value cannot be null or empty.");
+                throw new ArgumentNullException(nameof(hashValue), ResourceMessages.StoredHashCannotBeNullOrEmpty);
             return new Password(hashValue);
         }
 

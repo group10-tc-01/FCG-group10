@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
@@ -56,7 +57,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Price.Create(negativePrice);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("The price cannot be a negative value.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.PriceCannotBeNegative);
         }
 
         [Fact]

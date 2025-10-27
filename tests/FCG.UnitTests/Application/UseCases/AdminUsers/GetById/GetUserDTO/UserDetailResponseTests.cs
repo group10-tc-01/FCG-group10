@@ -1,4 +1,4 @@
-using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
+using FCG.Application.UseCases.AdminUsers.GetById;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById.GetUserDTO
@@ -18,7 +18,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById.GetUserDTO
             var library = new LibraryDto { Id = Guid.NewGuid(), CreatedAt = DateTime.UtcNow };
 
             // Act
-            var response = new UserDetailResponse
+            var response = new GetUserByIdResponse
             {
                 Id = id,
                 Name = name,

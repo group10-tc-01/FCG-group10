@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Exceptions;
+using FCG.Messages;
 using FCG.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,10 +69,10 @@ namespace FCG.WebApi.Middlewares
 
             var problemDetails = new ProblemDetails
             {
-                Title = "An unexpected error occurred!",
+                Title = ResourceMessages.UnexpectedErrorOccurred,
                 Status = context.Response.StatusCode,
                 Instance = context.Request.Path,
-                Detail = "Please contact support.",
+                Detail = ResourceMessages.PleaseContactSupport,
             };
 
             problemDetails.Extensions["traceId"] = traceId;

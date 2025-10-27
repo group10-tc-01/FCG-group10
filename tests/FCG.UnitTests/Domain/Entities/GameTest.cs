@@ -1,7 +1,8 @@
-﻿using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
@@ -38,7 +39,7 @@ namespace FCG.UnitTests.Domain.Entities
             );
 
             actShortName.Should().Throw<DomainException>()
-                .WithMessage("Name must be at least 2 characters long.");
+                .WithMessage(ResourceMessages.NameMinimumLength);
 
             Action actNullName = () => Game.Create(
                 Name.Create(""),
@@ -47,7 +48,7 @@ namespace FCG.UnitTests.Domain.Entities
                 gameEntity.Category
             );
 
-            actNullName.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            actNullName.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
@@ -60,10 +61,10 @@ namespace FCG.UnitTests.Domain.Entities
 
             // Act & Assert
             Action actNullDescription = () => Game.Create(name, "", price, category);
-            actNullDescription.Should().Throw<DomainException>().WithMessage("Description cannot be null or empty.");
+            actNullDescription.Should().Throw<DomainException>().WithMessage(ResourceMessages.DescriptionCannotBeNullOrEmpty);
 
             Action actEmptyDescription = () => Game.Create(name, string.Empty, price, category);
-            actEmptyDescription.Should().Throw<DomainException>().WithMessage("Description cannot be null or empty.");
+            actEmptyDescription.Should().Throw<DomainException>().WithMessage(ResourceMessages.DescriptionCannotBeNullOrEmpty);
         }
 
         [Fact]
@@ -76,10 +77,10 @@ namespace FCG.UnitTests.Domain.Entities
 
             // Act & Assert
             Action actNullCategory = () => Game.Create(name, description, price, "");
-            actNullCategory.Should().Throw<DomainException>().WithMessage("Category cannot be null or empty.");
+            actNullCategory.Should().Throw<DomainException>().WithMessage(ResourceMessages.CategoryCannotBeNullOrEmpty);
 
             Action actEmptyCategory = () => Game.Create(name, description, price, string.Empty);
-            actEmptyCategory.Should().Throw<DomainException>().WithMessage("Category cannot be null or empty.");
+            actEmptyCategory.Should().Throw<DomainException>().WithMessage(ResourceMessages.CategoryCannotBeNullOrEmpty);
         }
     }
 }

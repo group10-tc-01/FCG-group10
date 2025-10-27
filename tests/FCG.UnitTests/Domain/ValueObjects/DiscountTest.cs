@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 using System.Globalization;
 
@@ -39,8 +40,8 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action actAbove100 = () => Discount.Create(invalidPercentage);
 
             // Assert
-            actNegative.Should().Throw<DomainException>().WithMessage("Discount must be between 0 and 100.");
-            actAbove100.Should().Throw<DomainException>().WithMessage("Discount must be between 0 and 100.");
+            actNegative.Should().Throw<DomainException>().WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
+            actAbove100.Should().Throw<DomainException>().WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
         }
 
         [Fact]

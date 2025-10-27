@@ -1,4 +1,4 @@
-Ôªøusing FCG.Application.UseCases.Users.Update;
+using FCG.Application.UseCases.Users.Update;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
@@ -54,7 +54,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
 
             // Then
             await act.Should().ThrowAsync<NotFoundException>()
-                .Where(ex => ex.Message.Contains(userId.ToString()) && ex.Message.Contains("n√£o encontrado"));
+                .Where(ex => ex.Message.Contains(userId.ToString()) && ex.Message.Contains("n„o encontrado"));
         }
 
         [Fact]
@@ -81,7 +81,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
 
             // Then
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("A senha atual √© obrigat√≥ria para alterar a senha.");
+                .WithMessage("A senha atual È obrigatÛria para alterar a senha.");
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
 
             // Then
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("A senha atual est√° incorreta.");
+                .WithMessage("A senha atual est· incorreta.");
         }
 
         [Fact]
@@ -144,7 +144,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
 
             // Then
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("A nova senha deve ser diferente da senha atual.");
+                .WithMessage(ResourceMessages.NewPasswordMustBeDifferent);
         }
 
         [Fact]

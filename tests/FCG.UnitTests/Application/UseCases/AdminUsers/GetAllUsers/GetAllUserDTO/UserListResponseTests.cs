@@ -1,4 +1,4 @@
-using FCG.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO;
+using FCG.Application.UseCases.AdminUsers.GetAllUsers;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO
@@ -16,7 +16,7 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDT
             var createdAt = DateTime.UtcNow;
 
             // Act
-            var response = new UserListResponse
+            var response = new GetAllUsersResponse
             {
                 Id = id,
                 Name = name,

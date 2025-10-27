@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
@@ -31,7 +32,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Name.Create(shortName);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name must be at least 2 characters long.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameMinimumLength);
         }
 
         [Fact]
@@ -44,7 +45,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Name.Create(nullName);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
@@ -57,7 +58,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Name.Create(emptyName);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
@@ -70,7 +71,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             Action act = () => Name.Create(whitespaceName);
 
             // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]

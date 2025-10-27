@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Exceptions;
+using FCG.Messages;
 
 namespace FCG.Domain.ValueObjects
 {
@@ -9,7 +10,7 @@ namespace FCG.Domain.ValueObjects
         private Discount(decimal value)
         {
             if (value < 0 || value > 100)
-                throw new DomainException("Discount must be between 0 and 100.");
+                throw new DomainException(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
 
             Value = value;
         }

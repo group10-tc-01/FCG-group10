@@ -7,6 +7,7 @@ using FCG.Domain.Repositories.LibraryRepository;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
+using FCG.Messages;
 
 namespace FCG.Application.UseCases.Users.Register
 {
@@ -45,7 +46,7 @@ namespace FCG.Application.UseCases.Users.Register
 
                 if (existingUser != null)
                 {
-                    throw new DuplicateEmailException("Email já está em uso.");
+                    throw new DuplicateEmailException(ResourceMessages.EmailAlreadyInUse);
                 }
 
                 var hashedPassword = _passwordEncrypter.Encrypt(request.Password);

@@ -31,7 +31,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
                 Role.User
             );
 
-            var query = new GetByIdUserQuery(fakeUser.Id);
+            var query = new GetUserByIdRequest(fakeUser.Id);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(fakeUser.Id, It.IsAny<CancellationToken>()))
@@ -60,7 +60,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
         {
             // Arrange
             var user = User.Create(name, email, "Pass123!", Role.User);
-            var query = new GetByIdUserQuery(user.Id);
+            var query = new GetUserByIdRequest(user.Id);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(user.Id, It.IsAny<CancellationToken>()))
@@ -79,7 +79,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
         {
             // Arrange
             var user = UserBuilder.Build();
-            var query = new GetByIdUserQuery(user.Id);
+            var query = new GetUserByIdRequest(user.Id);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(user.Id, It.IsAny<CancellationToken>()))
@@ -101,7 +101,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
         {
             // Arrange
             var invalidId = Guid.NewGuid();
-            var query = new GetByIdUserQuery(invalidId);
+            var query = new GetUserByIdRequest(invalidId);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(invalidId, It.IsAny<CancellationToken>()))

@@ -30,7 +30,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password cannot be null or empty.");
+                .WithMessage(ResourceMessages.PasswordCannotBeNullOrEmpty);
         }
 
         [Fact(DisplayName = "Create deve lançar exceção quando senha é muito curta")]
@@ -44,7 +44,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must be at least 8 characters long.");
+                .WithMessage(ResourceMessages.PasswordMinimumLength);
         }
 
         [Fact(DisplayName = "Create deve lançar exceção quando senha não contém letra")]
@@ -58,7 +58,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one letter.");
+                .WithMessage(ResourceMessages.PasswordMustContainLetter);
         }
 
         [Fact(DisplayName = "Create deve lançar exceção quando senha não contém dígito")]
@@ -72,7 +72,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one number.");
+                .WithMessage(ResourceMessages.PasswordMustContainNumber);
         }
 
         [Fact(DisplayName = "Create deve lançar exceção quando senha não contém caractere especial")]
@@ -86,7 +86,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one special character.");
+                .WithMessage(ResourceMessages.PasswordMustContainSpecialCharacter);
         }
 
         [Fact(DisplayName = "CreateFromHash deve criar password com hash válido")]
@@ -114,7 +114,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
             // Assert
             act.Should().Throw<ArgumentNullException>()
                 .WithParameterName("hashValue")
-                .WithMessage("Stored hash value cannot be null or empty. (Parameter 'hashValue')");
+                .WithMessage($"*{ResourceMessages.StoredHashCannotBeNullOrEmpty}*");
         }
 
         [Fact(DisplayName = "Operador implícito string deve retornar Value")]
