@@ -1,5 +1,5 @@
 using FCG.Domain.Exceptions;
-using FCG.Domain.Models.Authenticaiton;
+using FCG.Domain.Models.Authentication;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Messages;

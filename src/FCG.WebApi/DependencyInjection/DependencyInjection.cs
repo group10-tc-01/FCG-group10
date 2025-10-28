@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using FCG.Application.UseCases.Authentication.Login;
-using FCG.Domain.Models.Authenticaiton;
+using FCG.Domain.Models.Authentication;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.Filter;
 using FCG.WebApi.Models;
