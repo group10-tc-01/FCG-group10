@@ -1,11 +1,13 @@
 ﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
+using FCG.Domain.Repositories.PromotionRepository;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Persistance.Repositories.GameRepository;
+using FCG.Infrastructure.Persistance.Repositories.PromotionRepository;
 using FCG.Infrastructure.Persistance.Repositories.UserRepository;
 using FCG.Infrastructure.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,8 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IWriteOnlyGameRepository, GameRepository>();
             services.AddScoped<IReadOnlyGameRepository, GameRepository>();
+            services.AddScoped<IReadOnlyPromotionRepository, PromotionRepository>();
+            services.AddScoped<IWriteOnlyPromotionRepository, PromotionRepository>();
         }
 
         public static void AddServices(this IServiceCollection services)

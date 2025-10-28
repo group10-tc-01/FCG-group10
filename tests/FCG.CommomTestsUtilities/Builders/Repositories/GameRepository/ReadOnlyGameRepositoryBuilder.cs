@@ -30,6 +30,7 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.GameRepository
             _mock.Verify(repo => repo.GetByNameAsync(name), Times.AtLeastOnce);
         }
 
+
         public static void SetupGetAllAsQueryable(IQueryable<Game> query)
         {
             _mock.Setup(repo => repo.GetAllAsQueryable())
@@ -39,6 +40,21 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.GameRepository
         public static void VerifyGetAllAsQueryableWasCalled()
         {
             _mock.Verify(repo => repo.GetAllAsQueryable(), Times.AtLeastOnce);
+        }
+  
+        public static void SetupExistsAsync(bool exists)
+        {
+            _mock.Setup(repo => repo.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(exists);
+        }
+
+        public static void SetupGetByIdAsync(Game? game)
+        {
+            _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(game);
+        }
+
+        public static void VerifyExistsAsyncWasCalled()
+        {
+            _mock.Verify(repo => repo.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
         }
 
         public static void Reset()

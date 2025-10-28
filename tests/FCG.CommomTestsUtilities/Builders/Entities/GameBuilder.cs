@@ -8,7 +8,13 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
     {
         public static Game Build()
         {
-            return new Faker<Game>().CustomInstantiator(f => Game.Create(f.Commerce.ProductName(), f.Commerce.ProductDescription(), f.Random.Decimal(1, 100), f.Commerce.Categories(1)[0])).Generate();
+            return new Faker<Game>().CustomInstantiator(f =>
+                Game.Create(Name.Create(f.Commerce.ProductName()),
+                    f.Commerce.ProductDescription(),
+                    Price.Create(f.Random.Decimal(1, 100)),
+                    f.Commerce.Categories(1)[0]
+                )
+            ).Generate();
         }
         public static List<Game> BuildList(int count)
         {
