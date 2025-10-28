@@ -2,6 +2,7 @@
 using FCG.FunctionalTests.Fixtures.Admin;
 using FCG.FunctionalTests.Fixtures.Authentication;
 using FCG.FunctionalTests.Fixtures.Games;
+using FCG.FunctionalTests.Fixtures.Promotions;
 using FCG.FunctionalTests.Fixtures.Users;
 using Reqnroll;
 
@@ -20,6 +21,7 @@ namespace FCG.FunctionalTests.Fixtures
         public LogoutFixture Logout => GetOrCreateFixture<LogoutFixture>();
         public RefreshTokenFixture RefreshToken => GetOrCreateFixture<RefreshTokenFixture>();
         public RegisterGameFixture RegisterGame => GetOrCreateFixture<RegisterGameFixture>();
+        public CreatePromotionFixture CreatePromotion => GetOrCreateFixture<CreatePromotionFixture>();
         public RegisterUserFixture RegisterUser => GetOrCreateFixture<RegisterUserFixture>();
         public UpdateUserFixture UpdateUser => GetOrCreateFixture<UpdateUserFixture>();
         public GetAllUsersFixture GetAllUsers => GetOrCreateFixture<GetAllUsersFixture>();

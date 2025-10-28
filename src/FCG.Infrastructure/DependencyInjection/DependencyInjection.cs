@@ -1,12 +1,14 @@
 ﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
 using FCG.Domain.Repositories.LibraryRepository;
+using FCG.Domain.Repositories.PromotionRepository;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
+using FCG.Infrastructure.Persistance.Repositories.PromotionRepository;
 using FCG.Infrastructure.Services;
 using FCG.Infrastructure.Services.Authentication;
 using FCG.Infrastructure.Services.CorrelationId;
@@ -52,6 +54,8 @@ namespace FCG.Infrastructure.DependencyInjection
 
             services.AddScoped<IWriteOnlyGameRepository, GameRepository>();
             services.AddScoped<IReadOnlyGameRepository, GameRepository>();
+            services.AddScoped<IReadOnlyPromotionRepository, PromotionRepository>();
+            services.AddScoped<IWriteOnlyPromotionRepository, PromotionRepository>();
 
             services.AddScoped<IWriteOnlyLibraryRepository, LibraryRepository>();
             services.AddScoped<IWriteOnlyWalletRepository, WalletRepository>();

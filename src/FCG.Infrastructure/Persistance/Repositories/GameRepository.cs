@@ -24,5 +24,19 @@ namespace FCG.Infrastructure.Persistance.Repositories
 
             return game;
         }
+
+        public async Task<Game?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _fcgDbContext.Games
+                .AsNoTracking()
+                .FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
+        }
+
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _fcgDbContext.Games
+                .AsNoTracking()
+                .AnyAsync(g => g.Id == id, cancellationToken);
+        }
     }
 }
