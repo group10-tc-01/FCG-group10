@@ -17,7 +17,20 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.UserRepository
 
         public static void SetupGetByIdAsync(User? user)
         {
-            _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(user);
+            if (user != null)
+            {
+                _mock.Setup(repo => repo.GetByIdAsync(user.Id, It.IsAny<CancellationToken>())).ReturnsAsync(user);
+            }
+            else
+            {
+                _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync((User?)null);
+            }
+        }
+
+        public static void SetupGetAllUsersAsync(List<User> users)
+        {
+            _mock.Setup(repo => repo.GetAllUsersAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((users, users.Count));
         }
     }
 }
