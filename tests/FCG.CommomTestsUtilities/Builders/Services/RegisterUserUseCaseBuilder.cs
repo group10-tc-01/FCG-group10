@@ -5,6 +5,7 @@ using FCG.Domain.Repositories.LibraryRepository;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FCG.CommomTestsUtilities.Builders.Services
@@ -17,6 +18,8 @@ namespace FCG.CommomTestsUtilities.Builders.Services
         private readonly Mock<IWriteOnlyLibraryRepository> _writeOnlyLibraryRepoMock = new();
         private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
         private readonly Mock<IPasswordEncrypter> _passwordEncrypterMock = new();
+        private readonly Mock<ILogger<RegisterUserUseCase>> _loggerMock = new();
+        private readonly Mock<ICorrelationIdProvider> _correlationIdProviderMock = new();
 
         public RegisterUserUseCaseBuilder WithExistingEmail(string email)
         {
@@ -76,13 +79,19 @@ namespace FCG.CommomTestsUtilities.Builders.Services
 
         public RegisterUserUseCase Build()
         {
+            _correlationIdProviderMock
+                .Setup(x => x.GetCorrelationId())
+                .Returns("test-correlation-id");
+
             return new RegisterUserUseCase(
                 _readOnlyUserRepoMock.Object,
                 _writeOnlyUserRepoMock.Object,
                 _writeOnlyWalletRepoMock.Object,
                 _writeOnlyLibraryRepoMock.Object,
                 _unitOfWorkMock.Object,
-                _passwordEncrypterMock.Object
+                _passwordEncrypterMock.Object,
+                _loggerMock.Object,
+                _correlationIdProviderMock.Object
             );
         }
 

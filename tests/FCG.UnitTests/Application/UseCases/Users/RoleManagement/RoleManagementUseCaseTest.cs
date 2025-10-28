@@ -1,12 +1,15 @@
 ﻿using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.CommomTestsUtilities.Builders.Entities;
-using FCG.CommomTestsUtilities.Builders.Repositories;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
+using UoWBuilder = FCG.CommomTestsUtilities.Builders.Repositories.UnitOfWorkBuilder;
 
 namespace FCG.UnitTests.Application.UseCases.Users.RoleManagement
 {
@@ -17,10 +20,14 @@ namespace FCG.UnitTests.Application.UseCases.Users.RoleManagement
             ReadOnlyUserRepositoryBuilder.SetupGetByIdAsync(user);
             var readOnlyRepo = ReadOnlyUserRepositoryBuilder.Build();
 
-            UnitOfWorkBuilder.SetupSaveChangesAsync();
-            unitOfWork = UnitOfWorkBuilder.Build();
+            UoWBuilder.SetupSaveChangesAsync();
+            unitOfWork = UoWBuilder.Build();
 
-            return new RoleManagementUseCase(readOnlyRepo, unitOfWork);
+            var logger = new Mock<ILogger<RoleManagementUseCase>>().Object;
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            return new RoleManagementUseCase(readOnlyRepo, unitOfWork, logger, correlationIdProvider);
         }
 
         [Fact]

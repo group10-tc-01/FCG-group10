@@ -4,6 +4,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
 using FCG.Messages;
+using Microsoft.Extensions.Logging;
 
 namespace FCG.Application.UseCases.Users.Update
 {
@@ -12,22 +13,39 @@ namespace FCG.Application.UseCases.Users.Update
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordEncrypter _passwordEncrypter;
+        private readonly ILogger<UpdateUserUseCase> _logger;
+        private readonly ICorrelationIdProvider _correlationIdProvider;
 
         public UpdateUserUseCase(
             IReadOnlyUserRepository readOnlyUserRepository,
             IUnitOfWork unitOfWork,
-            IPasswordEncrypter passwordEncrypter)
+            IPasswordEncrypter passwordEncrypter,
+            ILogger<UpdateUserUseCase> logger,
+            ICorrelationIdProvider correlationIdProvider)
         {
             _readOnlyUserRepository = readOnlyUserRepository;
             _unitOfWork = unitOfWork;
             _passwordEncrypter = passwordEncrypter;
+            _logger = logger;
+            _correlationIdProvider = correlationIdProvider;
         }
+
         public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
+            var correlationId = _correlationIdProvider.GetCorrelationId();
+
+            _logger.LogInformation(
+                "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Updating user: {UserId}",
+                correlationId, request.Id);
+
             var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (userToUpdate is null)
             {
+                _logger.LogWarning(
+                    "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] User not found: {UserId}",
+                    correlationId, request.Id);
+
                 throw new NotFoundException(string.Format(ResourceMessages.UserNotFoundForUpdate, request.Id));
             }
 
@@ -42,6 +60,10 @@ namespace FCG.Application.UseCases.Users.Update
 
                 if (!_passwordEncrypter.IsValid(request.CurrentPassword, userToUpdate.Password.Value))
                 {
+                    _logger.LogWarning(
+                        "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Invalid current password for user: {UserId}",
+                        correlationId, request.Id);
+
                     throw new DomainException(ResourceMessages.CurrentPasswordIncorrect);
                 }
 
@@ -52,11 +74,19 @@ namespace FCG.Application.UseCases.Users.Update
 
                 Password newPasswordVo = Password.Create(request.NewPassword);
                 hashedPassword = _passwordEncrypter.Encrypt(newPasswordVo.Value);
+
+                _logger.LogInformation(
+                    "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Password updated for user: {UserId}",
+                    correlationId, request.Id);
             }
 
             userToUpdate.Update(hashedPassword);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Successfully updated user: {UserId}",
+                correlationId, userToUpdate.Id);
 
             return new UpdateUserResponse
             {

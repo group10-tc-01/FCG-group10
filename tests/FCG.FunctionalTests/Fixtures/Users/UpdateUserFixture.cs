@@ -13,6 +13,9 @@ namespace FCG.FunctionalTests.Fixtures.Users
             var readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
             var unitOfWork = UoWBuilder.Build();
             var passwordEncrypter = PasswordEncrypterServiceBuilder.Build();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<UpdateUserUseCase>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
             var testUser = UserBuilder.Build();
             Setup(testUser);
@@ -20,7 +23,9 @@ namespace FCG.FunctionalTests.Fixtures.Users
             UpdateUserUseCase = new UpdateUserUseCase(
                 readOnlyUserRepository,
                 unitOfWork,
-                passwordEncrypter
+                passwordEncrypter,
+                logger,
+                correlationIdProvider
             );
 
             UpdateUserRequest = new UpdateUserRequest(

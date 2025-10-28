@@ -1,5 +1,6 @@
 using FCG.Application.UseCases.Users.Update;
 using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
@@ -7,6 +8,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Messages;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Users.Update
@@ -16,6 +18,8 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
         private readonly Mock<IReadOnlyUserRepository> _readOnlyUserRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IPasswordEncrypter> _passwordEncrypterMock;
+        private readonly Mock<ILogger<UpdateUserUseCase>> _loggerMock;
+        private readonly ICorrelationIdProvider _correlationIdProvider;
         private readonly UpdateUserUseCase _useCase;
 
         public UpdateUserUseCaseTests()
@@ -23,11 +27,16 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update
             _readOnlyUserRepositoryMock = new Mock<IReadOnlyUserRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _passwordEncrypterMock = new Mock<IPasswordEncrypter>();
+            _loggerMock = new Mock<ILogger<UpdateUserUseCase>>();
+            _correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
             _useCase = new UpdateUserUseCase(
                 _readOnlyUserRepositoryMock.Object,
                 _unitOfWorkMock.Object,
-                _passwordEncrypterMock.Object
+                _passwordEncrypterMock.Object,
+                _loggerMock.Object,
+                _correlationIdProvider
             );
         }
 

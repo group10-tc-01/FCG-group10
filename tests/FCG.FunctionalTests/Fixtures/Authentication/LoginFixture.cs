@@ -5,7 +5,9 @@ using FCG.CommomTestsUtilities.Builders.Models;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 
 namespace FCG.FunctionalTests.Fixtures.Authentication
 {
@@ -19,8 +21,12 @@ namespace FCG.FunctionalTests.Fixtures.Authentication
             var tokenService = TokenServiceBuilder.Build();
             var jwtSettings = Options.Create(JwtSettingsBuilder.Build());
             var passwordEcrypter = PasswordEncrypterServiceBuilder.Build();
+            var logger = new Mock<ILogger<LoginUseCase>>().Object;
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
-            LoginUseCase = new LoginUseCase(userRepository, tokenService, jwtSettings, passwordEcrypter);
+            LoginUseCase = new LoginUseCase(userRepository, tokenService, jwtSettings, passwordEcrypter, logger, correlationIdProvider);
             LoginInput = LoginInputBuilder.Build();
         }
 

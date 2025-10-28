@@ -9,6 +9,7 @@ using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
 using FCG.Infrastructure.Services;
 using FCG.Infrastructure.Services.Authentication;
+using FCG.Infrastructure.Services.CorrelationId;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace FCG.Infrastructure.DependencyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpContextAccessor();
             services.AddSqlServer(configuration);
             services.AddRepositories();
             services.AddServices();
@@ -60,6 +62,7 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
             services.AddScoped<IAdminSeedService, AdminSeedService>();
+            services.AddScoped<ICorrelationIdProvider, CorrelationIdProvider>();
         }
 
         private static void AddSerilogLogging(this IServiceCollection services, IConfiguration configuration)
@@ -67,7 +70,7 @@ namespace FCG.Infrastructure.DependencyInjection
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.Seq(configuration["Serilog:SeqUrl"] ?? "http://localhost:5341")
                 .CreateLogger();
 

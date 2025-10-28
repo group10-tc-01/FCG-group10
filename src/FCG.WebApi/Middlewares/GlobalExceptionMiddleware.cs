@@ -13,6 +13,7 @@ namespace FCG.WebApi.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IHostEnvironment _env;
+        private const string CorrelationIdKey = "CorrelationId";
 
         public GlobalExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         {
@@ -36,34 +37,44 @@ namespace FCG.WebApi.Middlewares
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var traceId = context!.TraceIdentifier;
+            var correlationId = context.Items.ContainsKey(CorrelationIdKey) 
+                ? context.Items[CorrelationIdKey]?.ToString() 
+                : string.Empty;
 
             context!.Response.ContentType = "application/json";
 
             if (exception is ApiException apiException)
             {
-                await HandleApiExceptionAsync(context, apiException);
+                await HandleApiExceptionAsync(context, apiException, correlationId);
                 return;
             }
 
-            await HandleGenericExceptionAsync(context, exception, traceId);
+            await HandleGenericExceptionAsync(context, exception, traceId, correlationId);
         }
 
-        private async Task HandleApiExceptionAsync(HttpContext context, ApiException exception)
+        private async Task HandleApiExceptionAsync(HttpContext context, ApiException exception, string? correlationId)
         {
             context.Response.StatusCode = (int)exception.StatusCode;
 
             var response = ApiResponse<object>.ErrorResponse(new List<string> { exception.Message }, exception.StatusCode);
 
-            var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
+            var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true
-            });
+            };
+
+            if (!string.IsNullOrEmpty(correlationId))
+            {
+                response.CorrelationId = correlationId;
+            }
+
+            var jsonResponse = JsonSerializer.Serialize(response, options);
 
             await context.Response.WriteAsync(jsonResponse);
         }
 
-        private async Task HandleGenericExceptionAsync(HttpContext context, Exception exception, string traceId)
+        private async Task HandleGenericExceptionAsync(HttpContext context, Exception exception, string traceId, string? correlationId)
         {
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
@@ -76,6 +87,11 @@ namespace FCG.WebApi.Middlewares
             };
 
             problemDetails.Extensions["traceId"] = traceId;
+
+            if (!string.IsNullOrEmpty(correlationId))
+            {
+                problemDetails.Extensions["correlationId"] = correlationId;
+            }
 
             if (_env.IsDevelopment())
             {

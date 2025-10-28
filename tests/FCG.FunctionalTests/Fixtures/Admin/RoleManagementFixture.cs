@@ -1,6 +1,7 @@
 using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Enum;
 using UoWBuilder = FCG.CommomTestsUtilities.Builders.Repositories.UnitOfWorkBuilder;
 
@@ -13,8 +14,12 @@ namespace FCG.FunctionalTests.Fixtures.Admin
             var readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
             var unitOfWork = UoWBuilder.Build();
             var testUser = UserBuilder.Build();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<RoleManagementUseCase>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
             Setup(testUser);
-            RoleManagementUseCase = new RoleManagementUseCase(readOnlyUserRepository, unitOfWork);
+            RoleManagementUseCase = new RoleManagementUseCase(readOnlyUserRepository, unitOfWork, logger, correlationIdProvider);
             RoleManagementRequest = new RoleManagementRequest(testUser.Id, Role.Admin);
         }
 

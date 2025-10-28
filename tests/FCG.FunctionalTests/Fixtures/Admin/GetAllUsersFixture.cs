@@ -1,6 +1,7 @@
 using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
+using FCG.CommomTestsUtilities.Builders.Services;
 
 namespace FCG.FunctionalTests.Fixtures.Admin
 {
@@ -9,10 +10,13 @@ namespace FCG.FunctionalTests.Fixtures.Admin
         public GetAllUsersFixture()
         {
             var readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<GetAllUsersUseCase>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
             Setup();
 
-            GetAllUsersUseCase = new GetAllUsersUseCase(readOnlyUserRepository);
+            GetAllUsersUseCase = new GetAllUsersUseCase(readOnlyUserRepository, logger, correlationIdProvider);
             GetAllUserCaseRequest = new GetAllUserCaseRequest
             {
                 PageNumber = 1,

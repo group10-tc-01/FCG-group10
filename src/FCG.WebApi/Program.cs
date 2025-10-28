@@ -39,6 +39,7 @@ namespace FCG.WebApi
                 });
             }
 
+            app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.MapHealthChecks("/health", new HealthCheckOptions

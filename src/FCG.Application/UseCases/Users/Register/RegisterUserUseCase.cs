@@ -8,6 +8,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
 using FCG.Messages;
+using Microsoft.Extensions.Logging;
 
 namespace FCG.Application.UseCases.Users.Register
 {
@@ -19,6 +20,8 @@ namespace FCG.Application.UseCases.Users.Register
         private readonly IWriteOnlyLibraryRepository _writeOnlyLibraryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordEncrypter _passwordEncrypter;
+        private readonly ILogger<RegisterUserUseCase> _logger;
+        private readonly ICorrelationIdProvider _correlationIdProvider;
 
         public RegisterUserUseCase(
             IReadOnlyUserRepository readOnlyUserRepository,
@@ -26,7 +29,9 @@ namespace FCG.Application.UseCases.Users.Register
             IWriteOnlyWalletRepository writeOnlyWalletRepository,
             IWriteOnlyLibraryRepository writeOnlyLibraryRepository,
             IUnitOfWork unitOfWork,
-            IPasswordEncrypter passwordEncrypter)
+            IPasswordEncrypter passwordEncrypter,
+            ILogger<RegisterUserUseCase> logger,
+            ICorrelationIdProvider correlationIdProvider)
         {
             _readOnlyUserRepository = readOnlyUserRepository;
             _writeOnlyUserRepository = writeOnlyUserRepository;
@@ -34,10 +39,18 @@ namespace FCG.Application.UseCases.Users.Register
             _writeOnlyLibraryRepository = writeOnlyLibraryRepository;
             _unitOfWork = unitOfWork;
             _passwordEncrypter = passwordEncrypter;
+            _logger = logger;
+            _correlationIdProvider = correlationIdProvider;
         }
 
         public async Task<RegisterUserResponse> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
         {
+            var correlationId = _correlationIdProvider.GetCorrelationId();
+
+            _logger.LogInformation(
+                "[RegisterUserUseCase] [CorrelationId: {CorrelationId}] Registering new user: {Email}",
+                correlationId, request.Email);
+
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
@@ -46,6 +59,10 @@ namespace FCG.Application.UseCases.Users.Register
 
                 if (existingUser != null)
                 {
+                    _logger.LogWarning(
+                        "[RegisterUserUseCase] [CorrelationId: {CorrelationId}] Email already in use: {Email}",
+                        correlationId, request.Email);
+
                     throw new DuplicateEmailException(ResourceMessages.EmailAlreadyInUse);
                 }
 
@@ -58,13 +75,21 @@ namespace FCG.Application.UseCases.Users.Register
 
                 await PersistEntitiesAsync(user, wallet, library, cancellationToken);
 
+                _logger.LogInformation(
+                    "[RegisterUserUseCase] [CorrelationId: {CorrelationId}] Successfully registered user: {UserId} - {Email}",
+                    correlationId, user.Id, user.Email.Value);
+
                 return new RegisterUserResponse
                 {
                     Name = user.Name.Value
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex,
+                    "[RegisterUserUseCase] [CorrelationId: {CorrelationId}] Error registering user: {Email}",
+                    correlationId, request.Email);
+
                 await _unitOfWork.RollbackAsync(cancellationToken);
                 throw;
             }

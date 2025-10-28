@@ -19,6 +19,9 @@ namespace FCG.FunctionalTests.Fixtures.Users
             var writeOnlyLibraryRepository = new Mock<IWriteOnlyLibraryRepository>().Object;
             var unitOfWork = UoWBuilder.Build();
             var passwordEncrypter = PasswordEncrypterServiceBuilder.Build();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<RegisterUserUseCase>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
             Setup();
 
@@ -28,7 +31,9 @@ namespace FCG.FunctionalTests.Fixtures.Users
                 writeOnlyWalletRepository,
                 writeOnlyLibraryRepository,
                 unitOfWork,
-                passwordEncrypter
+                passwordEncrypter,
+                logger,
+                correlationIdProvider
             );
             RegisterUserRequest = CreateUserInputBuilder.Build();
         }

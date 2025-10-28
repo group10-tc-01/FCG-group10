@@ -1,9 +1,11 @@
 using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
@@ -11,12 +13,17 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
     public class GetAllUsersUseCaseTests
     {
         private readonly Mock<IReadOnlyUserRepository> _userRepositoryMock;
+        private readonly Mock<ILogger<GetAllUsersUseCase>> _loggerMock;
         private readonly GetAllUsersUseCase _useCase;
 
         public GetAllUsersUseCaseTests()
         {
             _userRepositoryMock = new Mock<IReadOnlyUserRepository>();
-            _useCase = new GetAllUsersUseCase(_userRepositoryMock.Object);
+            _loggerMock = new Mock<ILogger<GetAllUsersUseCase>>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            _useCase = new GetAllUsersUseCase(_userRepositoryMock.Object, _loggerMock.Object, correlationIdProvider);
         }
 
         [Fact]
