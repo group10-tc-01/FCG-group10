@@ -22,6 +22,8 @@ namespace FCG.WebApi.Controllers.v1
 
         [HttpGet]
         [AuthenticatedUser]
+        [ProducesResponseType(typeof(ApiResponse<GetAllGamesOutput>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllGamesInput input)
         {
             var output = await _mediator.Send(input, CancellationToken.None);
