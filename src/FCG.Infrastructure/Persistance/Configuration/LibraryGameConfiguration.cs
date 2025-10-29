@@ -31,12 +31,18 @@ namespace FCG.Infrastructure.Persistance.Configuration
             builder.HasOne(lg => lg.Library)
                 .WithMany(l => l.LibraryGames)
                 .HasForeignKey(lg => lg.LibraryId)
+                .HasPrincipalKey(l => l.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(lg => lg.Game)
                 .WithMany(g => g.LibraryGames)
                 .HasForeignKey(lg => lg.GameId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(lg => lg.Status)
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .IsRequired();
         }
     }
 }

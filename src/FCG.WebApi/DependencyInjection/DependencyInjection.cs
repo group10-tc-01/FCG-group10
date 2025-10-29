@@ -1,7 +1,10 @@
 ﻿using Asp.Versioning;
 using FCG.Application.UseCases.Authentication.Login;
 using FCG.Domain.Models.Authentication;
+using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
+using FCG.Infrastructure.Services.Authentication;
+using FCG.WebApi.Context;
 using FCG.WebApi.Filter;
 using FCG.WebApi.Models;
 using FluentValidation;
@@ -28,7 +31,9 @@ namespace FCG.WebApi.DependencyInjection
             services.AddFilters();
             services.AddLowerCaseUrl();
             services.AddSwaggerConfiguration();
-
+            services.AddHttpContextAccessor();
+            services.AddScoped<ITokenProvider, ContextTokenValue>();
+            services.AddScoped<ILoggedUser, LoggedUser>();
             return services;
         }
 

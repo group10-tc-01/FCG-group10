@@ -1,4 +1,5 @@
 ﻿using FCG.Application.UseCases.Admin.RoleManagement;
+using FCG.Application.UseCases.Users.MyGames;
 using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update;
@@ -12,7 +13,9 @@ namespace FCG.WebApi.Controllers.v1
 {
     public class UsersController : FcgBaseController
     {
-        public UsersController(IMediator mediator) : base(mediator) { }
+        public UsersController(IMediator mediator) : base(mediator)
+        {
+        }
 
         [HttpPost("register")]
         [ProducesResponseType(typeof(ApiResponse<RegisterUserResponse>), StatusCodes.Status201Created)]
@@ -38,11 +41,24 @@ namespace FCG.WebApi.Controllers.v1
         [AuthenticatedAdmin]
         [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateUserRole([FromBody] RoleManagementRequest input, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUserRole([FromBody] RoleManagementRequest input,
+            CancellationToken cancellationToken)
         {
             var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
             return Ok(ApiResponse<RoleManagementResponse>.SuccesResponse(output));
         }
 
+        [HttpGet("library")]
+        [AuthenticatedUser]
+        [ProducesResponseType(typeof(ApiResponse<ICollection<LibraryGameResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyLibrary()
+        {
+            var output = new LibraryGameUseCaseRequest();
+            var result = await _mediator.Send(output);
+
+            return Ok(ApiResponse<ICollection<LibraryGameResponse>>.SuccesResponse(result));
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
+using FCG.Domain.Repositories.LibraryGameRespository;
 using FCG.Domain.Repositories.LibraryRepository;
 using FCG.Domain.Repositories.PromotionRepository;
 using FCG.Domain.Repositories.RefreshTokenRepository;
@@ -8,6 +9,7 @@ using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
+using FCG.Infrastructure.Persistance.Repositories.LibraryGameRepository;
 using FCG.Infrastructure.Persistance.Repositories.PromotionRepository;
 using FCG.Infrastructure.Services;
 using FCG.Infrastructure.Services.Authentication;
@@ -59,6 +61,9 @@ namespace FCG.Infrastructure.DependencyInjection
 
             services.AddScoped<IWriteOnlyLibraryRepository, LibraryRepository>();
             services.AddScoped<IWriteOnlyWalletRepository, WalletRepository>();
+
+            services.AddScoped<IReadOnlyLibraryGameRepository, LibraryGameRepository>();
+
         }
 
         private static void AddServices(this IServiceCollection services)
