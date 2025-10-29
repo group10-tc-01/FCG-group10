@@ -1,9 +1,9 @@
-﻿using FCG.Application.UseCases.AdminUsers.RoleManagement.RoleManagementDTO;
+﻿using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
 using FCG.Domain.Enum;
 using FCG.Messages;
 using FluentValidation;
 
-namespace FCG.Application.UseCases.AdminUsers.RoleManagement
+namespace FCG.Application.UseCases.Users.RoleManagement
 {
     public class RoleManagementInputValidator : AbstractValidator<RoleManagementRequest>
     {

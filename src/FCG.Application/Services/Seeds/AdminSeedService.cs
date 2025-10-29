@@ -3,7 +3,7 @@ using FCG.Domain.Enum;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 
-namespace FCG.Infrastructure.Services.Seeds
+namespace FCG.Application.Services.Seeds
 {
     public class AdminSeedService : ISeed
     {

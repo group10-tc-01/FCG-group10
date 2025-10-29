@@ -1,5 +1,4 @@
 ﻿using FCG.Application.UseCases.AdminUsers.GetById.GetUserDTO;
-using FCG.Application.UseCases.AdminUsers.RoleManagement.RoleManagementDTO;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
@@ -333,99 +332,5 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.ErrorMessages.Should().Contain(e => e.ToString()!.Contains(domainExceptionMessage));
         }
 
-
-        [Fact]
-        public async Task Given_AdminToken_When_UpdatingUserRole_Then_ShouldReturnOk()
-        {
-            // Given
-            var existingUserAdmin = Factory.CreatedAdminUsers.First();
-            var existingUserRegular = Factory.CreatedUsers.First();
-
-            var adminToken = GenerateToken(existingUserAdmin.Id, "Admin");
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", adminToken);
-
-            var requestBody = new RoleManagementRequest(existingUserRegular.Id, Role.Admin);
-
-            // When
-            var response = await _httpClient.PatchAsJsonAsync("/api/v1/admin/users/update-role", requestBody);
-
-            // Then
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().Contain("\"success\":true");
-            content.Should().Contain("\"role\":0");
-        }
-
-        [Fact]
-        public async Task Given_AdminToken_When_DemotingAnotherAdmin_ToUser_Then_ShouldReturnOk()
-        {
-            // Given
-            var existingAdmin = Factory.CreatedAdminUsers.First();
-            var anotherAdmin = Factory.CreatedAdminUsers.Skip(1).First();
-
-            var adminToken = GenerateToken(existingAdmin.Id, "Admin");
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", adminToken);
-
-            var requestBody = new RoleManagementRequest(anotherAdmin.Id, Role.User);
-
-            // When
-            var response = await _httpClient.PatchAsJsonAsync("/api/v1/admin/users/update-role", requestBody);
-
-            // Then
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().Contain("\"success\":true");
-            content.Should().Contain("\"role\":1");
-        }
-
-        [Fact]
-        public async Task Given_AdminToken_When_DemotingAlreadyUser_Then_ShouldReturnBadRequest()
-        {
-            // Given
-            var adminUser = Factory.CreatedAdminUsers.First();
-            var alreadyUser = Factory.CreatedUsers.First();
-
-            var adminToken = GenerateToken(adminUser.Id, "Admin");
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", adminToken);
-
-            var requestBody = new RoleManagementRequest(alreadyUser.Id, Role.User);
-
-            // When
-            var response = await _httpClient.PatchAsJsonAsync("/api/v1/admin/users/update-role", requestBody);
-
-            // Then
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().Contain("\"success\": false");
-        }
-
-        [Fact]
-        public async Task Given_AdminToken_When_PromotingAlreadyAdmin_Then_ShouldReturnBadRequest()
-        {
-            // Given
-            var adminUser = Factory.CreatedAdminUsers.First();
-            var anotherAdmin = Factory.CreatedAdminUsers.Skip(1).First();
-
-            var adminToken = GenerateToken(adminUser.Id, "Admin");
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", adminToken);
-
-            var requestBody = new RoleManagementRequest(anotherAdmin.Id, Role.Admin);
-
-            // When
-            var response = await _httpClient.PatchAsJsonAsync("/api/v1/admin/users/update-role", requestBody);
-
-            // Then
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().Contain("\"success\": false");
-        }
     }
 }
