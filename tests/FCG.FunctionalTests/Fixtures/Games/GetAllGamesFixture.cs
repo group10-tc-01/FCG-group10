@@ -25,46 +25,39 @@ namespace FCG.FunctionalTests.Fixtures.Games
             GetAllGamesInput = new GetAllGamesInput
             {
                 PageNumber = 1,
-                PageSize = 10,
-                Filter = new GameFilter()
+                PageSize = 10
             };
 
             GetAllGamesInputWithNameFilter = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "Witcher" }
+                Name = "Witcher"
             };
 
             GetAllGamesInputWithCategoryFilter = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = GameCategory.RPG }
+                Category = GameCategory.RPG
             };
 
             GetAllGamesInputWithPriceFilter = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 20m,
-                    MaxPrice = 50m
-                }
+                MinPrice = 20m,
+                MaxPrice = 50m
             };
 
             GetAllGamesInputWithMultipleFilters = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Name = "Dark",
-                    Category = GameCategory.RPG,
-                    MinPrice = 30m,
-                    MaxPrice = 50m
-                }
+                Name = "Dark",
+                Category = GameCategory.RPG,
+                MinPrice = 30m,
+                MaxPrice = 50m
             };
         }
 

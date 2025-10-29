@@ -26,7 +26,7 @@ namespace FCG.Application.UseCases.Games.GetAll
 
             _logger.LogInformation(
                 "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Starting GetAllGames request. Filters: Name={Name}, Category={Category}, MinPrice={MinPrice}, MaxPrice={MaxPrice}, PageNumber={PageNumber}, PageSize={PageSize}",
-                correlationId, request.Filter.Name, request.Filter.Category, request.Filter.MinPrice, request.Filter.MaxPrice, request.PageNumber, request.PageSize);
+                correlationId, request.Name, request.Category, request.MinPrice, request.MaxPrice, request.PageNumber, request.PageSize);
 
             var query = _readOnlyGameRepository.GetAllAsQueryable();
 
@@ -34,7 +34,7 @@ namespace FCG.Application.UseCases.Games.GetAll
                 "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Applying filters to query",
                 correlationId);
 
-            query = ApplyFilters(query, request.Filter);
+            query = ApplyFilters(query, request);
 
             _logger.LogDebug(
                 "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Counting total items",
@@ -53,7 +53,7 @@ namespace FCG.Application.UseCases.Games.GetAll
             var items = await pagedQuery
                 .Select(x => new GetAllGamesOutput
                 {
-                    Id = x.Id,
+                    Id = x!.Id,
                     Category = x.Category,
                     Description = x.Description,
                     Name = x.Name,
@@ -68,22 +68,19 @@ namespace FCG.Application.UseCases.Games.GetAll
             return new PagedListResponse<GetAllGamesOutput>(items, totalCount, request.PageNumber, request.PageSize);
         }
 
-        private static IQueryable<Game> ApplyFilters(IQueryable<Game> query, GameFilter? filter)
+        private static IQueryable<Game?> ApplyFilters(IQueryable<Game?> query, GetAllGamesInput input)
         {
-            if (filter is null)
-                return query;
+            if (!string.IsNullOrWhiteSpace(input.Name))
+                query = query.Where(g => g!.Name.Value.Contains(input.Name));
 
-            if (!string.IsNullOrWhiteSpace(filter.Name))
-                query = query.Where(g => g.Name.Value.Contains(filter.Name));
+            if (input.Category.HasValue)
+                query = query.Where(g => g!.Category == input.Category.Value);
 
-            if (filter.Category.HasValue)
-                query = query.Where(g => g.Category == filter.Category.Value);
+            if (input.MinPrice.HasValue)
+                query = query.Where(g => g!.Price.Value >= input.MinPrice.Value);
 
-            if (filter.MinPrice.HasValue)
-                query = query.Where(g => g.Price.Value >= filter.MinPrice.Value);
-
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(g => g.Price.Value <= filter.MaxPrice.Value);
+            if (input.MaxPrice.HasValue)
+                query = query.Where(g => g!.Price.Value <= input.MaxPrice.Value);
 
             return query;
         }

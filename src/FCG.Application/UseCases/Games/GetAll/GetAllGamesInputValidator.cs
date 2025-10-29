@@ -7,27 +7,24 @@ namespace FCG.Application.UseCases.Games.GetAll
     {
         public GetAllGamesInputValidator()
         {
-            When(x => x.Filter is not null, () =>
-            {
-                RuleFor(x => x.Filter.Name)
-                    .MaximumLength(255)
-                    .WithMessage(ResourceMessages.GameNameMaxLength);
+            RuleFor(x => x.Name)
+                .MaximumLength(255)
+                .WithMessage(ResourceMessages.GameNameMaxLength);
 
-                RuleFor(x => x.Filter.MinPrice)
-                    .GreaterThanOrEqualTo(0)
-                    .When(x => x.Filter.MinPrice.HasValue)
-                    .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
+            RuleFor(x => x.MinPrice)
+                .GreaterThanOrEqualTo(0)
+                .When(x => x.MinPrice.HasValue)
+                .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
 
-                RuleFor(x => x.Filter.MaxPrice)
-                    .GreaterThanOrEqualTo(0)
-                    .When(x => x.Filter.MaxPrice.HasValue)
-                    .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
+            RuleFor(x => x.MaxPrice)
+                .GreaterThanOrEqualTo(0)
+                .When(x => x.MaxPrice.HasValue)
+                .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
 
-                RuleFor(x => x.Filter.MaxPrice)
-                    .GreaterThanOrEqualTo(x => x.Filter.MinPrice!.Value)
-                    .When(x => x.Filter.MinPrice.HasValue && x.Filter.MaxPrice.HasValue)
-                    .WithMessage(ResourceMessages.GameMaxPriceMustBeGreaterThanMinPrice);
-            });
+            RuleFor(x => x.MaxPrice)
+                .GreaterThanOrEqualTo(x => x.MinPrice!.Value)
+                .When(x => x.MinPrice.HasValue && x.MaxPrice.HasValue)
+                .WithMessage(ResourceMessages.GameMaxPriceMustBeGreaterThanMinPrice);
         }
     }
 }

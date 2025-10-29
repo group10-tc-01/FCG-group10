@@ -23,8 +23,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
-                PageSize = 10,
-                Filter = null
+                PageSize = 10
             };
 
             // Act
@@ -41,8 +40,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
-                PageSize = 10,
-                Filter = new GameFilter()
+                PageSize = 10
             };
 
             // Act
@@ -60,7 +58,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "The Witcher" }
+                Name = "The Witcher"
             };
 
             // Act
@@ -78,7 +76,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = GameCategory.RPG }
+                Category = GameCategory.RPG
             };
 
             // Act
@@ -96,11 +94,8 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 10.00m,
-                    MaxPrice = 50.00m
-                }
+                MinPrice = 10.00m,
+                MaxPrice = 50.00m
             };
 
             // Act
@@ -118,13 +113,10 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Name = "Dark Souls",
-                    Category = GameCategory.RPG,
-                    MinPrice = 20.00m,
-                    MaxPrice = 60.00m
-                }
+                Name = "Dark Souls",
+                Category = GameCategory.RPG,
+                MinPrice = 20.00m,
+                MaxPrice = 60.00m
             };
 
             // Act
@@ -146,17 +138,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Name = new string('A', 256) // 256 characters
-                }
+                Name = new string('A', 256) // 256 characters
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Filter.Name)
+            result.ShouldHaveValidationErrorFor(x => x.Name)
                 .WithErrorMessage(ResourceMessages.GameNameMaxLength);
         }
 
@@ -168,17 +157,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Name = new string('A', 255) // Exactly 255 characters
-                }
+                Name = new string('A', 255) // Exactly 255 characters
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.Name);
+            result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
 
         #endregion
@@ -197,17 +183,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = -10.00m
-                }
+                MinPrice = -10.00m
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Filter.MinPrice)
+            result.ShouldHaveValidationErrorFor(x => x.MinPrice)
                 .WithErrorMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
         }
 
@@ -219,17 +202,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 0.00m
-                }
+                MinPrice = 0.00m
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.MinPrice);
+            result.ShouldNotHaveValidationErrorFor(x => x.MinPrice);
         }
 
         #endregion
@@ -244,17 +224,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MaxPrice = -20.00m
-                }
+                MaxPrice = -20.00m
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Filter.MaxPrice)
+            result.ShouldHaveValidationErrorFor(x => x.MaxPrice)
                 .WithErrorMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
         }
 
@@ -266,17 +243,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MaxPrice = 0.00m
-                }
+                MaxPrice = 0.00m
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.MaxPrice);
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
         }
 
         #endregion
@@ -291,18 +265,15 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 50.00m,
-                    MaxPrice = 30.00m // MaxPrice < MinPrice
-                }
+                MinPrice = 50.00m,
+                MaxPrice = 30.00m // MaxPrice < MinPrice
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Filter.MaxPrice)
+            result.ShouldHaveValidationErrorFor(x => x.MaxPrice)
                 .WithErrorMessage(ResourceMessages.GameMaxPriceMustBeGreaterThanMinPrice);
         }
 
@@ -314,18 +285,15 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 40.00m,
-                    MaxPrice = 40.00m // MaxPrice == MinPrice
-                }
+                MinPrice = 40.00m,
+                MaxPrice = 40.00m // MaxPrice == MinPrice
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.MaxPrice);
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
         }
 
         [Fact]
@@ -336,18 +304,15 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 10.00m,
-                    MaxPrice = null
-                }
+                MinPrice = 10.00m,
+                MaxPrice = null
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.MaxPrice);
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
         }
 
         [Fact]
@@ -358,18 +323,15 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = null,
-                    MaxPrice = 100.00m
-                }
+                MinPrice = null,
+                MaxPrice = 100.00m
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.MaxPrice);
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
         }
 
         #endregion
@@ -384,21 +346,18 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Name = new string('A', 300), // Exceeds max length
-                    MinPrice = -10.00m, // Negative
-                    MaxPrice = -20.00m // Negative
-                }
+                Name = new string('A', 300), // Exceeds max length
+                MinPrice = -10.00m, // Negative
+                MaxPrice = -20.00m // Negative
             };
 
             // Act
             var result = _validator.TestValidate(input);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Filter.Name);
-            result.ShouldHaveValidationErrorFor(x => x.Filter.MinPrice);
-            result.ShouldHaveValidationErrorFor(x => x.Filter.MaxPrice);
+            result.ShouldHaveValidationErrorFor(x => x.Name);
+            result.ShouldHaveValidationErrorFor(x => x.MinPrice);
+            result.ShouldHaveValidationErrorFor(x => x.MaxPrice);
         }
 
         #endregion

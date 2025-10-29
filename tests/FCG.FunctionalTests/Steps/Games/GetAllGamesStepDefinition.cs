@@ -146,8 +146,8 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
             _getAllGamesResponse.Items.Should().OnlyContain(g =>
-                g.Price >= _getAllGamesInput!.Filter!.MinPrice &&
-                g.Price <= _getAllGamesInput.Filter.MaxPrice);
+                g.Price >= _getAllGamesInput!.MinPrice &&
+                g.Price <= _getAllGamesInput.MaxPrice);
         }
 
         [Then(@"o sistema deve retornar apenas os jogos que atendem a todos os filtros")]

@@ -35,8 +35,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
-                PageSize = 5,
-                Filter = new GameFilter()
+                PageSize = 5
             };
 
             // Act
@@ -69,7 +68,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "FIFA" }
+                Name = "FIFA"
             };
 
             // Act
@@ -97,7 +96,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = GameCategory.Action }
+                Category = GameCategory.Action
             };
 
             // Act
@@ -125,7 +124,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { MinPrice = 50 }
+                MinPrice = 50
             };
 
             // Act
@@ -153,7 +152,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { MaxPrice = 50 }
+                MaxPrice = 50
             };
 
             // Act
@@ -182,7 +181,8 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { MinPrice = 40, MaxPrice = 100 }
+                MinPrice = 40,
+                MaxPrice = 100
             };
 
             // Act
@@ -203,8 +203,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             var input = new GetAllGamesInput
             {
                 PageNumber = 2,
-                PageSize = 5,
-                Filter = new GameFilter()
+                PageSize = 5
             };
 
             // Act
@@ -233,7 +232,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "Call of Duty" }
+                Name = "Call of Duty"
             };
 
             // Act
