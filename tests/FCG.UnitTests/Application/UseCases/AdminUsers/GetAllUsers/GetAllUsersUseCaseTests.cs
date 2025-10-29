@@ -1,9 +1,11 @@
-using FCG.Application.UseCases.AdminUsers.GetAllUsers;
+using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
@@ -11,22 +13,25 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
     public class GetAllUsersUseCaseTests
     {
         private readonly Mock<IReadOnlyUserRepository> _userRepositoryMock;
+        private readonly Mock<ILogger<GetAllUsersUseCase>> _loggerMock;
         private readonly GetAllUsersUseCase _useCase;
 
         public GetAllUsersUseCaseTests()
         {
             _userRepositoryMock = new Mock<IReadOnlyUserRepository>();
-            _useCase = new GetAllUsersUseCase(_userRepositoryMock.Object);
+            _loggerMock = new Mock<ILogger<GetAllUsersUseCase>>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            _useCase = new GetAllUsersUseCase(_userRepositoryMock.Object, _loggerMock.Object, correlationIdProvider);
         }
 
-        [Fact(DisplayName = "Handle deve retornar lista vazia quando não existem usuários")]
-        public async Task Handle_GivenNoUsers_ShouldReturnEmptyPagedList()
+        [Fact]
+        public async Task Given_NoUsers_When_HandlingRequest_Then_ReturnsEmptyPagedList()
         {
             // Arrange
-            var request = new GetAllUserCaseQuery();
-            _userRepositoryMock.Setup(r => r.GetQueryableAllUsers(
-                It.IsAny<string?>(),
-                It.IsAny<string?>(),
+            var request = new GetAllUserCaseRequest();
+            _userRepositoryMock.Setup(r => r.GetAllUsersAsync(
                 It.IsAny<int>(),
                 It.IsAny<int>(),
                 It.IsAny<CancellationToken>()))
@@ -42,20 +47,18 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
             result.PageSize.Should().Be(request.PageSize);
         }
 
-        [Fact(DisplayName = "Handle deve retornar lista paginada quando existem usuários")]
-        public async Task Handle_GivenExistingUsers_ShouldReturnPagedListWithUsers()
+        [Fact]
+        public async Task Given_ExistingUsers_When_HandlingRequest_Then_ReturnsPagedListWithUsers()
         {
             // Arrange
-            var request = new GetAllUserCaseQuery();
+            var request = new GetAllUserCaseRequest();
             var users = new List<User>
             {
                 UserBuilder.BuildWithData("User1", "user1@test.com", Role.User),
                 UserBuilder.BuildWithData("User2", "user2@test.com", Role.Admin)
             };
 
-            _userRepositoryMock.Setup(r => r.GetQueryableAllUsers(
-                It.IsAny<string?>(),
-                It.IsAny<string?>(),
+            _userRepositoryMock.Setup(r => r.GetAllUsersAsync(
                 It.IsAny<int>(),
                 It.IsAny<int>(),
                 It.IsAny<CancellationToken>()))
@@ -75,17 +78,15 @@ namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
             result.Items[1].Role.Should().Be("Admin");
         }
 
-        [Fact(DisplayName = "Handle deve mapear corretamente as propriedades do usuário")]
-        public async Task Handle_ShouldMapUserPropertiesCorrectly()
+        [Fact]
+        public async Task Given_ExistingUser_When_HandlingRequest_Then_MapsUserPropertiesCorrectly()
         {
             // Arrange
-            var request = new GetAllUserCaseQuery();
+            var request = new GetAllUserCaseRequest();
             var user = UserBuilder.BuildWithData("Test User", "test@example.com", Role.Admin);
             var users = new List<User> { user };
 
-            _userRepositoryMock.Setup(r => r.GetQueryableAllUsers(
-                It.IsAny<string?>(),
-                It.IsAny<string?>(),
+            _userRepositoryMock.Setup(r => r.GetAllUsersAsync(
                 It.IsAny<int>(),
                 It.IsAny<int>(),
                 It.IsAny<CancellationToken>()))

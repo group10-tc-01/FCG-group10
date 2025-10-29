@@ -1,38 +1,52 @@
-﻿using FCG.Application.UseCases.Users.Update.UsersDTO;
-using FCG.Domain.Exceptions;
+﻿using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
-using MediatR;
+using FCG.Messages;
+using Microsoft.Extensions.Logging;
 
 namespace FCG.Application.UseCases.Users.Update
 {
-    public class UpdateUserUseCase : IRequestHandler<UpdateUserRequest, UpdateUserResponse>
+    public class UpdateUserUseCase : IUpdateUserUseCase
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
-        private readonly IWriteOnlyUserRepository _writeOnlyUserRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordEncrypter _passwordEncrypter;
+        private readonly ILogger<UpdateUserUseCase> _logger;
+        private readonly ICorrelationIdProvider _correlationIdProvider;
 
         public UpdateUserUseCase(
             IReadOnlyUserRepository readOnlyUserRepository,
-            IWriteOnlyUserRepository writeOnlyUserRepository,
             IUnitOfWork unitOfWork,
-            IPasswordEncrypter passwordEncrypter)
+            IPasswordEncrypter passwordEncrypter,
+            ILogger<UpdateUserUseCase> logger,
+            ICorrelationIdProvider correlationIdProvider)
         {
             _readOnlyUserRepository = readOnlyUserRepository;
-            _writeOnlyUserRepository = writeOnlyUserRepository;
             _unitOfWork = unitOfWork;
             _passwordEncrypter = passwordEncrypter;
+            _logger = logger;
+            _correlationIdProvider = correlationIdProvider;
         }
+
         public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
+            var correlationId = _correlationIdProvider.GetCorrelationId();
+
+            _logger.LogInformation(
+                "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Updating user: {UserId}",
+                correlationId, request.Id);
+
             var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (userToUpdate is null)
             {
-                throw new NotFoundException($"Usuário com ID {request.Id} não encontrado para atualização.");
+                _logger.LogWarning(
+                    "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] User not found: {UserId}",
+                    correlationId, request.Id);
+
+                throw new NotFoundException(string.Format(ResourceMessages.UserNotFoundForUpdate, request.Id));
             }
 
             string hashedPassword = userToUpdate.Password.Value;
@@ -41,35 +55,43 @@ namespace FCG.Application.UseCases.Users.Update
             {
                 if (string.IsNullOrWhiteSpace(request.CurrentPassword))
                 {
-                    throw new DomainException("A senha atual é obrigatória para alterar a senha.");
+                    throw new DomainException(ResourceMessages.CurrentPasswordRequired);
                 }
 
                 if (!_passwordEncrypter.IsValid(request.CurrentPassword, userToUpdate.Password.Value))
                 {
-                    throw new DomainException("A senha atual está incorreta.");
+                    _logger.LogWarning(
+                        "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Invalid current password for user: {UserId}",
+                        correlationId, request.Id);
+
+                    throw new DomainException(ResourceMessages.CurrentPasswordIncorrect);
                 }
 
                 if (request.CurrentPassword == request.NewPassword)
                 {
-                    throw new DomainException("A nova senha deve ser diferente da senha atual.");
+                    throw new DomainException(ResourceMessages.NewPasswordMustBeDifferent);
                 }
 
                 Password newPasswordVo = Password.Create(request.NewPassword);
-
                 hashedPassword = _passwordEncrypter.Encrypt(newPasswordVo.Value);
-            }
 
+                _logger.LogInformation(
+                    "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Password updated for user: {UserId}",
+                    correlationId, request.Id);
+            }
 
             userToUpdate.Update(hashedPassword);
 
-            await _writeOnlyUserRepository.UpdateAsync(userToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Successfully updated user: {UserId}",
+                correlationId, userToUpdate.Id);
 
             return new UpdateUserResponse
             {
                 Id = userToUpdate.Id,
-                UpdatedAt = userToUpdate.UpdatedAt,
-                Message = $"Usuário {userToUpdate.Name.Value} sua senha foi atualizado com sucesso!"
+                UpdatedAt = userToUpdate.UpdatedAt
             };
         }
     }

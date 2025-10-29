@@ -1,31 +1,31 @@
-using FCG.Application.UseCases.AdminUsers.GetById;
+using FCG.Application.UseCases.Admin.GetById;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
+namespace FCG.UnitTests.Application.UseCases.Admin.GetById
 {
     public class GetByIdUseCaseQueryTests
     {
-        [Fact(DisplayName = "Construtor deve definir Id corretamente")]
-        public void Constructor_GivenValidId_ShouldSetIdCorrectly()
+        [Fact]
+        public void Given_ValidId_When_Constructor_Then_ShouldSetIdCorrectly()
         {
             // Arrange
             var expectedId = Guid.NewGuid();
 
             // Act
-            var query = new GetByIdUserQuery(expectedId);
+            var query = new GetUserByIdRequest(expectedId);
 
             // Assert
             query.Id.Should().Be(expectedId);
         }
 
-        [Fact(DisplayName = "Deve criar query com Guid vazio")]
-        public void Constructor_GivenEmptyGuid_ShouldCreateQuery()
+        [Fact]
+        public void Given_EmptyGuid_When_Constructor_Then_ShouldCreateQuery()
         {
             // Arrange
             var emptyId = Guid.Empty;
 
             // Act
-            var query = new GetByIdUserQuery(emptyId);
+            var query = new GetUserByIdRequest(emptyId);
 
             // Assert
             query.Id.Should().Be(Guid.Empty);

@@ -12,10 +12,13 @@ namespace FCG.FunctionalTests.Fixtures.Games
             var readOnlyGameRepository = ReadOnlyGameRepositoryBuilder.Build();
             var writeOnlyGameRepository = WriteOnlyGameRepositoryBuilder.Build();
             var unitOfWork = UnitOfWorkBuilder.Build();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<RegisterGameUseCase>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
             Setup();
 
-            RegisterGameUseCase = new RegisterGameUseCase(writeOnlyGameRepository, readOnlyGameRepository, unitOfWork);
+            RegisterGameUseCase = new RegisterGameUseCase(writeOnlyGameRepository, readOnlyGameRepository, unitOfWork, logger, correlationIdProvider);
             RegisterGameInput = RegisterGameInputBuilder.Build();
         }
 

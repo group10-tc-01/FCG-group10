@@ -1,14 +1,14 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
 {
     public class NameTests
     {
-
         [Fact]
-        public void Given_ValidName_When_CreateName_Then_ShouldCreateSuccessfully()
+        public void Given_ValidName_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string validName = "FIFA";
@@ -22,59 +22,51 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_ShortName_When_CreateName_Then_ShouldThrowDomainException()
+        public void Given_ShortName_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string shortName = "A";
+            var act = () => Name.Create(shortName);
 
-            // Act
-            Action act = () => Name.Create(shortName);
-
-            // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name must be at least 2 characters long.");
+            // Act & Assert
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameMinimumLength);
         }
 
         [Fact]
-        public void Given_NullName_When_CreateName_Then_ShouldThrowDomainException()
+        public void Given_NullName_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
-            string nullName = null;
+            string? nullName = null;
+            var act = () => Name.Create(nullName!);
 
-            // Act
-            Action act = () => Name.Create(nullName);
-
-            // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            // Act & Assert
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_EmptyName_When_CreateName_Then_ShouldThrowDomainException()
+        public void Given_EmptyName_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string emptyName = string.Empty;
+            var act = () => Name.Create(emptyName);
 
-            // Act
-            Action act = () => Name.Create(emptyName);
-
-            // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            // Act & Assert
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_WhitespaceOnlyName_When_CreateName_Then_ShouldThrowDomainException()
+        public void Given_WhitespaceOnlyName_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             string whitespaceName = "   ";
+            var act = () => Name.Create(whitespaceName);
 
-            // Act
-            Action act = () => Name.Create(whitespaceName);
-
-            // Assert
-            act.Should().Throw<DomainException>().WithMessage("Name cannot be null or empty.");
+            // Act & Assert
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.NameCannotBeNullOrEmpty);
         }
 
         [Fact]
-        public void Given_ExactlyTwoCharactersName_When_CreateName_Then_ShouldCreateSuccessfully()
+        public void Given_ExactlyTwoCharactersName_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string minValidName = "AB";
@@ -88,7 +80,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_VeryLongName_When_CreateName_Then_ShouldCreateSuccessfully()
+        public void Given_VeryLongName_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string longName = new string('A', 100);
@@ -102,7 +94,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_NameWithSpecialCharacters_When_CreateName_Then_ShouldCreateSuccessfully()
+        public void Given_NameWithSpecialCharacters_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string nameWithSpecialChars = "Call of Duty: Modern Warfare II";
@@ -116,7 +108,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_NameWithNumbers_When_CreateName_Then_ShouldCreateSuccessfully()
+        public void Given_NameWithNumbers_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             string nameWithNumbers = "FIFA 2024";
@@ -130,9 +122,8 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_NameObject_When_ConvertToString_Then_ShouldReturnValue()
+        public void Given_NameObject_When_ToStringCalled_Then_ShouldReturnValue()
         {
-
             // Arrange
             var name = Name.Create("Grand Theft Auto V");
 

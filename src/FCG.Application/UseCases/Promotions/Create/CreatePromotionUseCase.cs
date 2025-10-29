@@ -1,9 +1,12 @@
+using FCG.Application.UseCases.Users.Update;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
 using FCG.Domain.Repositories.PromotionRepository;
+using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
+using Microsoft.Extensions.Logging;
 
 namespace FCG.Application.UseCases.Promotions.Create
 {
@@ -13,22 +16,35 @@ namespace FCG.Application.UseCases.Promotions.Create
         private readonly IReadOnlyPromotionRepository _readOnlyPromotionRepository;
         private readonly IWriteOnlyPromotionRepository _writeOnlyPromotionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICorrelationIdProvider _correlationIdProvider;
+        private readonly ILogger<UpdateUserUseCase> _logger;
 
         public CreatePromotionUseCase(
             IReadOnlyGameRepository readOnlyGameRepository,
             IReadOnlyPromotionRepository readOnlyPromotionRepository,
             IWriteOnlyPromotionRepository writeOnlyPromotionRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICorrelationIdProvider correlationIdProvider,
+            ILogger<UpdateUserUseCase> logger)
         {
             _readOnlyGameRepository = readOnlyGameRepository;
             _readOnlyPromotionRepository = readOnlyPromotionRepository;
             _writeOnlyPromotionRepository = writeOnlyPromotionRepository;
             _unitOfWork = unitOfWork;
+            _correlationIdProvider = correlationIdProvider;
+            _logger = logger;
         }
 
         public async Task<CreatePromotionResponse> Handle(CreatePromotionRequest request, CancellationToken cancellationToken)
         {
+            var correlationId = _correlationIdProvider.GetCorrelationId();
+
+            _logger.LogInformation(
+                "[CreatePromotionUseCase] [CorrelationId: {CorrelationId}] Creating promotion for game: {GameId}",
+                correlationId, request.GameId);
+
             var gameExists = await _readOnlyGameRepository.ExistsAsync(request.GameId, cancellationToken);
+
             if (!gameExists)
             {
                 throw new DomainException("Game not found.");
@@ -50,6 +66,10 @@ namespace FCG.Application.UseCases.Promotions.Create
 
             await _writeOnlyPromotionRepository.AddAsync(promotion, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "[CreatePromotionUseCase] [CorrelationId: {CorrelationId}] Successfully created promotion: {PromotionId} for game: {GameId}",
+                correlationId, promotion.Id, promotion.GameId);
 
             return new CreatePromotionResponse
             {

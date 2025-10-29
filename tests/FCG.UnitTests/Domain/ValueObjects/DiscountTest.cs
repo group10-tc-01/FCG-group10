@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 using System.Globalization;
 
@@ -8,7 +9,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
     public class DiscountTests
     {
         [Fact]
-        public void Given_ValidPercentages_When_CreateDiscount_Then_ShouldCreateSuccessfullyAndSetProperties()
+        public void Given_ValidPercentages_When_Create_Then_ShouldCreateSuccessfullyAndSetProperties()
         {
             // Arrange
             decimal validPercentage = 25.5m;
@@ -28,19 +29,17 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_InvalidPercentages_When_CreateDiscount_Then_ShouldThrowDomainException()
+        public void Given_InvalidPercentages_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             decimal negativePercentage = -5m;
             decimal invalidPercentage = 101m;
+            var actNegative = () => Discount.Create(negativePercentage);
+            var actAbove100 = () => Discount.Create(invalidPercentage);
 
-            // Act
-            Action actNegative = () => Discount.Create(negativePercentage);
-            Action actAbove100 = () => Discount.Create(invalidPercentage);
-
-            // Assert
-            actNegative.Should().Throw<DomainException>().WithMessage("Discount must be between 0 and 100.");
-            actAbove100.Should().Throw<DomainException>().WithMessage("Discount must be between 0 and 100.");
+            // Act & Assert
+            actNegative.Should().Throw<DomainException>().WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
+            actAbove100.Should().Throw<DomainException>().WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
         }
 
         [Fact]
@@ -70,7 +69,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_DiscountObject_When_CallToString_Then_ShouldReturnFormattedValue()
+        public void Given_DiscountObject_When_ToStringCalled_Then_ShouldReturnFormattedValue()
         {
             // Arrange
             var discount1 = Discount.Create(15.5m);

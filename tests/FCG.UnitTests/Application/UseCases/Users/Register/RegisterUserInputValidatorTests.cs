@@ -1,5 +1,4 @@
 using FCG.Application.UseCases.Users.Register;
-using FCG.Application.UseCases.Users.Register.UsersDTO;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.UseCases.Users.Register
@@ -13,8 +12,8 @@ namespace FCG.UnitTests.Application.UseCases.Users.Register
             _validator = new RegisterUserInputValidator();
         }
 
-        [Fact(DisplayName = "Deve validar com sucesso quando todos os campos são válidos")]
-        public void Validate_GivenValidInput_ShouldPassValidation()
+        [Fact]
+        public void Given_ValidInput_When_Validate_Then_ShouldPassValidation()
         {
             // Arrange
             var input = new RegisterUserRequest
@@ -36,7 +35,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Register
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Validate_GivenInvalidName_ShouldFailValidation(string? name)
+        public void Given_InvalidName_When_Validate_Then_ShouldFailValidation(string? name)
         {
             // Arrange
             var input = new RegisterUserRequest
@@ -58,7 +57,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Register
         [InlineData("invalid-email")]
         [InlineData("@example.com")]
         [InlineData("test@")]
-        public void Validate_GivenInvalidEmail_ShouldFailValidation(string email)
+        public void Given_InvalidEmail_When_Validate_Then_ShouldFailValidation(string email)
         {
             // Arrange
             var input = new RegisterUserRequest
@@ -81,7 +80,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.Register
         [InlineData("password")]
         [InlineData("PASSWORD123")]
         [InlineData("password123")]
-        public void Validate_GivenInvalidPassword_ShouldFailValidation(string password)
+        public void Given_InvalidPassword_When_Validate_Then_ShouldFailValidation(string password)
         {
             // Arrange
             var input = new RegisterUserRequest

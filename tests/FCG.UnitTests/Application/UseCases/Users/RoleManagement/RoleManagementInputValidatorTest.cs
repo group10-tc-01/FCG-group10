@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.Users.RoleManagement;
+﻿using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.CommomTestsUtilities.Builders.Inputs.Users.RoleManagement;
 using FCG.Messages;
 using FluentAssertions;

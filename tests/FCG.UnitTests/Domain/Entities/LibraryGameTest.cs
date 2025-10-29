@@ -1,5 +1,6 @@
-﻿using FCG.Domain.Entities;
+using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
@@ -56,7 +57,7 @@ namespace FCG.UnitTests.Domain.Entities
 
             // Act & Assert
             Action act = () => LibraryGame.Create(libraryId, gameId, negativePrice);
-            act.Should().Throw<DomainException>().WithMessage("The price cannot be a negative value.");
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.PriceCannotBeNegative);
         }
 
         [Fact]

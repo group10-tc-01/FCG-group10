@@ -1,7 +1,6 @@
 using FCG.Application.DependencyInjection;
-using FCG.Application.Services.Seeds;
+using FCG.Domain.Services;
 using FCG.Infrastructure.DependencyInjection;
-using FCG.Infrastructure.Logging;
 using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
 using FCG.WebApi.Middlewares;
@@ -27,8 +26,6 @@ namespace FCG.WebApi
             builder.Services.AddWebApi(builder.Configuration);
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
-            builder.Services.AddSerilogLogging(builder.Configuration);
-
 
             var app = builder.Build();
 
@@ -42,6 +39,7 @@ namespace FCG.WebApi
                 });
             }
 
+            app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.MapHealthChecks("/health", new HealthCheckOptions
@@ -78,7 +76,7 @@ namespace FCG.WebApi
         {
             using var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
-            var seeds = scope.ServiceProvider.GetServices<ISeed>();
+            var seeds = scope.ServiceProvider.GetServices<IAdminSeedService>();
 
             await dbContext.Database.MigrateAsync();
 

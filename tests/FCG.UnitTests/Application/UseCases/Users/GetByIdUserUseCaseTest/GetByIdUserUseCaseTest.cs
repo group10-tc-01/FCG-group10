@@ -1,10 +1,12 @@
-﻿using FCG.Application.UseCases.AdminUsers.GetById;
+﻿using FCG.Application.UseCases.Admin.GetById;
 using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
@@ -12,12 +14,17 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
     public class GetByIdUserUseCaseTest
     {
         private readonly Mock<IReadOnlyUserRepository> _userRepositoryMock;
-        private readonly GetByIdUserUseCase _useCase;
+        private readonly Mock<ILogger<GetUserByIdUseCase>> _loggerMock;
+        private readonly GetUserByIdUseCase _useCase;
 
         public GetByIdUserUseCaseTest()
         {
             _userRepositoryMock = new Mock<IReadOnlyUserRepository>();
-            _useCase = new GetByIdUserUseCase(_userRepositoryMock.Object);
+            _loggerMock = new Mock<ILogger<GetUserByIdUseCase>>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            _useCase = new GetUserByIdUseCase(_userRepositoryMock.Object, _loggerMock.Object, correlationIdProvider);
         }
 
         [Fact]
@@ -31,7 +38,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
                 Role.User
             );
 
-            var query = new GetByIdUserQuery(fakeUser.Id);
+            var query = new GetUserByIdRequest(fakeUser.Id);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(fakeUser.Id, It.IsAny<CancellationToken>()))
@@ -60,7 +67,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
         {
             // Arrange
             var user = User.Create(name, email, "Pass123!", Role.User);
-            var query = new GetByIdUserQuery(user.Id);
+            var query = new GetUserByIdRequest(user.Id);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(user.Id, It.IsAny<CancellationToken>()))
@@ -79,7 +86,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
         {
             // Arrange
             var user = UserBuilder.Build();
-            var query = new GetByIdUserQuery(user.Id);
+            var query = new GetUserByIdRequest(user.Id);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(user.Id, It.IsAny<CancellationToken>()))
@@ -101,7 +108,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetByIdUserUseCaseTest
         {
             // Arrange
             var invalidId = Guid.NewGuid();
-            var query = new GetByIdUserQuery(invalidId);
+            var query = new GetUserByIdRequest(invalidId);
 
             _userRepositoryMock
                 .Setup(r => r.GetByIdWithDetailsAsync(invalidId, It.IsAny<CancellationToken>()))

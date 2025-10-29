@@ -1,13 +1,14 @@
 using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
 {
     public class PasswordTests
     {
-        [Fact(DisplayName = "Create deve criar password com senha válida")]
-        public void Create_GivenValidPassword_ShouldCreatePassword()
+        [Fact]
+        public void Given_ValidPassword_When_Create_Then_ShouldCreatePassword()
         {
             // Arrange
             var validPassword = "Password@123";
@@ -23,18 +24,18 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void Create_GivenNullOrEmptyPassword_ShouldThrowDomainException(string? invalidPassword)
+        public void Given_NullOrEmptyPassword_When_Create_Then_ShouldThrowDomainException(string? invalidPassword)
         {
-            // Act
+            // Arrange
             var act = () => Password.Create(invalidPassword!);
 
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password cannot be null or empty.");
+                .WithMessage(ResourceMessages.PasswordCannotBeNullOrEmpty);
         }
 
-        [Fact(DisplayName = "Create deve lançar exceção quando senha é muito curta")]
-        public void Create_GivenShortPassword_ShouldThrowDomainException()
+        [Fact]
+        public void Given_ShortPassword_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var shortPassword = "Pass@1";
@@ -44,11 +45,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must be at least 8 characters long.");
+                .WithMessage(ResourceMessages.PasswordMinimumLength);
         }
 
-        [Fact(DisplayName = "Create deve lançar exceção quando senha não contém letra")]
-        public void Create_GivenPasswordWithoutLetter_ShouldThrowDomainException()
+        [Fact]
+        public void Given_PasswordWithoutLetter_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var passwordWithoutLetter = "12345678@";
@@ -58,11 +59,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one letter.");
+                .WithMessage(ResourceMessages.PasswordMustContainLetter);
         }
 
-        [Fact(DisplayName = "Create deve lançar exceção quando senha não contém dígito")]
-        public void Create_GivenPasswordWithoutDigit_ShouldThrowDomainException()
+        [Fact]
+        public void Given_PasswordWithoutDigit_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var passwordWithoutDigit = "Password@";
@@ -72,11 +73,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one number.");
+                .WithMessage(ResourceMessages.PasswordMustContainNumber);
         }
 
-        [Fact(DisplayName = "Create deve lançar exceção quando senha não contém caractere especial")]
-        public void Create_GivenPasswordWithoutSpecialCharacter_ShouldThrowDomainException()
+        [Fact]
+        public void Given_PasswordWithoutSpecialCharacter_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             var passwordWithoutSpecial = "Password123";
@@ -86,11 +87,11 @@ namespace FCG.UnitTests.Domain.ValueObjects
 
             // Assert
             act.Should().Throw<DomainException>()
-                .WithMessage("Password must contain at least one special character.");
+                .WithMessage(ResourceMessages.PasswordMustContainSpecialCharacter);
         }
 
-        [Fact(DisplayName = "CreateFromHash deve criar password com hash válido")]
-        public void CreateFromHash_GivenValidHash_ShouldCreatePassword()
+        [Fact]
+        public void Given_ValidHash_When_CreateFromHash_Then_ShouldCreatePassword()
         {
             // Arrange
             var hash = "hashed_password_value";
@@ -106,19 +107,19 @@ namespace FCG.UnitTests.Domain.ValueObjects
         [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void CreateFromHash_GivenNullOrEmptyHash_ShouldThrowArgumentNullException(string? invalidHash)
+        public void Given_NullOrEmptyHash_When_CreateFromHash_Then_ShouldThrowArgumentNullException(string? invalidHash)
         {
-            // Act
+            // Arrange
             var act = () => Password.CreateFromHash(invalidHash!);
 
-            // Assert
+            // Act & Assert
             act.Should().Throw<ArgumentNullException>()
                 .WithParameterName("hashValue")
-                .WithMessage("Stored hash value cannot be null or empty. (Parameter 'hashValue')");
+                .WithMessage($"*{ResourceMessages.StoredHashCannotBeNullOrEmpty}*");
         }
 
-        [Fact(DisplayName = "Operador implícito string deve retornar Value")]
-        public void ImplicitOperator_GivenPassword_ShouldReturnValue()
+        [Fact]
+        public void Given_Password_When_ImplicitOperatorCalled_Then_ShouldReturnValue()
         {
             // Arrange
             var password = Password.Create("Password@123");
@@ -130,8 +131,8 @@ namespace FCG.UnitTests.Domain.ValueObjects
             result.Should().Be(password.Value);
         }
 
-        [Fact(DisplayName = "ToString deve retornar Value")]
-        public void ToString_ShouldReturnValue()
+        [Fact]
+        public void Given_Password_When_ToStringCalled_Then_ShouldReturnValue()
         {
             // Arrange
             var passwordValue = "Password@123";

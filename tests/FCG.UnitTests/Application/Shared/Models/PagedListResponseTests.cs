@@ -1,4 +1,4 @@
-using FCG.Application.Shared.Models;
+using FCG.Domain.Models.Pagination;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Application.Shared.Models

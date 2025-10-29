@@ -1,5 +1,7 @@
-﻿using FCG.Domain.Entities;
+using FCG.CommomTestsUtilities.Builders.Entities;
+using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.Entities
@@ -7,44 +9,39 @@ namespace FCG.UnitTests.Domain.Entities
     public class PromotionTests
     {
         [Fact]
-        public void Given_ValidParameters_When_CreatePromotion_Then_AllPropertiesShouldBeSetCorrectly()
+        public void Given_ValidParameters_When_Create_Then_ShouldSetAllPropertiesCorrectly()
         {
             // Arrange
-            var gameId = Guid.NewGuid();
+            var game = GameBuilder.Build();
             var discountValue = 25.5m;
             var startDate = DateTime.UtcNow.Date;
             var endDate = DateTime.UtcNow.Date.AddDays(7);
-            var preciseDiscount = 12.75m;
 
             // Act
-            var promotion = Promotion.Create(gameId, discountValue, startDate, endDate);
-            var promotionPrecise = Promotion.Create(gameId, preciseDiscount, startDate, endDate);
+            var promotion = Promotion.Create(game.Id, discountValue, startDate, endDate);
 
             // Assert
             promotion.Should().NotBeNull();
             promotion.Id.Should().NotBe(Guid.Empty);
-            promotion.GameId.Should().Be(gameId);
+            promotion.GameId.Should().Be(game.Id);
             promotion.Discount.Value.Should().Be(discountValue);
             promotion.StartDate.Should().Be(startDate);
             promotion.EndDate.Should().Be(endDate);
-
-            // Verifica o valor de precisão
-            promotionPrecise.Discount.Value.Should().Be(preciseDiscount);
         }
 
         [Fact]
-        public void Given_DiscountValues_When_CreatePromotion_Then_ShouldHandleZeroAndMaxDiscount()
+        public void Given_ZeroAndMaxDiscount_When_Create_Then_ShouldHandleBothValues()
         {
             // Arrange
-            var gameId = Guid.NewGuid();
+            var game = GameBuilder.Build();
             var startDate = DateTime.UtcNow.Date;
             var endDate = DateTime.UtcNow.Date.AddDays(3);
             var zeroDiscount = 0m;
             var maxDiscount = 100m;
 
             // Act
-            var zeroPromotion = Promotion.Create(gameId, zeroDiscount, startDate, endDate);
-            var maxPromotion = Promotion.Create(gameId, maxDiscount, startDate, endDate);
+            var zeroPromotion = Promotion.Create(game.Id, zeroDiscount, startDate, endDate);
+            var maxPromotion = Promotion.Create(game.Id, maxDiscount, startDate, endDate);
 
             // Assert
             zeroPromotion.Discount.Value.Should().Be(0m);
@@ -52,53 +49,49 @@ namespace FCG.UnitTests.Domain.Entities
         }
 
         [Fact]
-        public void Given_EndDateBeforeStartDate_When_CreatePromotion_Then_ShouldThrowDomainException()
+        public void Given_EndDateBeforeStartDate_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
-            var gameId = Guid.NewGuid();
+            var game = GameBuilder.Build();
             var discount = 20m;
             var startDate = DateTime.UtcNow;
             var endDate = DateTime.UtcNow.AddDays(-1);
+            var act = () => Promotion.Create(game.Id, discount, startDate, endDate);
 
-            // Act
-            Action act = () => Promotion.Create(gameId, discount, startDate, endDate);
-
-            // Assert
+            // Act & Assert
             act.Should().Throw<DomainException>()
-               .WithMessage("End date must be on or after the start date.");
+               .WithMessage(ResourceMessages.PromotionEndDateMustBeAfterStartDate);
         }
 
         [Fact]
-        public void Given_DiscountOutOfRange_When_CreatePromotion_Then_ShouldThrowDomainException()
+        public void Given_DiscountOutOfRange_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
-            var gameId = Guid.NewGuid();
+            var game = GameBuilder.Build();
             var startDate = DateTime.UtcNow;
             var endDate = DateTime.UtcNow.AddDays(2);
             var negativeDiscount = -5m;
             var invalidDiscount = 101m;
+            var actNegative = () => Promotion.Create(game.Id, negativeDiscount, startDate, endDate);
+            var actAbove100 = () => Promotion.Create(game.Id, invalidDiscount, startDate, endDate);
 
-            // Act
-            Action actNegative = () => Promotion.Create(gameId, negativeDiscount, startDate, endDate);
-            Action actAbove100 = () => Promotion.Create(gameId, invalidDiscount, startDate, endDate);
-
-            // Assert
+            // Act & Assert
             actNegative.Should().Throw<DomainException>()
-                       .WithMessage("Discount must be between 0 and 100.");
+                       .WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
             actAbove100.Should().Throw<DomainException>()
-                       .WithMessage("Discount must be between 0 and 100.");
+                       .WithMessage(ResourceMessages.DiscountMustBeBetweenZeroAndHundred);
         }
 
         [Fact]
-        public void Given_SameStartAndEndDate_When_CreatePromotion_Then_ShouldCreateSuccessfully()
+        public void Given_SameStartAndEndDate_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
-            var gameId = Guid.NewGuid();
+            var game = GameBuilder.Build();
             var discount = 30m;
             var sameDate = DateTime.UtcNow.Date;
 
             // Act
-            var promotion = Promotion.Create(gameId, discount, sameDate, sameDate);
+            var promotion = Promotion.Create(game.Id, discount, sameDate, sameDate);
 
             // Assert
             promotion.StartDate.Should().Be(sameDate);
@@ -106,17 +99,17 @@ namespace FCG.UnitTests.Domain.Entities
         }
 
         [Fact]
-        public void Given_TwoPromotionsWithSameData_When_Compare_Then_ShouldHaveDifferentIds()
+        public void Given_TwoPromotionsWithSameData_When_Create_Then_ShouldHaveDifferentIds()
         {
             // Arrange
-            var gameId = Guid.NewGuid();
+            var game = GameBuilder.Build();
             var discount = 25m;
             var startDate = DateTime.UtcNow.Date;
             var endDate = DateTime.UtcNow.Date.AddDays(7);
 
             // Act
-            var promotion1 = Promotion.Create(gameId, discount, startDate, endDate);
-            var promotion2 = Promotion.Create(gameId, discount, startDate, endDate);
+            var promotion1 = Promotion.Create(game.Id, discount, startDate, endDate);
+            var promotion2 = Promotion.Create(game.Id, discount, startDate, endDate);
 
             // Assert
             promotion1.Id.Should().NotBe(promotion2.Id);

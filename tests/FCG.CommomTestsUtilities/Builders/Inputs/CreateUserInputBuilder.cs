@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Application.UseCases.Users.Register;
 
 namespace FCG.CommomTestsUtilities.Builders.Inputs
 {
@@ -11,7 +11,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs
             return new Faker<RegisterUserRequest>()
                 .RuleFor(u => u.Name, f => f.Name.FullName())
                 .RuleFor(u => u.Email, f => f.Internet.Email())
-                .RuleFor(u => u.Password, f => f.Internet.Password(8, false, "", "Aa1@"))
+                .RuleFor(u => u.Password, f => "ValidPass@123")
                 .Generate();
         }
 

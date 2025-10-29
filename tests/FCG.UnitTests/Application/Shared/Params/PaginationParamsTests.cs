@@ -1,4 +1,4 @@
-using FCG.Application.Shared.Params;
+using FCG.Domain.Models.Pagination;
 using FluentAssertions;
 using System.ComponentModel.DataAnnotations;
 

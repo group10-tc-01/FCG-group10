@@ -275,5 +275,237 @@ namespace FCG.Messages {
                 return ResourceManager.GetString("UserIdRequired", resourceCulture);
             }
         }
+
+        public static string BalanceCannotBeNegative
+        {
+            get
+            {
+                return ResourceManager.GetString("BalanceCannotBeNegative", resourceCulture);
+            }
+        }
+
+        public static string DiscountMustBeBetweenZeroAndHundred
+        {
+            get
+            {
+                return ResourceManager.GetString("DiscountMustBeBetweenZeroAndHundred", resourceCulture);
+            }
+        }
+
+        public static string EmailCannotBeNullOrEmpty
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+
+        public static string EmailCannotExceed255Characters
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailCannotExceed255Characters", resourceCulture);
+            }
+        }
+
+        public static string InvalidEmailFormat
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
+            }
+        }
+
+        public static string NameCannotBeNullOrEmpty
+        {
+            get
+            {
+                return ResourceManager.GetString("NameCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+
+        public static string NameMinimumLength
+        {
+            get
+            {
+                return ResourceManager.GetString("NameMinimumLength", resourceCulture);
+            }
+        }
+
+        public static string NameCannotExceed255Characters
+        {
+            get
+            {
+                return ResourceManager.GetString("NameCannotExceed255Characters", resourceCulture);
+            }
+        }
+
+        public static string PasswordCannotBeNullOrEmpty
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+
+        public static string PasswordMinimumLength
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMinimumLength", resourceCulture);
+            }
+        }
+
+        public static string PasswordMustContainLetter
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMustContainLetter", resourceCulture);
+            }
+        }
+
+        public static string PasswordMustContainNumber
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMustContainNumber", resourceCulture);
+            }
+        }
+
+        public static string PasswordMustContainSpecialCharacter
+        {
+            get
+            {
+                return ResourceManager.GetString("PasswordMustContainSpecialCharacter", resourceCulture);
+            }
+        }
+
+        public static string StoredHashCannotBeNullOrEmpty
+        {
+            get
+            {
+                return ResourceManager.GetString("StoredHashCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+
+        public static string PriceCannotBeNegative
+        {
+            get
+            {
+                return ResourceManager.GetString("PriceCannotBeNegative", resourceCulture);
+            }
+        }
+
+        public static string PriceMustBeGreaterThanZero
+        {
+            get
+            {
+                return ResourceManager.GetString("PriceMustBeGreaterThanZero", resourceCulture);
+            }
+        }
+
+        public static string DescriptionCannotBeNullOrEmpty
+        {
+            get
+            {
+                return ResourceManager.GetString("DescriptionCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+
+        public static string CategoryCannotBeNullOrEmpty
+        {
+            get
+            {
+                return ResourceManager.GetString("CategoryCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+
+        public static string PromotionEndDateMustBeAfterStartDate
+        {
+            get
+            {
+                return ResourceManager.GetString("PromotionEndDateMustBeAfterStartDate", resourceCulture);
+            }
+        }
+
+        public static string UserAlreadyAdmin
+        {
+            get
+            {
+                return ResourceManager.GetString("UserAlreadyAdmin", resourceCulture);
+            }
+        }
+
+        public static string UserAlreadyUser
+        {
+            get
+            {
+                return ResourceManager.GetString("UserAlreadyUser", resourceCulture);
+            }
+        }
+
+        public static string UserNotFoundForUpdate
+        {
+            get
+            {
+                return ResourceManager.GetString("UserNotFoundForUpdate", resourceCulture);
+            }
+        }
+
+        public static string CurrentPasswordRequired
+        {
+            get
+            {
+                return ResourceManager.GetString("CurrentPasswordRequired", resourceCulture);
+            }
+        }
+
+        public static string CurrentPasswordIncorrect
+        {
+            get
+            {
+                return ResourceManager.GetString("CurrentPasswordIncorrect", resourceCulture);
+            }
+        }
+
+        public static string NewPasswordMustBeDifferent
+        {
+            get
+            {
+                return ResourceManager.GetString("NewPasswordMustBeDifferent", resourceCulture);
+            }
+        }
+
+        public static string EmailAlreadyInUse
+        {
+            get
+            {
+                return ResourceManager.GetString("EmailAlreadyInUse", resourceCulture);
+            }
+        }
+
+        public static string UnexpectedErrorOccurred
+        {
+            get
+            {
+                return ResourceManager.GetString("UnexpectedErrorOccurred", resourceCulture);
+            }
+        }
+
+        public static string PleaseContactSupport
+        {
+            get
+            {
+                return ResourceManager.GetString("PleaseContactSupport", resourceCulture);
+            }
+        }
+
+        public static string UserNotFound
+        {
+            get
+            {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
     }
 }

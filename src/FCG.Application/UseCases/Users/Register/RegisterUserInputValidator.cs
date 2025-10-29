@@ -1,5 +1,4 @@
-﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
-using FCG.Domain.ValueObjects;
+﻿using FCG.Domain.ValueObjects;
 using FCG.Messages;
 using FluentValidation;
 
