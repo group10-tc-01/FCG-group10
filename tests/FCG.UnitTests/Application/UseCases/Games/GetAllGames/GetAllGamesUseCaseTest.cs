@@ -1,10 +1,13 @@
 ﻿using FCG.Application.UseCases.Games.GetAll;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.CommomTestsUtilities.Extensions;
 using FCG.Domain.Entities;
 using FCG.Domain.Repositories.GamesRepository;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
 {
@@ -16,7 +19,9 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
         public GetAllGamesUseCaseTest()
         {
             _readOnlyGameRepository = ReadOnlyGameRepositoryBuilder.Build();
-            _sut = new GetAllGamesUseCase(_readOnlyGameRepository);
+            var logger = new Mock<ILogger<GetAllGamesUseCase>>().Object;
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            _sut = new GetAllGamesUseCase(_readOnlyGameRepository, logger, correlationIdProvider);
         }
 
         [Fact(DisplayName = "Deve retornar lista paginada de jogos quando não há filtros")]

@@ -104,5 +104,38 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
                 .Generate();
         }
+
+        public static RegisterGameInput BuildWithNameAndCategory(string name, string category)
+        {
+            return new RegisterGameInput
+            {
+                Name = name,
+                Category = category,
+                Description = "Test game description",
+                Price = 49.99m
+            };
+        }
+
+        public static RegisterGameInput BuildWithNameAndPrice(string name, decimal price)
+        {
+            return new RegisterGameInput
+            {
+                Name = name,
+                Category = "Action",
+                Description = "Test game description",
+                Price = price
+            };
+        }
+
+        public static RegisterGameInput BuildWithDetails(string name, string category, decimal price)
+        {
+            return new RegisterGameInput
+            {
+                Name = name,
+                Category = category,
+                Description = "Test game description",
+                Price = price
+            };
+        }
     }
 }

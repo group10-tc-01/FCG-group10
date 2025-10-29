@@ -25,6 +25,7 @@ namespace FCG.FunctionalTests.Fixtures
         public RegisterUserFixture RegisterUser => GetOrCreateFixture<RegisterUserFixture>();
         public UpdateUserFixture UpdateUser => GetOrCreateFixture<UpdateUserFixture>();
         public GetAllUsersFixture GetAllUsers => GetOrCreateFixture<GetAllUsersFixture>();
+        public GetAllGamesFixture GetAllGames => GetOrCreateFixture<GetAllGamesFixture>();
         public GetUserByIdFixture GetUserById => GetOrCreateFixture<GetUserByIdFixture>();
         public RoleManagementFixture RoleManagement => GetOrCreateFixture<RoleManagementFixture>();
 
