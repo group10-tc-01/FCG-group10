@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 using FluentAssertions;
 
 namespace FCG.UnitTests.Domain.ValueObjects
@@ -7,7 +8,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
     public class PriceTests
     {
         [Fact]
-        public void Given_ValidPrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
+        public void Given_ValidPrice_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             decimal validPrice = 59.99m;
@@ -21,7 +22,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_VerySmallPrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
+        public void Given_VerySmallPrice_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             decimal smallPrice = 0.01m;
@@ -34,7 +35,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_LargePrice_When_CreatePrice_Then_ShouldCreateSuccessfully()
+        public void Given_LargePrice_When_Create_Then_ShouldCreateSuccessfully()
         {
             // Arrange
             decimal largePrice = decimal.MaxValue;
@@ -47,16 +48,14 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_NegativePrice_When_CreatePrice_Then_ShouldThrowDomainException()
+        public void Given_NegativePrice_When_Create_Then_ShouldThrowDomainException()
         {
             // Arrange
             decimal negativePrice = -10.50m;
+            var act = () => Price.Create(negativePrice);
 
-            // Act
-            Action act = () => Price.Create(negativePrice);
-
-            // Assert
-            act.Should().Throw<DomainException>().WithMessage("The price cannot be a negative value.");
+            // Act & Assert
+            act.Should().Throw<DomainException>().WithMessage(ResourceMessages.PriceCannotBeNegative);
         }
 
         [Fact]
@@ -86,7 +85,7 @@ namespace FCG.UnitTests.Domain.ValueObjects
         }
 
         [Fact]
-        public void Given_PriceWithHighPrecision_When_CreatePrice_Then_ShouldMaintainPrecision()
+        public void Given_PriceWithHighPrecision_When_Create_Then_ShouldMaintainPrecision()
         {
             // Arrange
             decimal precisePrice = 19.999999m;

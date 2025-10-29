@@ -1,8 +1,11 @@
 using FCG.Application.UseCases.Promotions.Create;
+using FCG.Application.UseCases.Users.Update;
 using FCG.CommomTestsUtilities.Builders.Inputs.Promotions.Create;
 using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
 using FCG.CommomTestsUtilities.Builders.Repositories.PromotionRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace FCG.FunctionalTests.Fixtures.Promotions
 {
@@ -14,6 +17,8 @@ namespace FCG.FunctionalTests.Fixtures.Promotions
             var readOnlyPromotionRepository = ReadOnlyPromotionRepositoryBuilder.Build();
             var writeOnlyPromotionRepository = WriteOnlyPromotionRepositoryBuilder.Build();
             var unitOfWork = UnitOfWorkBuilder.Build();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            var logger = new Mock<ILogger<UpdateUserUseCase>>().Object;
 
             Setup();
 
@@ -21,7 +26,9 @@ namespace FCG.FunctionalTests.Fixtures.Promotions
                 readOnlyGameRepository,
                 readOnlyPromotionRepository,
                 writeOnlyPromotionRepository,
-                unitOfWork);
+                unitOfWork,
+                correlationIdProvider,
+                logger);
             CreatePromotionRequest = CreatePromotionInputBuilder.Build();
         }
 
@@ -34,6 +41,7 @@ namespace FCG.FunctionalTests.Fixtures.Promotions
             ReadOnlyPromotionRepositoryBuilder.SetupExistsActivePromotionForGameAsync(false);
             WriteOnlyPromotionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkBuilder.SetupSaveChangesAsync();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
         }
     }
 }

@@ -4,10 +4,13 @@ using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Models;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
+using FCG.Domain.Entities;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Authentication.Login
 {
@@ -16,6 +19,8 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly ITokenService _tokenService;
         private readonly IPasswordEncrypter _passwordEncrypter;
+        private readonly ILogger<LoginUseCase> _logger;
+        private readonly ICorrelationIdProvider _correlationIdProvider;
         private readonly ILoginUseCase _sut;
 
         public LoginUseCaseTest()
@@ -25,11 +30,18 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
             _readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
             _tokenService = TokenServiceBuilder.Build();
             _passwordEncrypter = PasswordEncrypterServiceBuilder.Build();
+            _logger = new Mock<ILogger<LoginUseCase>>().Object;
+            _correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+            
             _sut = new LoginUseCase(
                 _readOnlyUserRepository,
                 _tokenService,
                 Options.Create(JwtSettingsBuilder.Build()),
-                _passwordEncrypter
+                _passwordEncrypter,
+                _logger,
+                _correlationIdProvider
             );
         }
 
@@ -41,14 +53,13 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
         [Fact]
         public async Task Given_ValidLogin_When_Handle_Then_ShouldReturnOutput()
         {
-            // Given
+            // Arrange
             var input = LoginInputBuilder.Build();
-            var refreshToken = RefreshTokenBuilder.Build();
             var user = UserBuilder.Build();
 
-            var expectedAccessToken = "access_token";
-            var expectedRefreshToken = refreshToken.Token;
-            var expectedExpiresInMinutes = 1;
+            var expectedAccessToken = "new_access_token";
+            var expectedRefreshToken = "new_refresh_token";
+            var refreshToken = RefreshToken.Create(expectedRefreshToken, user.Id, TimeSpan.FromDays(7));
 
             // Setup dos mocks
             ReadOnlyUserRepositoryBuilder.SetupGetByEmailAsync(user);
@@ -57,17 +68,13 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Login
             TokenServiceBuilder.SetupGenerateRefreshToken(expectedRefreshToken);
             TokenServiceBuilder.SetupSaveRefreshTokenAsync(refreshToken);
 
-            // When
+            // Act
             var result = await _sut.Handle(input, CancellationToken.None);
 
-            // Then
+            // Assert
             result.Should().NotBeNull();
-
             result.AccessToken.Should().Be(expectedAccessToken);
-            //result.RefreshToken.Should().Be(expectedRefreshToken);
-            // result.ExpiresInMinutes.Should().Be(expectedExpiresInMinutes);
-
-            result.RefreshToken.Should().Be(refreshToken.Token);
+            result.RefreshToken.Should().Be(expectedRefreshToken);
             result.ExpiresInMinutes.Should().Be(1);
 
         }

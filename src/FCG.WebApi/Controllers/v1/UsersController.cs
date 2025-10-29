@@ -1,6 +1,7 @@
-﻿using FCG.Application.UseCases.Users.Register.UsersDTO;
-using FCG.Application.UseCases.Users.Update.UsersDTO;
-using FCG.Application.UseCases.Users.RoleManagement.RoleManagementDTO;
+﻿using FCG.Application.UseCases.Admin.RoleManagement;
+using FCG.Application.UseCases.Users.Register;
+using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
+using FCG.Application.UseCases.Users.Update;
 using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;
@@ -22,12 +23,13 @@ namespace FCG.WebApi.Controllers.v1
             return Created(string.Empty, ApiResponse<RegisterUserResponse>.SuccesResponse(output));
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [AuthenticatedUser]
-        [ProducesResponseType(typeof(ApiResponse<RegisterUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UpdateUserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserBodyRequest bodyRequest)
         {
+            var request = new UpdateUserRequest(id, bodyRequest);
             var output = await _mediator.Send(request, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<UpdateUserResponse>.SuccesResponse(output));
         }
@@ -38,7 +40,7 @@ namespace FCG.WebApi.Controllers.v1
         [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUserRole([FromBody] RoleManagementRequest input, CancellationToken cancellationToken)
         {
-            var output = await _mediator.Send(input, cancellationToken);
+            var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
             return Ok(ApiResponse<RoleManagementResponse>.SuccesResponse(output));
         }
 

@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Exceptions;
+using FCG.Messages;
 
 namespace FCG.Domain.ValueObjects
 {
@@ -9,7 +10,7 @@ namespace FCG.Domain.ValueObjects
         private Balance(decimal value)
         {
             if (value < 0)
-                throw new DomainException("Balance cannot be negative.");
+                throw new DomainException(ResourceMessages.BalanceCannotBeNegative);
 
             Value = value;
         }

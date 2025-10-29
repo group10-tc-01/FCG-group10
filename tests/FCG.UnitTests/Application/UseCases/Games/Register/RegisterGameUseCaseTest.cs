@@ -8,6 +8,8 @@ using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Games.Register
 {
@@ -23,7 +25,11 @@ namespace FCG.UnitTests.Application.UseCases.Games.Register
             _writeOnlyGameRepository = WriteOnlyGameRepositoryBuilder.Build();
             _readOnlyGameRepository = ReadOnlyGameRepositoryBuilder.Build();
             _unitOfWork = UnitOfWorkBuilder.Build();
-            _sut = new RegisterGameUseCase(_writeOnlyGameRepository, _readOnlyGameRepository, _unitOfWork);
+            var logger = new Mock<ILogger<RegisterGameUseCase>>().Object;
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            _sut = new RegisterGameUseCase(_writeOnlyGameRepository, _readOnlyGameRepository, _unitOfWork, logger, correlationIdProvider);
         }
 
         [Fact]

@@ -10,7 +10,9 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using FCG.Messages;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Authentication.Refresh
 {
@@ -24,7 +26,11 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Refresh
         {
             _tokenService = TokenServiceBuilder.Build();
             _readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
-            _sut = new RefreshTokenUseCase(_tokenService, _readOnlyUserRepository, Options.Create(JwtSettingsBuilder.Build()));
+            var logger = new Mock<ILogger<RefreshTokenUseCase>>().Object;
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            _sut = new RefreshTokenUseCase(_tokenService, _readOnlyUserRepository, Options.Create(JwtSettingsBuilder.Build()), logger, correlationIdProvider);
         }
 
         [Fact]

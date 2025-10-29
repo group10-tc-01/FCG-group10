@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 
 namespace FCG.Domain.Entities
 {
@@ -17,12 +18,12 @@ namespace FCG.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new DomainException("Description cannot be null or empty.");
+                throw new DomainException(ResourceMessages.DescriptionCannotBeNullOrEmpty);
             }
 
             if (string.IsNullOrWhiteSpace(category))
             {
-                throw new DomainException("Category cannot be null or empty.");
+                throw new DomainException(ResourceMessages.CategoryCannotBeNullOrEmpty);
             }
 
             Name = name;

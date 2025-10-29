@@ -1,21 +1,28 @@
 using FCG.Application.UseCases.Promotions.Create;
+using FCG.Application.UseCases.Users.Update;
 using FCG.CommomTestsUtilities.Builders.Inputs.Promotions.Create;
 using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
 using FCG.CommomTestsUtilities.Builders.Repositories.PromotionRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Exceptions;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Promotions.Create
 {
     public class CreatePromotionUseCaseTests
     {
+        private readonly Mock<ILogger<UpdateUserUseCase>> _loggerMock;
+
         public CreatePromotionUseCaseTests()
         {
-            // Reset builders before each test
             ReadOnlyGameRepositoryBuilder.Reset();
             ReadOnlyPromotionRepositoryBuilder.Reset();
             WriteOnlyPromotionRepositoryBuilder.Reset();
+            CorrelationIdProviderBuilder.Reset();
+
+            _loggerMock = new Mock<ILogger<UpdateUserUseCase>>();
         }
 
         [Fact]
@@ -29,7 +36,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act
             var result = await sut.Handle(input, CancellationToken.None);
@@ -59,7 +68,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<DomainException>(() => sut.Handle(input, CancellationToken.None));
@@ -79,7 +90,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<DomainException>(() => sut.Handle(input, CancellationToken.None));
@@ -99,7 +112,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act
             await sut.Handle(input, CancellationToken.None);
@@ -119,7 +134,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act
             await sut.Handle(input, CancellationToken.None);
@@ -139,7 +156,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act
             await sut.Handle(input, CancellationToken.None);
@@ -159,7 +178,9 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
                 ReadOnlyGameRepositoryBuilder.Build(),
                 ReadOnlyPromotionRepositoryBuilder.Build(),
                 WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build());
+                UnitOfWorkBuilder.Build(),
+                CorrelationIdProviderBuilder.Build(),
+                _loggerMock.Object);
 
             // Act
             await sut.Handle(input, CancellationToken.None);
@@ -174,6 +195,7 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
             ReadOnlyPromotionRepositoryBuilder.SetupExistsActivePromotionForGameAsync(false);
             WriteOnlyPromotionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkBuilder.SetupSaveChangesAsync();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
         }
 
         private static void SetupWithNonExistentGame()
@@ -182,6 +204,7 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
             ReadOnlyPromotionRepositoryBuilder.SetupExistsActivePromotionForGameAsync(false);
             WriteOnlyPromotionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkBuilder.SetupSaveChangesAsync();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
         }
 
         private static void SetupWithActivePromotion()
@@ -190,6 +213,7 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
             ReadOnlyPromotionRepositoryBuilder.SetupExistsActivePromotionForGameAsync(true);
             WriteOnlyPromotionRepositoryBuilder.SetupAddAsync();
             UnitOfWorkBuilder.SetupSaveChangesAsync();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using FCG.Application.Services.Seeds;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -14,10 +13,7 @@ namespace FCG.Application.DependencyInjection
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
 
-            services.AddScoped<ISeed, AdminSeedService>();
-
             return services;
         }
-
     }
 }

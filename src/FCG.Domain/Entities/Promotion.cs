@@ -1,5 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
+using FCG.Messages;
 
 namespace FCG.Domain.Entities
 {
@@ -15,7 +16,7 @@ namespace FCG.Domain.Entities
         {
             if (endDate < startDate)
             {
-                throw new DomainException("End date must be on or after the start date.");
+                throw new DomainException(ResourceMessages.PromotionEndDateMustBeAfterStartDate);
             }
 
             GameId = gameId;

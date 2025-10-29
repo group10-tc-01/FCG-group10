@@ -17,9 +17,13 @@ namespace FCG.FunctionalTests.Fixtures.Authentication
             var userRepository = ReadOnlyUserRepositoryBuilder.Build();
             var jwtSettings = Options.Create(JwtSettingsBuilder.Build());
             var refreshToken = RefreshTokenBuilder.Build();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<RefreshTokenUseCase>();
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
             Setup(refreshToken);
 
-            RefreshTokenUseCase = new RefreshTokenUseCase(tokenService, userRepository, jwtSettings);
+            RefreshTokenUseCase = new RefreshTokenUseCase(tokenService, userRepository, jwtSettings, logger, correlationIdProvider);
             RefreshTokenInput = RefreshTokenInputBuilder.Build();
             RefreshTokenInputWithValidToken = RefreshTokenInputBuilder.BuildWithToken("valid_refresh_token");
             RefreshTokenInputWithInvalidToken = RefreshTokenInputBuilder.BuildWithToken("invalid_refresh_token");

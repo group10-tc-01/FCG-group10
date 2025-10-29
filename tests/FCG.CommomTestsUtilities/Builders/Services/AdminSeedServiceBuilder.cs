@@ -1,6 +1,6 @@
-﻿using FCG.Application.Services.Seeds;
-using FCG.Domain.Repositories;
+﻿using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.UserRepository;
+using FCG.Infrastructure.Services;
 using Moq;
 
 namespace FCG.CommomTestsUtilities.Builders.Services

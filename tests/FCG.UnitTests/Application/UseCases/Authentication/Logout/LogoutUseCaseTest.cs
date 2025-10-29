@@ -1,9 +1,12 @@
 using FCG.Application.UseCases.Authentication.Logout;
 using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Logout;
 using FCG.CommomTestsUtilities.Builders.Repositories.RefreshTokenRepository;
+using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Messages;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace FCG.UnitTests.Application.UseCases.Authentication.Logout
 {
@@ -15,7 +18,11 @@ namespace FCG.UnitTests.Application.UseCases.Authentication.Logout
         public LogoutUseCaseTest()
         {
             _refreshTokenRepository = RefreshTokenRepositoryBuilder.Build();
-            _sut = new LogoutUseCase(_refreshTokenRepository);
+            var logger = new Mock<ILogger<LogoutUseCase>>().Object;
+            var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
+
+            _sut = new LogoutUseCase(_refreshTokenRepository, logger, correlationIdProvider);
         }
 
         [Fact]

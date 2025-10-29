@@ -1,4 +1,4 @@
-﻿using FCG.Domain.Models.Authenticaiton;
+﻿using FCG.Domain.Models.Authentication;
 
 namespace FCG.CommomTestsUtilities.Builders.Models
 {

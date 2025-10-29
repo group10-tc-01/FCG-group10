@@ -3,7 +3,7 @@ using FCG.CommomTestsUtilities.Builders.Models;
 using FCG.CommomTestsUtilities.Builders.Repositories.RefreshTokenRepository;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
-using FCG.Domain.Models.Authenticaiton;
+using FCG.Domain.Models.Authentication;
 using FCG.Domain.Repositories.RefreshTokenRepository;
 using FCG.Infrastructure.Services.Authentication;
 using FCG.Messages;
