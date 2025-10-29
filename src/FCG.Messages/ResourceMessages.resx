@@ -141,6 +141,9 @@
   <data name="GamePriceMustBeGreaterThanZero" xml:space="preserve">
     <value>The game price must be greater than zero.</value>
   </data>
+  <data name="GameMaxPriceMustBeGreaterThanMinPrice" xml:space="preserve">
+    <value>The maximum price must be greater than or equal to the minimum price.</value>
+  </data>
   <data name="InvalidAccessLevel" xml:space="preserve">
     <value>Invalid access level.</value>
   </data>

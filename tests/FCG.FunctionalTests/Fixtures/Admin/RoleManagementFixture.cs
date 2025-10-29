@@ -13,7 +13,7 @@ namespace FCG.FunctionalTests.Fixtures.Admin
         {
             var readOnlyUserRepository = ReadOnlyUserRepositoryBuilder.Build();
             var unitOfWork = UoWBuilder.Build();
-            var testUser = UserBuilder.Build();
+            var testUser = UserBuilder.BuildRegularUser();
             var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<RoleManagementUseCase>();
             var correlationIdProvider = CorrelationIdProviderBuilder.Build();
             CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");

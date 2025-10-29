@@ -10,7 +10,6 @@ namespace FCG.WebApi.Filter
     {
         private readonly ITokenService _tokenService;
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
-
         public AuthenticatedUserFilter(ITokenService tokenService, IReadOnlyUserRepository readOnlyUserRepository)
         {
             _tokenService = tokenService;

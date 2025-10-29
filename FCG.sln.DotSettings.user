@@ -1,12 +1,4 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4a46d79f_002D1f09_002D48ec_002Da915_002D69c685e7fb32/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RoleManagementUseCaseTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::D3586424-61A4-43E2-BAE1-BC208707CE51::net8.0::FCG.UnitTests.Application.UseCases.Users.RoleManagement.RoleManagementUseCaseTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::D3586424-61A4-43E2-BAE1-BC208707CE51::net8.0::FCG.UnitTests.Application.UseCases.Users.RoleManagement.RoleManagementInputValidatorTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_GivenValidAdminToken_ShouldReturnOk&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_AsAdmin_ShouldReturnOk&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_AsNonAdmin_ShouldReturnForbidden&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest.PATCH_UpdateUserRole_InvalidInput_ShouldReturnBadRequest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::7A3796FE-224B-4619-B180-6C19EE0F13EA::net8.0::FCG.IntegratedTests.Controllers.v1.UserControllerTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a6c44b2f_002D85ef_002D4acd_002D9f7c_002D47f3ca809f9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

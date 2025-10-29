@@ -21,7 +21,6 @@ namespace FCG.IntegratedTests.Configurations
             Factory = factory;
             _httpClient = factory.CreateClient();
             _configuration = factory.Services.GetRequiredService<IConfiguration>();
-
         }
 
         #region POST Helpers
@@ -29,22 +28,15 @@ namespace FCG.IntegratedTests.Configurations
         protected async Task<HttpResponseMessage> DoPost<T>(string url, T content)
         {
             var json = JsonSerializer.Serialize(content);
-            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            return await _httpClient.PostAsync(url, stringContent);
-        }
-        protected async Task<HttpResponseMessage> DoAuthenticatedPut<T>(string url, T content, string jwtToken)
-        {
-            SetAuthenticationHeader(jwtToken);
-            var json = JsonSerializer.Serialize(content);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            return await _httpClient.PutAsync(url, stringContent);
+            return await _httpClient.PostAsync(url, stringContent);
         }
 
         protected async Task<HttpResponseMessage> DoAuthenticatedPost<T>(string url, T content, string jwtToken)
         {
             SetAuthenticationHeader(jwtToken);
             var json = JsonSerializer.Serialize(content);
-            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             return await _httpClient.PostAsync(url, stringContent);
         }
 
@@ -53,31 +45,17 @@ namespace FCG.IntegratedTests.Configurations
             SetAuthenticationHeader(jwtToken);
             return await _httpClient.PostAsync(url, null);
         }
-        protected async Task<User> AddUserToDatabaseAsync(string email, string password = "OriginalPass!1")
-        {
-            using var scope = Factory.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
 
-            var user = User.Create("Test User", email, password, Role.User);
-            var wallet = Wallet.Create(user.Id);
+        #endregion
 
-            dbContext.Users.Add(user);
-            dbContext.Wallets.Add(wallet);
+        #region PUT Helpers
 
-            await dbContext.SaveChangesAsync();
-
-            return user;
-        }
-        protected async Task<HttpResponseMessage> DoAuthenticatedGet(string url, string jwtToken)
+        protected async Task<HttpResponseMessage> DoAuthenticatedPut<T>(string url, T content, string jwtToken)
         {
             SetAuthenticationHeader(jwtToken);
-
-            return await _httpClient.GetAsync(url);
-        }
-
-        protected string GenerateToken(Guid userId, string role)
-        {
-            return TokenServiceBuilder.GenerateToken(_configuration, userId, role);
+            var json = JsonSerializer.Serialize(content);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            return await _httpClient.PutAsync(url, stringContent);
         }
 
         #endregion
@@ -87,7 +65,7 @@ namespace FCG.IntegratedTests.Configurations
         protected async Task<HttpResponseMessage> DoPatch<T>(string url, T content)
         {
             var json = JsonSerializer.Serialize(content);
-            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var request = new HttpRequestMessage(new HttpMethod("PATCH"), url)
             {
                 Content = stringContent
@@ -99,7 +77,7 @@ namespace FCG.IntegratedTests.Configurations
         {
             SetAuthenticationHeader(jwtToken);
             var json = JsonSerializer.Serialize(content);
-            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var request = new HttpRequestMessage(new HttpMethod("PATCH"), url)
             {
                 Content = stringContent
@@ -115,6 +93,54 @@ namespace FCG.IntegratedTests.Configurations
         }
 
         #endregion
+
+        #region GET Helpers
+
+        protected async Task<HttpResponseMessage> DoGet(string url)
+        {
+            return await _httpClient.GetAsync(url);
+        }
+
+        protected async Task<HttpResponseMessage> DoAuthenticatedGet(string url, string jwtToken)
+        {
+            SetAuthenticationHeader(jwtToken);
+            return await _httpClient.GetAsync(url);
+        }
+
+        #endregion
+
+        #region Database Helpers
+
+        protected async Task<User> AddUserToDatabaseAsync(string email, string password = "OriginalPass!1")
+        {
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+
+            var user = User.Create("Test User", email, password, Role.User);
+            var wallet = Wallet.Create(user.Id);
+
+            dbContext.Users.Add(user);
+            dbContext.Wallets.Add(wallet);
+
+            await dbContext.SaveChangesAsync();
+
+            return user;
+        }
+
+        #endregion
+
+        #region Authentication Helpers
+
+        protected string GenerateToken(Guid userId, string role)
+        {
+            return TokenServiceBuilder.GenerateToken(_configuration, userId, role);
+        }
+
+        protected void ClearAuthentication()
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+
         private void SetAuthenticationHeader(string jwtToken)
         {
             if (!string.IsNullOrEmpty(jwtToken))
@@ -123,9 +149,6 @@ namespace FCG.IntegratedTests.Configurations
             }
         }
 
-        protected void ClearAuthentication()
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = null;
-        }
+        #endregion
     }
 }

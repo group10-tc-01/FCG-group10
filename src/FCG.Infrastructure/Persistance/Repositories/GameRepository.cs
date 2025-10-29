@@ -18,6 +18,13 @@ namespace FCG.Infrastructure.Persistance.Repositories
             await _fcgDbContext.Games.AddAsync(game);
         }
 
+        public IQueryable<Game?> GetAllAsQueryable()
+        {
+            var games = _fcgDbContext.Games.AsNoTracking().AsQueryable();
+
+            return games;
+        }
+
         public async Task<Game?> GetByNameAsync(string name)
         {
             var game = await _fcgDbContext.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Name.Value == name);
