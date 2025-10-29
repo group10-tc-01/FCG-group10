@@ -13,10 +13,6 @@ namespace FCG.Application.UseCases.Games.GetAll
                     .MaximumLength(255)
                     .WithMessage(ResourceMessages.GameNameMaxLength);
 
-                RuleFor(x => x.Filter.Category)
-                    .MaximumLength(100)
-                    .WithMessage(ResourceMessages.GameCategoryMaxLength);
-
                 RuleFor(x => x.Filter.MinPrice)
                     .GreaterThanOrEqualTo(0)
                     .When(x => x.Filter.MinPrice.HasValue)

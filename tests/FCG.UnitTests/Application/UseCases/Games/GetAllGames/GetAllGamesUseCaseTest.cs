@@ -4,6 +4,7 @@ using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.CommomTestsUtilities.Extensions;
 using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Repositories.GamesRepository;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -85,9 +86,9 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             // Arrange
             var games = new List<Game>
             {
-                GameBuilder.BuildWithCategory("Ação"),
-                GameBuilder.BuildWithCategory("Esporte"),
-                GameBuilder.BuildWithCategory("Ação")
+                GameBuilder.BuildWithCategory(GameCategory.Action),
+                GameBuilder.BuildWithCategory(GameCategory.Sports),
+                GameBuilder.BuildWithCategory(GameCategory.Action)
             };
 
             SetupGetAllAsQueryable(games);
@@ -96,7 +97,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = "Ação" }
+                Filter = new GameFilter { Category = GameCategory.Action }
             };
 
             // Act
@@ -104,7 +105,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
 
             // Assert
             result.Items.Should().HaveCount(2);
-            result.Items.All(x => x.Category == "Ação").Should().BeTrue();
+            result.Items.All(x => x.Category == GameCategory.Action).Should().BeTrue();
         }
 
         [Fact(DisplayName = "Deve aplicar filtro por preço mínimo corretamente")]

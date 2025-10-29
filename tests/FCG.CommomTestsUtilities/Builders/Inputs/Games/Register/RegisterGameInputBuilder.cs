@@ -1,5 +1,6 @@
 using Bogus;
 using FCG.Application.UseCases.Games.Register;
+using FCG.Domain.Enum;
 
 namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
 {
@@ -11,7 +12,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
@@ -21,7 +22,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, string.Empty)
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
@@ -31,7 +32,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, string.Empty)
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
@@ -41,7 +42,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, 0)
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
@@ -51,17 +52,17 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(-100, -1))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
-        public static RegisterGameInput BuildWithEmptyCategory()
+        public static RegisterGameInput BuildWithInvalidCategory()
         {
             return new Faker<RegisterGameInput>()
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, string.Empty)
+                .RuleFor(input => input.Category, (GameCategory)999) // Invalid enum value
                 .Generate();
         }
 
@@ -71,7 +72,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Lorem.Letter(256))
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
@@ -81,17 +82,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Lorem.Letter(501))
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
-                .Generate();
-        }
-
-        public static RegisterGameInput BuildWithLongCategory()
-        {
-            return new Faker<RegisterGameInput>()
-                .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
-                .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
-                .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Lorem.Letter(101))
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
@@ -102,11 +93,11 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, name)
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.Commerce.Categories(1)[0])
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
                 .Generate();
         }
 
-        public static RegisterGameInput BuildWithNameAndCategory(string name, string category)
+        public static RegisterGameInput BuildWithNameAndCategory(string name, GameCategory category)
         {
             return new RegisterGameInput
             {
@@ -122,13 +113,13 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
             return new RegisterGameInput
             {
                 Name = name,
-                Category = "Action",
+                Category = GameCategory.Action,
                 Description = "Test game description",
                 Price = price
             };
         }
 
-        public static RegisterGameInput BuildWithDetails(string name, string category, decimal price)
+        public static RegisterGameInput BuildWithDetails(string name, GameCategory category, decimal price)
         {
             return new RegisterGameInput
             {

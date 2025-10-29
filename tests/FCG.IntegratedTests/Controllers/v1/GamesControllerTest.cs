@@ -5,6 +5,7 @@ using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Inputs.Games.Register;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Models.Pagination;
 using FCG.Infrastructure.Persistance;
 using FCG.IntegratedTests.Configurations;
@@ -254,9 +255,9 @@ namespace FCG.IntegratedTests.Controllers.v1
             var adminUser = Factory.CreatedAdminUsers.First();
             var adminToken = await GetAdminAccessToken(adminUser);
 
-            await CreateGameWithCategory("Dark Souls", "RPG", adminToken);
-            await CreateGameWithCategory("Skyrim", "RPG", adminToken);
-            await CreateGameWithCategory("Call of Duty", "FPS", adminToken);
+            await CreateGameWithCategory("Dark Souls", GameCategory.RPG, adminToken);
+            await CreateGameWithCategory("Skyrim", GameCategory.RPG, adminToken);
+            await CreateGameWithCategory("Call of Duty", GameCategory.Action, adminToken);
 
             var jwtToken = await GetRegularUserAccessToken(regularUser);
 
@@ -272,7 +273,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Should().NotBeNull();
             apiResponse.Success.Should().BeTrue();
             apiResponse.Data.Items.Should().HaveCountGreaterOrEqualTo(2);
-            apiResponse.Data.Items.Should().OnlyContain(g => g.Category == "RPG");
+            apiResponse.Data.Items.Should().OnlyContain(g => g.Category == GameCategory.RPG);
         }
 
         [Fact]
@@ -312,9 +313,9 @@ namespace FCG.IntegratedTests.Controllers.v1
             var adminUser = Factory.CreatedAdminUsers.First();
             var adminToken = await GetAdminAccessToken(adminUser);
 
-            await CreateGameWithDetails("Elden Ring", "RPG", 59.99m, adminToken);
-            await CreateGameWithDetails("Dark Souls RPG", "RPG", 39.99m, adminToken);
-            await CreateGameWithDetails("Bloodborne", "Action", 29.99m, adminToken);
+            await CreateGameWithDetails("Elden Ring", GameCategory.RPG, 59.99m, adminToken);
+            await CreateGameWithDetails("Dark Souls RPG", GameCategory.RPG, 39.99m, adminToken);
+            await CreateGameWithDetails("Bloodborne", GameCategory.Action, 29.99m, adminToken);
 
             var jwtToken = await GetRegularUserAccessToken(regularUser);
 
@@ -334,7 +335,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Data.Items.Should().HaveCountGreaterOrEqualTo(1);
             apiResponse.Data.Items.Should().OnlyContain(g =>
                 g.Name.Contains("Dark") &&
-                g.Category == "RPG" &&
+                g.Category == GameCategory.RPG &&
                 g.Price >= 30m &&
                 g.Price <= 50m);
         }
@@ -471,7 +472,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             await DoAuthenticatedPost(ValidUrl, registerGameInput, adminToken);
         }
 
-        private async Task CreateGameWithCategory(string name, string category, string adminToken)
+        private async Task CreateGameWithCategory(string name, GameCategory category, string adminToken)
         {
             var registerGameInput = RegisterGameInputBuilder.BuildWithNameAndCategory(name, category);
             await DoAuthenticatedPost(ValidUrl, registerGameInput, adminToken);
@@ -483,7 +484,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             await DoAuthenticatedPost(ValidUrl, registerGameInput, adminToken);
         }
 
-        private async Task CreateGameWithDetails(string name, string category, decimal price, string adminToken)
+        private async Task CreateGameWithDetails(string name, GameCategory category, decimal price, string adminToken)
         {
             var registerGameInput = RegisterGameInputBuilder.BuildWithDetails(name, category, price);
             await DoAuthenticatedPost(ValidUrl, registerGameInput, adminToken);

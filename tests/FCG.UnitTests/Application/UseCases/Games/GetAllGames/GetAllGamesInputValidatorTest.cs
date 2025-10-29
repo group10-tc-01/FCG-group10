@@ -1,4 +1,5 @@
 ﻿using FCG.Application.UseCases.Games.GetAll;
+using FCG.Domain.Enum;
 using FCG.Messages;
 using FluentValidation.TestHelper;
 
@@ -77,7 +78,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = "RPG" }
+                Filter = new GameFilter { Category = GameCategory.RPG }
             };
 
             // Act
@@ -120,7 +121,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 Filter = new GameFilter
                 {
                     Name = "Dark Souls",
-                    Category = "RPG",
+                    Category = GameCategory.RPG,
                     MinPrice = 20.00m,
                     MaxPrice = 60.00m
                 }
@@ -183,50 +184,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
         #endregion
 
         #region Category Filter Validation
-
-        [Fact]
-        public void Given_InputWithCategoryFilterExceedingMaxLength_When_Validate_ShouldHaveValidationError()
-        {
-            // Arrange
-            var input = new GetAllGamesInput
-            {
-                PageNumber = 1,
-                PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Category = new string('B', 101) // 101 characters
-                }
-            };
-
-            // Act
-            var result = _validator.TestValidate(input);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Filter.Category)
-                .WithErrorMessage(ResourceMessages.GameCategoryMaxLength);
-        }
-
-        [Fact]
-        public void Given_InputWithCategoryFilterAt100Characters_When_Validate_ShouldNotHaveValidationError()
-        {
-            // Arrange
-            var input = new GetAllGamesInput
-            {
-                PageNumber = 1,
-                PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Category = new string('B', 100) // Exactly 100 characters
-                }
-            };
-
-            // Act
-            var result = _validator.TestValidate(input);
-
-            // Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.Filter.Category);
-        }
-
+        // Category validation tests removed - enum provides type safety at compile time
         #endregion
 
         #region MinPrice Filter Validation
@@ -429,7 +387,6 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 Filter = new GameFilter
                 {
                     Name = new string('A', 300), // Exceeds max length
-                    Category = new string('B', 150), // Exceeds max length
                     MinPrice = -10.00m, // Negative
                     MaxPrice = -20.00m // Negative
                 }
@@ -440,7 +397,6 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.Filter.Name);
-            result.ShouldHaveValidationErrorFor(x => x.Filter.Category);
             result.ShouldHaveValidationErrorFor(x => x.Filter.MinPrice);
             result.ShouldHaveValidationErrorFor(x => x.Filter.MaxPrice);
         }

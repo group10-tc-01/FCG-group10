@@ -76,8 +76,8 @@ namespace FCG.Application.UseCases.Games.GetAll
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 query = query.Where(g => g.Name.Value.Contains(filter.Name));
 
-            if (!string.IsNullOrWhiteSpace(filter.Category))
-                query = query.Where(g => g.Category == filter.Category);
+            if (filter.Category.HasValue)
+                query = query.Where(g => g.Category == filter.Category.Value);
 
             if (filter.MinPrice.HasValue)
                 query = query.Where(g => g.Price.Value >= filter.MinPrice.Value);

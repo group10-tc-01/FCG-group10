@@ -24,10 +24,8 @@ namespace FCG.Application.UseCases.Games.Register
                 .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
 
             RuleFor(x => x.Category)
-                .NotEmpty()
-                .WithMessage(ResourceMessages.GameCategoryIsRequired)
-                .MaximumLength(100)
-                .WithMessage(ResourceMessages.GameCategoryMaxLength);
+                .IsInEnum()
+                .WithMessage(ResourceMessages.GameCategoryIsRequired);
         }
     }
 }

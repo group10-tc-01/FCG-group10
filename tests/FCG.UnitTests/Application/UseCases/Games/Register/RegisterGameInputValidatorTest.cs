@@ -113,10 +113,10 @@ namespace FCG.UnitTests.Application.UseCases.Games.Register
         }
 
         [Fact]
-        public void Given_RegisterGameInputWithEmptyCategory_When_Validate_Then_ShouldHaveValidationErrorForCategory()
+        public void Given_RegisterGameInputWithInvalidCategory_When_Validate_Then_ShouldHaveValidationErrorForCategory()
         {
             // Arrange
-            var input = RegisterGameInputBuilder.BuildWithEmptyCategory();
+            var input = RegisterGameInputBuilder.BuildWithInvalidCategory();
             var validator = new RegisterGameInputValidator();
 
             // Act
@@ -125,21 +125,6 @@ namespace FCG.UnitTests.Application.UseCases.Games.Register
             // Assert
             result.IsValid.Should().BeFalse();
             result.Errors.Should().ContainSingle(e => e.ErrorMessage == ResourceMessages.GameCategoryIsRequired);
-        }
-
-        [Fact]
-        public void Given_RegisterGameInputWithLongCategory_When_Validate_Then_ShouldHaveValidationErrorForCategoryLength()
-        {
-            // Arrange
-            var input = RegisterGameInputBuilder.BuildWithLongCategory();
-            var validator = new RegisterGameInputValidator();
-
-            // Act
-            var result = validator.Validate(input);
-
-            // Assert
-            result.IsValid.Should().BeFalse();
-            result.Errors.Should().ContainSingle(e => e.ErrorMessage == ResourceMessages.GameCategoryMaxLength);
         }
     }
 }

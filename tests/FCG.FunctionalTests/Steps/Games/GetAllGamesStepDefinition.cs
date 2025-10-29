@@ -1,4 +1,5 @@
 ﻿using FCG.Application.UseCases.Games.GetAll;
+using FCG.Domain.Enum;
 using FCG.Domain.Models.Pagination;
 using FCG.FunctionalTests.Fixtures;
 using FluentAssertions;
@@ -134,7 +135,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Should().NotBeNull();
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
-            _getAllGamesResponse.Items.Should().OnlyContain(g => g.Category == "RPG");
+            _getAllGamesResponse.Items.Should().OnlyContain(g => g.Category == GameCategory.RPG);
         }
 
         [Then(@"o sistema deve retornar apenas os jogos dentro da faixa de preco")]
@@ -158,7 +159,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
             _getAllGamesResponse.Items.Should().OnlyContain(g =>
                 g.Name.Contains("Dark") &&
-                g.Category == "RPG" &&
+                g.Category == GameCategory.RPG &&
                 g.Price >= 30m &&
                 g.Price <= 50m);
         }
