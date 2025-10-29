@@ -1,6 +1,6 @@
-﻿using FCG.Application.Shared.Models;
-using FCG.Application.UseCases.Games.GetAll;
+﻿using FCG.Application.UseCases.Games.GetAll;
 using FCG.Application.UseCases.Games.Register;
+using FCG.Domain.Models.Pagination;
 using FCG.WebApi.Attributes;
 using FCG.WebApi.Models;
 using MediatR;

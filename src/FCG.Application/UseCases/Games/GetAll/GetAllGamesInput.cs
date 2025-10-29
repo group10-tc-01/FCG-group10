@@ -1,5 +1,4 @@
-﻿using FCG.Application.Shared.Models;
-using FCG.Application.Shared.Params;
+﻿using FCG.Domain.Models.Pagination;
 using MediatR;
 
 namespace FCG.Application.UseCases.Games.GetAll

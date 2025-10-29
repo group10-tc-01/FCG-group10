@@ -1,5 +1,5 @@
-﻿using FCG.Application.Shared.Models;
-using FCG.Domain.Entities;
+﻿using FCG.Domain.Entities;
+using FCG.Domain.Models.Pagination;
 using FCG.Domain.Repositories.GamesRepository;
 using Microsoft.EntityFrameworkCore;
 
