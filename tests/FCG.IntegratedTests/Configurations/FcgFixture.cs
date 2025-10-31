@@ -131,7 +131,7 @@ namespace FCG.IntegratedTests.Configurations
             await dbContext.SaveChangesAsync();
             return user;
         }
-        protected async Task<Game> AddGameToDatabaseAsync(string name = "Default Test Game", decimal price = 59.99m, string category = "Test Category")
+        protected async Task<Game> AddGameToDatabaseAsync(string name = "Default Test Game", decimal price = 59.99m, GameCategory category = GameCategory.Action)
         {
             using var scope = Factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
@@ -139,7 +139,7 @@ namespace FCG.IntegratedTests.Configurations
             var existingGame = await dbContext.Games.FirstOrDefaultAsync(g => g.Name.Value == name);
             if (existingGame != null) return existingGame;
 
-            var game = Game.Create(Name.Create(name), "Test Description", Price.Create(price), category);
+            var game = Game.Create(Name.Create(name), "Test Description", Price.Create(price), GameCategory.Action);
             dbContext.Games.Add(game);
             await dbContext.SaveChangesAsync();
             return game;
