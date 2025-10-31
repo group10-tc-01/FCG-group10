@@ -1,7 +1,9 @@
 ﻿using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
+using FCG.Domain.ValueObjects;
 using FCG.Infrastructure.Persistance;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
@@ -110,21 +112,66 @@ namespace FCG.IntegratedTests.Configurations
         #endregion
 
         #region Database Helpers
-
-        protected async Task<User> AddUserToDatabaseAsync(string email, string password = "OriginalPass!1")
+        protected async Task<User> AddUserToDatabaseAsync(string email, string password = "OriginalPass!1", Role role = Role.User)
         {
             using var scope = Factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
 
-            var user = User.Create("Test User", email, password, Role.User);
+            var existingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Email.Value == email);
+            if (existingUser != null) return existingUser;
+
+            var user = User.Create("Test User", email, password, role);
             var wallet = Wallet.Create(user.Id);
+            var library = Library.Create(user.Id);
 
             dbContext.Users.Add(user);
             dbContext.Wallets.Add(wallet);
+            dbContext.Libraries.Add(library);
 
             await dbContext.SaveChangesAsync();
-
             return user;
+        }
+        protected async Task<Game> AddGameToDatabaseAsync(string name = "Default Test Game", decimal price = 59.99m, string category = "Test Category")
+        {
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+
+            var existingGame = await dbContext.Games.FirstOrDefaultAsync(g => g.Name.Value == name);
+            if (existingGame != null) return existingGame;
+
+            var game = Game.Create(Name.Create(name), "Test Description", Price.Create(price), category);
+            dbContext.Games.Add(game);
+            await dbContext.SaveChangesAsync();
+            return game;
+        }
+        protected async Task<LibraryGame> AddGameToLibraryAsync(Guid userId, Guid gameId, decimal purchasePrice = 49.99m, GameStatus status = GameStatus.Active)
+        {
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+
+            var library = await dbContext.Libraries.FirstOrDefaultAsync(l => l.UserId == userId);
+            if (library == null)
+            {
+                throw new InvalidOperationException($"Cannot add game to library: Library not found for UserId {userId}. Ensure AddUserToDatabaseAsync was called first.");
+            }
+            var existingEntry = await dbContext.LibraryGames.FirstOrDefaultAsync(lg => lg.LibraryId == library.Id && lg.GameId == gameId);
+            if (existingEntry != null) return existingEntry;
+
+            var libraryGame = LibraryGame.Create(library.Id, gameId, Price.Create(purchasePrice));
+            if (status == GameStatus.Suspended)
+            {
+                libraryGame.Suspend();
+            }
+
+            dbContext.LibraryGames.Add(libraryGame);
+            await dbContext.SaveChangesAsync();
+            return libraryGame;
+        }
+        protected async Task ClearLibraryGamesAsync()
+        {
+            using var scope = Factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+            await dbContext.LibraryGames.ExecuteDeleteAsync(); // Cuidado: Apaga TUDO
         }
 
         #endregion

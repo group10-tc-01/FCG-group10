@@ -15,30 +15,35 @@ namespace FCG.Application.UseCases.Users.Update
         private readonly IPasswordEncrypter _passwordEncrypter;
         private readonly ILogger<UpdateUserUseCase> _logger;
         private readonly ICorrelationIdProvider _correlationIdProvider;
+        private readonly ILoggedUser _loggedUser;
+
 
         public UpdateUserUseCase(
             IReadOnlyUserRepository readOnlyUserRepository,
             IUnitOfWork unitOfWork,
             IPasswordEncrypter passwordEncrypter,
             ILogger<UpdateUserUseCase> logger,
-            ICorrelationIdProvider correlationIdProvider)
+            ICorrelationIdProvider correlationIdProvider,
+            ILoggedUser loggedUser)
         {
             _readOnlyUserRepository = readOnlyUserRepository;
             _unitOfWork = unitOfWork;
             _passwordEncrypter = passwordEncrypter;
             _logger = logger;
             _correlationIdProvider = correlationIdProvider;
+            _loggedUser = loggedUser;
         }
 
         public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
             var correlationId = _correlationIdProvider.GetCorrelationId();
+            var userId = await _loggedUser.GetLoggedUserAsync();
 
             _logger.LogInformation(
                 "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Updating user: {UserId}",
                 correlationId, request.Id);
 
-            var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(request.Id, cancellationToken);
+            var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(userId.Id, cancellationToken);
 
             if (userToUpdate is null)
             {

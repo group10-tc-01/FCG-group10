@@ -8,9 +8,8 @@ namespace FCG.Application.UseCases.Users.Update
         public string CurrentPassword { get; init; } = string.Empty;
         public string NewPassword { get; init; } = string.Empty;
 
-        public UpdateUserRequest(Guid id, UpdateUserBodyRequest bodyRequest)
+        public UpdateUserRequest(UpdateUserBodyRequest bodyRequest)
         {
-            Id = id;
             CurrentPassword = bodyRequest.CurrentPassword;
             NewPassword = bodyRequest.NewPassword;
         }

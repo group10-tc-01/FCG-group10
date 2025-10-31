@@ -9,7 +9,6 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update.UsersDTO
         public void Given_ValidProperties_When_CreateUpdateUserRequest_Then_ShouldSetAllPropertiesCorrectly()
         {
             // Arrange
-            var id = Guid.NewGuid();
             var currentPassword = "CurrentPass@123";
             var newPassword = "NewPass@456";
             var bodyRequest = new UpdateUserBodyRequest
@@ -19,10 +18,9 @@ namespace FCG.UnitTests.Application.UseCases.Users.Update.UsersDTO
             };
 
             // Act
-            var request = new UpdateUserRequest(id, bodyRequest);
+            var request = new UpdateUserRequest(bodyRequest);
 
             // Assert
-            request.Id.Should().Be(id);
             request.CurrentPassword.Should().Be(currentPassword);
             request.NewPassword.Should().Be(newPassword);
         }

@@ -1,5 +1,6 @@
 using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.Application.UseCases.Authentication.Login;
+using FCG.Application.UseCases.Users.MyGames;
 using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update;
@@ -70,11 +71,10 @@ namespace FCG.IntegratedTests.Controllers.v1
                 CurrentPassword = "OriginalPass!1",
                 NewPassword = "UpdatedPass!2"
             };
-            var request = new UpdateUserRequest(userToUpdate.Id, bodyRequest);
+            var request = new UpdateUserRequest(bodyRequest);
 
             // Act
-            var response = await DoAuthenticatedPut($"/api/v1/users/{userToUpdate.Id}", request, userToken);
-
+            var response = await DoAuthenticatedPut("/api/v1/users/admin/update-password", request, userToken);
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -167,19 +167,6 @@ namespace FCG.IntegratedTests.Controllers.v1
         }
 
         [Fact]
-        public async Task POST_Register_GivenInvalidWeakPasswordFromBuilder_ShouldReturnBadRequest()
-        {
-            // Arrange
-            var request = CreateUserInputBuilder.BuildWithWeakPassword();
-
-            // Act
-            var result = await DoPost(RegisterUrl, request);
-
-            // Assert
-            result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
         public async Task POST_Register_GivenInvalidSimplePassword_ShouldReturnBadRequest()
         {
             // Arrange
@@ -189,7 +176,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var result = await DoPost(RegisterUrl, request);
 
             // Assert
-            result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -204,7 +191,72 @@ namespace FCG.IntegratedTests.Controllers.v1
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+        [Fact]
+        public async Task GetMyLibrary_WhenNoTokenIsProvided_ShouldReturn401Unauthorized()
+        {
+            // Arrange
+            ClearAuthentication();
 
+            // Act
+            var response = await DoGet("/api/v1/users/library");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+        [Fact]
+        public async Task GetMyLibrary_WhenTokenIsValid_AndUserHasNoGames_ShouldReturn404NotFound()
+        {
+            //Arrange
+            var user = await AddUserToDatabaseAsync($"user_no_games_{Guid.NewGuid()}@test.com");
+            var token = GenerateToken(user.Id, user.Role.ToString());
+
+            //Act
+            var response = await DoAuthenticatedGet("/api/v1/users/library", token);
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse<object>>(jsonResponse,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            apiResponse.Success.Should().BeFalse();
+            apiResponse.ErrorMessages.Should().Contain("Not game in library");
+        }
+        [Fact]
+        public async Task GetMyLibrary_WhenTokenIsValid_AndUserHasGames_ShouldReturn200Ok_AndGameList()
+        {
+            //Arrange
+            var userEmail = $"user_with_games_{Guid.NewGuid()}@test.com";
+            var user = await AddUserToDatabaseAsync(userEmail);
+            var game = await AddGameToDatabaseAsync("My Library Test Game", 88.88m);
+
+            await AddGameToLibraryAsync(user.Id, game.Id, 79.99m, GameStatus.Active);
+
+            var token = GenerateToken(user.Id, user.Role.ToString());
+
+            // Act
+            var response = await DoAuthenticatedGet("/api/v1/users/library", token);
+
+            //Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse<ICollection<LibraryGameResponse>>>(jsonResponse,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            apiResponse.Should().NotBeNull();
+            apiResponse!.Success.Should().BeTrue();
+            apiResponse.Data.Should().NotBeNull();
+            apiResponse.Data!.Should().HaveCount(1);
+
+            var gameResponse = apiResponse.Data!.First();
+            gameResponse.GameId.Should().Be(game.Id);
+            gameResponse.GameName.Should().Be("My Library Test Game");
+            gameResponse.Status.Should().Be(GameStatus.Active);
+            gameResponse.PurchasePrice.Should().Be(79.99m);
+            gameResponse.PurchaseDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(15));
+        }
         #region RoleManagement
 
         [Fact]

@@ -26,13 +26,13 @@ namespace FCG.WebApi.Controllers.v1
             return Created(string.Empty, ApiResponse<RegisterUserResponse>.SuccesResponse(output));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("admin/update-password")]
         [AuthenticatedUser]
         [ProducesResponseType(typeof(ApiResponse<UpdateUserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserBodyRequest bodyRequest)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserBodyRequest bodyRequest)
         {
-            var request = new UpdateUserRequest(id, bodyRequest);
+            var request = new UpdateUserRequest(bodyRequest);
             var output = await _mediator.Send(request, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<UpdateUserResponse>.SuccesResponse(output));
         }
