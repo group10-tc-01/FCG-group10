@@ -61,5 +61,18 @@ namespace FCG.Infrastructure.Persistance.Repositories
         {
             return await _fcgDbContext.Users.AsNoTracking().AnyAsync(u => u.Role == Role.Admin, cancellationToken);
         }
+
+        public IQueryable<User> GetAllUsersWithFilters(string? name = null, string? email = null)
+        {
+            var query = _fcgDbContext.Users.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(name))
+                query = query.Where(u => u.Name.Value.Contains(name));
+
+            if (!string.IsNullOrWhiteSpace(email))
+                query = query.Where(u => u.Email.Value.Contains(email));
+
+            return query;
+        }
     }
 }

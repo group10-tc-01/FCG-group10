@@ -2,6 +2,8 @@ using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Repositories.UserRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
+using FCG.CommomTestsUtilities.Extensions;
+using FCG.Domain.Entities;
 
 namespace FCG.FunctionalTests.Fixtures.Admin
 {
@@ -29,12 +31,14 @@ namespace FCG.FunctionalTests.Fixtures.Admin
 
         private static void Setup()
         {
-            var users = new List<FCG.Domain.Entities.User>
+            var users = new List<User>
             {
                 UserBuilder.Build(),
                 UserBuilder.Build()
-            };
-            ReadOnlyUserRepositoryBuilder.SetupGetAllUsersAsync(users);
+            }.AsQueryable();
+
+            var queryable = users.BuildMockDbSet();
+            ReadOnlyUserRepositoryBuilder.SetupGetAllUsersWithFilters(queryable);
         }
     }
 }

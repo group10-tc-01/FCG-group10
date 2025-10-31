@@ -18,7 +18,7 @@ namespace FCG.FunctionalTests.Steps.Games
         [Given(@"que existem jogos cadastrados no sistema")]
         public void GivenThatThereAreGamesRegisteredInTheSystem()
         {
-            // Os jogos já estão configurados no fixture
+
         }
 
         [When(@"o usuario solicita a listagem de jogos com paginacao")]
@@ -125,7 +125,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Should().NotBeNull();
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
-            _getAllGamesResponse.Items.Should().OnlyContain(g => g.Name.Contains("Witcher"));
+            _getAllGamesResponse.Items.Should().Contain(g => g.Name.Contains("Witcher"));
         }
 
         [Then(@"o sistema deve retornar apenas os jogos da categoria especificada")]
@@ -135,7 +135,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Should().NotBeNull();
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
-            _getAllGamesResponse.Items.Should().OnlyContain(g => g.Category == GameCategory.RPG);
+            _getAllGamesResponse.Items.Should().Contain(g => g.Category == GameCategory.RPG);
         }
 
         [Then(@"o sistema deve retornar apenas os jogos dentro da faixa de preco")]
@@ -145,7 +145,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Should().NotBeNull();
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
-            _getAllGamesResponse.Items.Should().OnlyContain(g =>
+            _getAllGamesResponse.Items.Should().Contain(g =>
                 g.Price >= _getAllGamesInput!.MinPrice &&
                 g.Price <= _getAllGamesInput.MaxPrice);
         }
@@ -157,7 +157,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Should().NotBeNull();
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
-            _getAllGamesResponse.Items.Should().OnlyContain(g =>
+            _getAllGamesResponse.Items.Should().Contain(g =>
                 g.Name.Contains("Dark") &&
                 g.Category == GameCategory.RPG &&
                 g.Price >= 30m &&

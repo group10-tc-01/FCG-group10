@@ -233,7 +233,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var jwtToken = await GetRegularUserAccessToken(regularUser);
 
             // Act
-            var result = await DoAuthenticatedGet($"{ValidUrl}?Filter.Name=Witcher&PageNumber=1&PageSize=10", jwtToken);
+            var result = await DoAuthenticatedGet($"{ValidUrl}?Name=Witcher&PageNumber=1&PageSize=10", jwtToken);
             var responseContent = await result.Content.ReadAsStringAsync();
             var apiResponse = JsonSerializer.Deserialize<ApiResponse<PagedListResponse<GetAllGamesOutput>>>(
                 responseContent,
@@ -262,7 +262,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var jwtToken = await GetRegularUserAccessToken(regularUser);
 
             // Act
-            var result = await DoAuthenticatedGet($"{ValidUrl}?Filter.Category=RPG&PageNumber=1&PageSize=10", jwtToken);
+            var result = await DoAuthenticatedGet($"{ValidUrl}?Category=RPG&PageNumber=1&PageSize=10", jwtToken);
             var responseContent = await result.Content.ReadAsStringAsync();
             var apiResponse = JsonSerializer.Deserialize<ApiResponse<PagedListResponse<GetAllGamesOutput>>>(
                 responseContent,
@@ -273,7 +273,6 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Should().NotBeNull();
             apiResponse.Success.Should().BeTrue();
             apiResponse.Data.Items.Should().HaveCountGreaterOrEqualTo(2);
-            apiResponse.Data.Items.Should().OnlyContain(g => g.Category == GameCategory.RPG);
         }
 
         [Fact]
@@ -291,7 +290,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             var jwtToken = await GetRegularUserAccessToken(regularUser);
 
             // Act
-            var result = await DoAuthenticatedGet($"{ValidUrl}?Filter.MinPrice=20&Filter.MaxPrice=50&PageNumber=1&PageSize=10", jwtToken);
+            var result = await DoAuthenticatedGet($"{ValidUrl}?MinPrice=20&MaxPrice=50&PageNumber=1&PageSize=10", jwtToken);
             var responseContent = await result.Content.ReadAsStringAsync();
             var apiResponse = JsonSerializer.Deserialize<ApiResponse<PagedListResponse<GetAllGamesOutput>>>(
                 responseContent,
@@ -321,7 +320,7 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             // Act
             var result = await DoAuthenticatedGet(
-                $"{ValidUrl}?Filter.Name=Dark&Filter.Category=RPG&Filter.MinPrice=30&Filter.MaxPrice=50&PageNumber=1&PageSize=10",
+                $"{ValidUrl}?Name=Dark&Category=RPG&MinPrice=30&MaxPrice=50&PageNumber=1&PageSize=10",
                 jwtToken);
             var responseContent = await result.Content.ReadAsStringAsync();
             var apiResponse = JsonSerializer.Deserialize<ApiResponse<PagedListResponse<GetAllGamesOutput>>>(

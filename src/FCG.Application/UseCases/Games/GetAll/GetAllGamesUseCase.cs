@@ -1,5 +1,4 @@
-﻿using FCG.Domain.Entities;
-using FCG.Domain.Models.Pagination;
+﻿using FCG.Domain.Models.Pagination;
 using FCG.Domain.Repositories.GamesRepository;
 using FCG.Domain.Services;
 using Microsoft.EntityFrameworkCore;
@@ -28,13 +27,15 @@ namespace FCG.Application.UseCases.Games.GetAll
                 "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Starting GetAllGames request. Filters: Name={Name}, Category={Category}, MinPrice={MinPrice}, MaxPrice={MaxPrice}, PageNumber={PageNumber}, PageSize={PageSize}",
                 correlationId, request.Name, request.Category, request.MinPrice, request.MaxPrice, request.PageNumber, request.PageSize);
 
-            var query = _readOnlyGameRepository.GetAllAsQueryable();
-
             _logger.LogDebug(
                 "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Applying filters to query",
                 correlationId);
 
-            query = ApplyFilters(query, request);
+            var query = _readOnlyGameRepository.GetAllWithFilters(
+                name: request.Name,
+                category: request.Category,
+                minPrice: request.MinPrice,
+                maxPrice: request.MaxPrice);
 
             _logger.LogDebug(
                 "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Counting total items",
@@ -66,23 +67,6 @@ namespace FCG.Application.UseCases.Games.GetAll
                 correlationId, items.Count, totalCount, request.PageNumber, request.PageSize);
 
             return new PagedListResponse<GetAllGamesOutput>(items, totalCount, request.PageNumber, request.PageSize);
-        }
-
-        private static IQueryable<Game?> ApplyFilters(IQueryable<Game?> query, GetAllGamesInput input)
-        {
-            if (!string.IsNullOrWhiteSpace(input.Name))
-                query = query.Where(g => g!.Name.Value.Contains(input.Name));
-
-            if (input.Category.HasValue)
-                query = query.Where(g => g!.Category == input.Category.Value);
-
-            if (input.MinPrice.HasValue)
-                query = query.Where(g => g!.Price.Value >= input.MinPrice.Value);
-
-            if (input.MaxPrice.HasValue)
-                query = query.Where(g => g!.Price.Value <= input.MaxPrice.Value);
-
-            return query;
         }
     }
 }

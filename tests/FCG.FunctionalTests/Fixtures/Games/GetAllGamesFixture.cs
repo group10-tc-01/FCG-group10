@@ -83,7 +83,7 @@ namespace FCG.FunctionalTests.Fixtures.Games
             }.AsQueryable();
 
             var queryable = games.AsQueryable().BuildMockDbSet();
-            ReadOnlyGameRepositoryBuilder.SetupGetAllAsQueryable(queryable);
+            ReadOnlyGameRepositoryBuilder.SetupGetAllWithFilters(queryable);
         }
     }
 }

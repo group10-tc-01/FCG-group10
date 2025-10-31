@@ -1,8 +1,10 @@
 using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.CommomTestsUtilities.Builders.Services;
+using FCG.CommomTestsUtilities.Extensions;
 using FCG.Domain.Entities;
 using FCG.Domain.Enum;
 using FCG.Domain.Repositories.UserRepository;
+using FCG.Domain.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -31,9 +33,9 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
             // Arrange
             var users = new List<User>
             {
-                User.Create("User A", "usera@test.com", "Password@123", Role.User),
-                User.Create("User B", "userb@test.com", "Password@123", Role.Admin),
-                User.Create("User C", "userc@test.com", "Password@123", Role.User)
+                User.Create(Name.Create("User A"), Email.Create("usera@test.com"), Password.Create("Password@123"), Role.User),
+                User.Create(Name.Create("User B"), Email.Create("userb@test.com"), Password.Create("Password@123"), Role.Admin),
+                User.Create(Name.Create("User C"), Email.Create("userc@test.com"), Password.Create("Password@123"), Role.User)
             };
 
             var query = new GetAllUserCaseRequest
@@ -42,17 +44,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 PageSize = 10
             };
 
-            var expectedTuple = (
-                Items: (IEnumerable<User>)users,
-                TotalCount: users.Count
-            );
-
-            _userRepositoryMock
-                .Setup(repo => repo.GetAllUsersAsync(
-                    query.PageNumber,
-                    query.PageSize,
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedTuple);
+            SetupGetAllUsersWithFilters(users);
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
@@ -63,6 +55,11 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
             result.TotalCount.Should().Be(3);
             result.CurrentPage.Should().Be(1);
             result.PageSize.Should().Be(10);
+
+            _userRepositoryMock.Verify(repo => repo.GetAllUsersWithFilters(
+                It.IsAny<string>(),
+                It.IsAny<string>()),
+                Times.Once);
         }
 
         [Fact]
@@ -74,22 +71,12 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 PageNumber = 1,
                 PageSize = 10
             };
-        
-            var repositoryResponse = (
-                Items: Enumerable.Empty<User>(),
-                TotalCount: 0
-            );
-        
-            _userRepositoryMock
-                .Setup(repo => repo.GetAllUsersAsync(
-                    query.PageNumber,
-                    query.PageSize,
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(repositoryResponse);
-        
+
+            SetupGetAllUsersWithFilters(Enumerable.Empty<User>());
+
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
-        
+
             // Assert
             result.Should().NotBeNull();
             result.Items.Should().BeEmpty("pois o totalCount é zero");
@@ -104,9 +91,9 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
             // Arrange
             var totalUsersInDb = new List<User>
             {
-                User.Create("User A", "usera@test.com", "Password@123", Role.User),
-                User.Create("User B", "userb@test.com", "Password@123", Role.Admin),
-                User.Create("User C", "userc@test.com", "Password@123", Role.User)
+                User.Create(Name.Create("User A"), Email.Create("usera@test.com"), Password.Create("Password@123"), Role.User),
+                User.Create(Name.Create("User B"), Email.Create("userb@test.com"), Password.Create("Password@123"), Role.Admin),
+                User.Create(Name.Create("User C"), Email.Create("userc@test.com"), Password.Create("Password@123"), Role.User)
             };
 
             var query = new GetAllUserCaseRequest
@@ -115,18 +102,7 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
                 PageSize = 2
             };
 
-            var usersForPage2 = totalUsersInDb.Skip(2).Take(2).ToList();
-            var repositoryResponse = (
-                Items: (IEnumerable<User>)usersForPage2,
-                TotalCount: totalUsersInDb.Count
-            );
-
-            _userRepositoryMock
-                .Setup(repo => repo.GetAllUsersAsync(
-                    query.PageNumber,
-                    query.PageSize,
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(repositoryResponse);
+            SetupGetAllUsersWithFilters(totalUsersInDb);
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
@@ -138,6 +114,110 @@ namespace FCG.UnitTests.Application.UseCases.Users.GetAllUsersUseCaseTest
             result.Items.Should().HaveCount(1, "pois apenas um usuário sobrou para a segunda página");
             result.Items.First().Name.Should().Be("User C");
             result.TotalPages.Should().Be(2, "pois 3 itens divididos em páginas de 2 resultam em 2 páginas");
+        }
+
+        [Fact]
+        public async Task Given_FilterByName_When_HandlingQuery_Then_ShouldReturnFilteredUsers()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                User.Create(Name.Create("John Doe"), Email.Create("john@test.com"), Password.Create("Password@123"), Role.User),
+                User.Create(Name.Create("Jane Smith"), Email.Create("jane@test.com"), Password.Create("Password@123"), Role.User),
+                User.Create(Name.Create("John Smith"), Email.Create("johnsmith@test.com"), Password.Create("Password@123"), Role.Admin)
+            };
+
+            var filteredUsers = users.Where(u => u.Name.Value.Contains("John"));
+
+            var query = new GetAllUserCaseRequest
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = "John"
+            };
+
+            SetupGetAllUsersWithFilters(filteredUsers);
+
+            // Act
+            var result = await _handler.Handle(query, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Items.Should().HaveCount(2);
+            result.Items.All(x => x.Name.Contains("John")).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task Given_FilterByEmail_When_HandlingQuery_Then_ShouldReturnFilteredUsers()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                User.Create(Name.Create("User A"), Email.Create("usera@test.com"), Password.Create("Password@123"), Role.User),
+                User.Create(Name.Create("User B"), Email.Create("userb@example.com"), Password.Create("Password@123"), Role.Admin),
+                User.Create(Name.Create("User C"), Email.Create("userc@test.com"), Password.Create("Password@123"), Role.User)
+            };
+
+            var filteredUsers = users.Where(u => u.Email.Value.Contains("test.com"));
+
+            var query = new GetAllUserCaseRequest
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Email = "test.com"
+            };
+
+            SetupGetAllUsersWithFilters(filteredUsers);
+
+            // Act
+            var result = await _handler.Handle(query, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Items.Should().HaveCount(2);
+            result.Items.All(x => x.Email.Contains("test.com")).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task Given_FilterByNameAndEmail_When_HandlingQuery_Then_ShouldReturnFilteredUsers()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                User.Create(Name.Create("John Doe"), Email.Create("john@test.com"), Password.Create("Password@123"), Role.User),
+                User.Create(Name.Create("John Smith"), Email.Create("johnsmith@example.com"), Password.Create("Password@123"), Role.Admin),
+                User.Create(Name.Create("Jane Doe"), Email.Create("jane@test.com"), Password.Create("Password@123"), Role.User)
+            };
+
+            var filteredUsers = users.Where(u => u.Name.Value.Contains("John") && u.Email.Value.Contains("test.com"));
+
+            var query = new GetAllUserCaseRequest
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = "John",
+                Email = "test.com"
+            };
+
+            SetupGetAllUsersWithFilters(filteredUsers);
+
+            // Act
+            var result = await _handler.Handle(query, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Items.Should().HaveCount(1);
+            result.Items.First().Name.Should().Be("John Doe");
+            result.Items.First().Email.Should().Be("john@test.com");
+        }
+
+        private void SetupGetAllUsersWithFilters(IEnumerable<User> users)
+        {
+            var queryable = users.AsQueryable().BuildMockDbSet();
+            _userRepositoryMock.Setup(r => r.GetAllUsersWithFilters(
+                It.IsAny<string>(),
+                It.IsAny<string>()))
+                .Returns(queryable);
         }
     }
 }
