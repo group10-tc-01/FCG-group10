@@ -4,6 +4,7 @@ using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.CommomTestsUtilities.Extensions;
 using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Repositories.GamesRepository;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -29,13 +30,12 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
         {
             // Arrange
             var games = GameBuilder.BuildList(10);
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games);
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
-                PageSize = 5,
-                Filter = new GameFilter()
+                PageSize = 5
             };
 
             // Act
@@ -48,7 +48,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             result.CurrentPage.Should().Be(1);
             result.PageSize.Should().Be(5);
 
-            ReadOnlyGameRepositoryBuilder.VerifyGetAllAsQueryableWasCalled();
+            ReadOnlyGameRepositoryBuilder.VerifyGetAllWithFiltersWasCalled();
         }
 
         [Fact(DisplayName = "Deve aplicar filtro por nome corretamente")]
@@ -62,13 +62,13 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 GameBuilder.BuildWithName("FIFA Street")
             };
 
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games.Where(g => g.Name.Value.Contains("FIFA")));
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "FIFA" }
+                Name = "FIFA"
             };
 
             // Act
@@ -85,18 +85,18 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             // Arrange
             var games = new List<Game>
             {
-                GameBuilder.BuildWithCategory("Ação"),
-                GameBuilder.BuildWithCategory("Esporte"),
-                GameBuilder.BuildWithCategory("Ação")
+                GameBuilder.BuildWithCategory(GameCategory.Action),
+                GameBuilder.BuildWithCategory(GameCategory.Sports),
+                GameBuilder.BuildWithCategory(GameCategory.Action)
             };
 
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games.Where(g => g.Category == GameCategory.Action));
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = "Ação" }
+                Category = GameCategory.Action
             };
 
             // Act
@@ -104,7 +104,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
 
             // Assert
             result.Items.Should().HaveCount(2);
-            result.Items.All(x => x.Category == "Ação").Should().BeTrue();
+            result.Items.All(x => x.Category == GameCategory.Action).Should().BeTrue();
         }
 
         [Fact(DisplayName = "Deve aplicar filtro por preço mínimo corretamente")]
@@ -118,13 +118,13 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 GameBuilder.BuildWithPrice(100)
             };
 
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games.Where(g => g.Price.Value >= 50));
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { MinPrice = 50 }
+                MinPrice = 50
             };
 
             // Act
@@ -146,13 +146,13 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 GameBuilder.BuildWithPrice(100)
             };
 
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games.Where(g => g.Price.Value <= 50));
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { MaxPrice = 50 }
+                MaxPrice = 50
             };
 
             // Act
@@ -175,13 +175,14 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 GameBuilder.BuildWithPrice(120)
             };
 
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games.Where(g => g.Price.Value >= 40 && g.Price.Value <= 100));
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { MinPrice = 40, MaxPrice = 100 }
+                MinPrice = 40,
+                MaxPrice = 100
             };
 
             // Act
@@ -197,13 +198,12 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
         {
             // Arrange
             var games = GameBuilder.BuildList(12);
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(games);
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 2,
-                PageSize = 5,
-                Filter = new GameFilter()
+                PageSize = 5
             };
 
             // Act
@@ -226,13 +226,13 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
                 GameBuilder.BuildWithName("NBA 2K")
             };
 
-            SetupGetAllAsQueryable(games);
+            SetupGetAllWithFilters(Enumerable.Empty<Game>());
 
             var input = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "Call of Duty" }
+                Name = "Call of Duty"
             };
 
             // Act
@@ -243,10 +243,10 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
             result.TotalCount.Should().Be(0);
         }
 
-        private static void SetupGetAllAsQueryable(IEnumerable<Game> games)
+        private static void SetupGetAllWithFilters(IEnumerable<Game> games)
         {
             var queryable = games.AsQueryable().BuildMockDbSet();
-            ReadOnlyGameRepositoryBuilder.SetupGetAllAsQueryable(queryable);
+            ReadOnlyGameRepositoryBuilder.SetupGetAllWithFilters(queryable);
         }
     }
 }

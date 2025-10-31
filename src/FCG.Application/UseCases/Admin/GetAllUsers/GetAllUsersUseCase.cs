@@ -1,6 +1,7 @@
 ﻿using FCG.Domain.Models.Pagination;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FCG.Application.UseCases.Admin.GetAllUsers
@@ -26,14 +27,22 @@ namespace FCG.Application.UseCases.Admin.GetAllUsers
             var correlationId = _correlationIdProvider.GetCorrelationId();
 
             _logger.LogInformation(
-                "[GetAllUsersUseCase] [CorrelationId: {CorrelationId}] Getting users - Page: {PageNumber}, Size: {PageSize}",
-                correlationId, request.PageNumber, request.PageSize);
+                "[GetAllUsersUseCase] [CorrelationId: {CorrelationId}] Getting users - Filters: Name={Name}, Email={Email}, Page: {PageNumber}, Size: {PageSize}",
+                correlationId, request.Name, request.Email, request.PageNumber, request.PageSize);
 
-            var (users, totalCount) = await _userRepository.GetAllUsersAsync(
-                request.PageNumber,
-                request.PageSize,
-                cancellationToken
-            );
+            _logger.LogDebug(
+                "[GetAllUsersUseCase] [CorrelationId: {CorrelationId}] Applying filters to query",
+                correlationId);
+
+            var query = _userRepository.GetAllUsersWithFilters(
+                name: request.Name,
+                email: request.Email);
+
+            _logger.LogDebug(
+                "[GetAllUsersUseCase] [CorrelationId: {CorrelationId}] Counting total items",
+                correlationId);
+
+            var totalCount = await query.CountAsync(cancellationToken);
 
             if (totalCount == 0)
             {
@@ -49,14 +58,21 @@ namespace FCG.Application.UseCases.Admin.GetAllUsers
                 );
             }
 
-            var items = users.Select(u => new GetAllUsersResponse
-            {
-                Id = u.Id,
-                Name = u.Name.Value,
-                Email = u.Email.Value,
-                CreatedAt = u.CreatedAt,
-                Role = u.Role.ToString()
-            }).ToList();
+            var pagedQuery = query
+                .OrderBy(u => u.Id)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize);
+
+            var items = await pagedQuery
+                .Select(u => new GetAllUsersResponse
+                {
+                    Id = u.Id,
+                    Name = u.Name.Value,
+                    Email = u.Email.Value,
+                    CreatedAt = u.CreatedAt,
+                    Role = u.Role.ToString()
+                })
+                .ToListAsync(cancellationToken);
 
             _logger.LogInformation(
                 "[GetAllUsersUseCase] [CorrelationId: {CorrelationId}] Successfully retrieved {Count} users out of {TotalCount}",

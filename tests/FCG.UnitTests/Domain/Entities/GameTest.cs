@@ -1,5 +1,6 @@
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.ValueObjects;
 using FCG.Messages;
@@ -48,28 +49,13 @@ namespace FCG.UnitTests.Domain.Entities
             // Arrange
             var name = Name.Create("Test Game");
             var price = Price.Create(59.99m);
-            var category = "Action";
+            var category = GameCategory.Action;
             var actNullDescription = () => Game.Create(name, "", price, category);
             var actEmptyDescription = () => Game.Create(name, string.Empty, price, category);
 
             // Act & Assert
             actNullDescription.Should().Throw<DomainException>().WithMessage(ResourceMessages.DescriptionCannotBeNullOrEmpty);
             actEmptyDescription.Should().Throw<DomainException>().WithMessage(ResourceMessages.DescriptionCannotBeNullOrEmpty);
-        }
-
-        [Fact]
-        public void Given_NullOrEmptyCategory_When_Create_Then_ShouldThrowDomainException()
-        {
-            // Arrange
-            var name = Name.Create("Test Game");
-            var description = "Test Description";
-            var price = Price.Create(59.99m);
-            var actNullCategory = () => Game.Create(name, description, price, "");
-            var actEmptyCategory = () => Game.Create(name, description, price, string.Empty);
-
-            // Act & Assert
-            actNullCategory.Should().Throw<DomainException>().WithMessage(ResourceMessages.CategoryCannotBeNullOrEmpty);
-            actEmptyCategory.Should().Throw<DomainException>().WithMessage(ResourceMessages.CategoryCannotBeNullOrEmpty);
         }
     }
 }

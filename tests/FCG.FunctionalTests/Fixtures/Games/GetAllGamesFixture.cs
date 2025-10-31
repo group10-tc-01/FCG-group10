@@ -4,6 +4,7 @@ using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.CommomTestsUtilities.Extensions;
 using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 
 namespace FCG.FunctionalTests.Fixtures.Games
 {
@@ -24,46 +25,39 @@ namespace FCG.FunctionalTests.Fixtures.Games
             GetAllGamesInput = new GetAllGamesInput
             {
                 PageNumber = 1,
-                PageSize = 10,
-                Filter = new GameFilter()
+                PageSize = 10
             };
 
             GetAllGamesInputWithNameFilter = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Name = "Witcher" }
+                Name = "Witcher"
             };
 
             GetAllGamesInputWithCategoryFilter = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter { Category = "RPG" }
+                Category = GameCategory.RPG
             };
 
             GetAllGamesInputWithPriceFilter = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    MinPrice = 20m,
-                    MaxPrice = 50m
-                }
+                MinPrice = 20m,
+                MaxPrice = 50m
             };
 
             GetAllGamesInputWithMultipleFilters = new GetAllGamesInput
             {
                 PageNumber = 1,
                 PageSize = 10,
-                Filter = new GameFilter
-                {
-                    Name = "Dark",
-                    Category = "RPG",
-                    MinPrice = 30m,
-                    MaxPrice = 50m
-                }
+                Name = "Dark",
+                Category = GameCategory.RPG,
+                MinPrice = 30m,
+                MaxPrice = 50m
             };
         }
 
@@ -78,18 +72,18 @@ namespace FCG.FunctionalTests.Fixtures.Games
         {
             var games = new List<Game>
             {
-                GameBuilder.BuildWithAllParameters("The Witcher 3", "RPG Game", 59.99m, "RPG"),
-                GameBuilder.BuildWithAllParameters("Witcher 2", "RPG Game", 29.99m, "RPG"),
-                GameBuilder.BuildWithAllParameters("Dark Souls", "RPG Game", 39.99m, "RPG"),
-                GameBuilder.BuildWithAllParameters("Dark Souls 3", "RPG Game", 49.99m, "RPG"),
-                GameBuilder.BuildWithAllParameters("Cyberpunk 2077", "Action Game", 59.99m, "Action"),
-                GameBuilder.BuildWithAllParameters("God of War", "Action Game", 49.99m, "Action"),
-                GameBuilder.BuildWithAllParameters("Budget Game", "Indie Game", 9.99m, "Indie"),
-                GameBuilder.BuildWithAllParameters("Premium Game", "AAA Game", 69.99m, "AAA")
+                GameBuilder.BuildWithAllParameters("The Witcher 3", "RPG Game", 59.99m, GameCategory.RPG),
+                GameBuilder.BuildWithAllParameters("Witcher 2", "RPG Game", 29.99m, GameCategory.RPG),
+                GameBuilder.BuildWithAllParameters("Dark Souls", "RPG Game", 39.99m, GameCategory.RPG),
+                GameBuilder.BuildWithAllParameters("Dark Souls 3", "RPG Game", 49.99m, GameCategory.RPG),
+                GameBuilder.BuildWithAllParameters("Cyberpunk 2077", "Action Game", 59.99m, GameCategory.Action),
+                GameBuilder.BuildWithAllParameters("God of War", "Action Game", 49.99m, GameCategory.Action),
+                GameBuilder.BuildWithAllParameters("Budget Game", "Indie Game", 9.99m, GameCategory.Puzzle),
+                GameBuilder.BuildWithAllParameters("Premium Game", "AAA Game", 69.99m, GameCategory.Adventure)
             }.AsQueryable();
 
             var queryable = games.AsQueryable().BuildMockDbSet();
-            ReadOnlyGameRepositoryBuilder.SetupGetAllAsQueryable(queryable);
+            ReadOnlyGameRepositoryBuilder.SetupGetAllWithFilters(queryable);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Repositories.GamesRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,11 +19,23 @@ namespace FCG.Infrastructure.Persistance.Repositories
             await _fcgDbContext.Games.AddAsync(game);
         }
 
-        public IQueryable<Game?> GetAllAsQueryable()
+        public IQueryable<Game?> GetAllWithFilters(string? name = null, GameCategory? category = null, decimal? minPrice = null, decimal? maxPrice = null)
         {
-            var games = _fcgDbContext.Games.AsNoTracking().AsQueryable();
+            var query = _fcgDbContext.Games.AsNoTracking().AsQueryable();
 
-            return games;
+            if (!string.IsNullOrWhiteSpace(name))
+                query = query.Where(g => g!.Name.Value.Contains(name));
+
+            if (category.HasValue)
+                query = query.Where(g => g!.Category == category.Value);
+
+            if (minPrice.HasValue)
+                query = query.Where(g => g!.Price.Value >= minPrice.Value);
+
+            if (maxPrice.HasValue)
+                query = query.Where(g => g!.Price.Value <= maxPrice.Value);
+
+            return query;
         }
 
         public async Task<Game?> GetByNameAsync(string name)
