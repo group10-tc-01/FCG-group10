@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.ValueObjects;
 
 namespace FCG.CommomTestsUtilities.Builders.Entities
@@ -12,7 +13,7 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
                 Game.Create(Name.Create(f.Commerce.ProductName()),
                     f.Commerce.ProductDescription(),
                     Price.Create(f.Random.Decimal(1, 100)),
-                    f.Commerce.Categories(1)[0]
+                    f.PickRandom<GameCategory>()
                 )
             ).Generate();
         }
@@ -23,7 +24,7 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
                     Name.Create(f.Commerce.ProductName()),
                     f.Commerce.ProductDescription(),
                     Price.Create(f.Random.Decimal(1, 100)),
-                    f.Commerce.Categories(1)[0]
+                    f.PickRandom<GameCategory>()
                 ))
                 .Generate(count);
         }
@@ -35,11 +36,11 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
                 Name.Create(name),
                 faker.Commerce.ProductDescription(),
                 Price.Create(faker.Random.Decimal(1, 100)),
-                faker.Commerce.Categories(1)[0]
+                faker.PickRandom<GameCategory>()
             );
         }
 
-        public static Game BuildWithCategory(string category)
+        public static Game BuildWithCategory(GameCategory category)
         {
             var faker = new Faker();
             return Game.Create(
@@ -57,11 +58,11 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
                 Name.Create(faker.Commerce.ProductName()),
                 faker.Commerce.ProductDescription(),
                 Price.Create(price),
-                faker.Commerce.Categories(1)[0]
+                faker.PickRandom<GameCategory>()
             );
         }
 
-        public static Game BuildWithAllParameters(string name, string description, decimal price, string category)
+        public static Game BuildWithAllParameters(string name, string description, decimal price, GameCategory category)
         {
             return Game.Create(
                 Name.Create(name),

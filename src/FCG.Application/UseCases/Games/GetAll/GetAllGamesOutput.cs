@@ -1,4 +1,6 @@
-﻿namespace FCG.Application.UseCases.Games.GetAll
+﻿using FCG.Domain.Enum;
+
+namespace FCG.Application.UseCases.Games.GetAll
 {
     public class GetAllGamesOutput
     {
@@ -6,6 +8,6 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public string Category { get; set; }
+        public GameCategory Category { get; set; }
     }
 }

@@ -9,7 +9,6 @@ namespace FCG.WebApi.Models
         public bool Success { get; set; }
         public T Data { get; set; } = default!;
         public List<string> ErrorMessages { get; set; } = default!;
-        public string? CorrelationId { get; set; }
 
         public static ApiResponse<T> SuccesResponse(T data)
         {

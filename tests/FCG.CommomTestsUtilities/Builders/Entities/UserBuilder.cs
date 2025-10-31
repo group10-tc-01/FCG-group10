@@ -27,6 +27,16 @@ namespace FCG.CommomTestsUtilities.Builders.Entities
             return User.Create(name, email, GenerateValidPassword(faker), role);
         }
 
+        public static List<User> BuildList(int count)
+        {
+            var users = new List<User>();
+            for (int i = 1; i <= count; i++)
+            {
+                users.Add(BuildWithData($"User{i}", $"user{i}@test.com", Role.User));
+            }
+            return users;
+        }
+
         private static string GenerateValidPassword(Faker faker)
         {
             var letter = faker.Random.Char('a', 'z');

@@ -25,7 +25,7 @@ namespace FCG.UnitTests.Application.Events
 
             loggedMessage.Should().Contain(game.Id.ToString());
             loggedMessage.Should().Contain(game.Name);
-            loggedMessage.Should().Contain(game.Category);
+            loggedMessage.Should().Contain(game.Category.ToString());
         }
     }
 }

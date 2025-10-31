@@ -1,7 +1,6 @@
 ﻿using FCG.Domain.Exceptions;
 using FCG.Messages;
 using FCG.WebApi.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
@@ -37,8 +36,8 @@ namespace FCG.WebApi.Middlewares
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var traceId = context!.TraceIdentifier;
-            var correlationId = context.Items.ContainsKey(CorrelationIdKey) 
-                ? context.Items[CorrelationIdKey]?.ToString() 
+            var correlationId = context.Items.ContainsKey(CorrelationIdKey)
+                ? context.Items[CorrelationIdKey]?.ToString()
                 : string.Empty;
 
             context!.Response.ContentType = "application/json";
@@ -63,11 +62,6 @@ namespace FCG.WebApi.Middlewares
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true
             };
-
-            if (!string.IsNullOrEmpty(correlationId))
-            {
-                response.CorrelationId = correlationId;
-            }
 
             var jsonResponse = JsonSerializer.Serialize(response, options);
 

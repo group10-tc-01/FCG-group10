@@ -39,6 +39,7 @@ namespace FCG.Infrastructure.Persistance.Configuration
             });
 
             builder.Property(g => g.Category)
+                .HasConversion<string>()
                 .HasMaxLength(100)
                 .IsRequired();
         }

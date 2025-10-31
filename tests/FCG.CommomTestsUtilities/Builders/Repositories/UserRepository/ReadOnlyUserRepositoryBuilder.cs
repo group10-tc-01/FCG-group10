@@ -32,5 +32,13 @@ namespace FCG.CommomTestsUtilities.Builders.Repositories.UserRepository
             _mock.Setup(repo => repo.GetAllUsersAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((users, users.Count));
         }
+
+        public static void SetupGetAllUsersWithFilters(IQueryable<User> queryable)
+        {
+            _mock.Setup(repo => repo.GetAllUsersWithFilters(
+                It.IsAny<string>(),
+                It.IsAny<string>()))
+                .Returns(queryable);
+        }
     }
 }
