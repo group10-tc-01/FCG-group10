@@ -30,12 +30,12 @@ namespace FCG.Infrastructure.Services.Authentication
             var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
 
             var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Email, user.Email.Value),
-                new(ClaimTypes.GivenName, user.Name.Value),
-                new(ClaimTypes.Role, user.Role.ToString())
-            };
+                {
+                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Email, user.Email.Value),
+                    new(ClaimTypes.GivenName, user.Name.Value),
+                    new(ClaimTypes.Role, user.Role.ToString())
+                };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

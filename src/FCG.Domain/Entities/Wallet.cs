@@ -1,4 +1,6 @@
-﻿namespace FCG.Domain.Entities
+﻿using FCG.Domain.Exceptions;
+
+namespace FCG.Domain.Entities
 {
     public sealed class Wallet : BaseEntity
     {
@@ -14,6 +16,16 @@
         private void AddInitialBalance()
         {
             Balance += 10;
+        }
+
+        public void Debit(decimal amount)
+        {
+            if (amount > Balance)
+            {
+                throw new DomainException("Insufficient balance in the wallet.");
+            }
+
+            Balance -= amount;
         }
 
         public static Wallet Create(Guid userId)

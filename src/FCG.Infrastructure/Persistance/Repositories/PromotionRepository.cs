@@ -2,7 +2,7 @@ using FCG.Domain.Entities;
 using FCG.Domain.Repositories.PromotionRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG.Infrastructure.Persistance.Repositories.PromotionRepository
+namespace FCG.Infrastructure.Persistance.Repositories
 {
     public class PromotionRepository : IReadOnlyPromotionRepository, IWriteOnlyPromotionRepository
     {
@@ -38,7 +38,7 @@ namespace FCG.Infrastructure.Persistance.Repositories.PromotionRepository
                 .AsNoTracking()
                 .AnyAsync(p =>
                     p.GameId == gameId &&
-                    ((p.StartDate <= endDate && p.EndDate >= startDate)),
+                    p.StartDate <= endDate && p.EndDate >= startDate,
                     cancellationToken);
         }
 

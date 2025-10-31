@@ -47,7 +47,7 @@ namespace FCG.Application.UseCases.Promotions.Create
 
             if (!gameExists)
             {
-                throw new DomainException("Game not found.");
+                throw new NotFoundException("Game not found.");
             }
 
             var hasActivePromotion = await _readOnlyPromotionRepository.ExistsActivePromotionForGameAsync(
@@ -58,7 +58,7 @@ namespace FCG.Application.UseCases.Promotions.Create
 
             if (hasActivePromotion)
             {
-                throw new DomainException("An active promotion already exists for this game in the specified period.");
+                throw new BadRequestException("An active promotion already exists for this game in the specified period.");
             }
 
             var discount = Discount.Create(request.DiscountPercentage);
