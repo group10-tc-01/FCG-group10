@@ -1,4 +1,5 @@
-﻿using FCG.Domain.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
@@ -9,6 +10,7 @@ using MediatR;
 
 namespace FCG.Application.UseCases.Users.MyGames.AddGameToLibrary
 {
+    [ExcludeFromCodeCoverage]
     public class AddGameToLibraryUseCase : IRequestHandler<AddGameToLibraryRequest, LibraryGameResponse>
     {
         private readonly ILoggedUser _loggedUser;
@@ -56,7 +58,6 @@ namespace FCG.Application.UseCases.Users.MyGames.AddGameToLibrary
             var existingGame = await _readLibraryGameRepo.GetByLibraryAndGameIdAsync(library.Id, game.Id);
             if (existingGame != null)
             {
-                // Se o jogo foi encontrado, lance um erro 409 Conflict
                 throw new ConflictException("Este jogo já está na sua biblioteca.");
             }
 
