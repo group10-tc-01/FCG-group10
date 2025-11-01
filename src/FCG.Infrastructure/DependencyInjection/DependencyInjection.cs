@@ -59,10 +59,14 @@ namespace FCG.Infrastructure.DependencyInjection
             services.AddScoped<IReadOnlyPromotionRepository, PromotionRepository>();
             services.AddScoped<IWriteOnlyPromotionRepository, PromotionRepository>();
 
+            services.AddScoped<IReadOnlyLibraryRepository, LibraryRepository>();
             services.AddScoped<IWriteOnlyLibraryRepository, LibraryRepository>();
             services.AddScoped<IWriteOnlyWalletRepository, WalletRepository>();
 
             services.AddScoped<IReadOnlyLibraryGameRepository, LibraryGameRepository>();
+            services.AddScoped<IWriteOnlyLibraryGameRepository, LibraryGameRepository>();
+            services.AddScoped<IReadOnlyLibraryRepository, LibraryRepository>();
+            services.AddScoped<IWriteOnlyLibraryRepository, LibraryRepository>();
 
         }
 

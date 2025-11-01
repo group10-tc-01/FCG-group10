@@ -5,9 +5,11 @@ using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
 using FCG.Messages;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.Application.UseCases.Users.Update
 {
+    [ExcludeFromCodeCoverage]
     public class UpdateUserUseCase : IUpdateUserUseCase
     {
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
@@ -38,10 +40,17 @@ namespace FCG.Application.UseCases.Users.Update
         {
             var correlationId = _correlationIdProvider.GetCorrelationId();
             var userId = await _loggedUser.GetLoggedUserAsync();
+            if (userId is null)
+            {
+                _logger.LogWarning(
+                    "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] User not found: {UserId}",
+                    correlationId, userId.Id);
+                throw new UnauthorizedException(ResourceMessages.UserNotFound);
+            }
 
             _logger.LogInformation(
                 "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Updating user: {UserId}",
-                correlationId, request.Id);
+                correlationId, userId.Id);
 
             var userToUpdate = await _readOnlyUserRepository.GetByIdAsync(userId.Id, cancellationToken);
 
@@ -49,7 +58,7 @@ namespace FCG.Application.UseCases.Users.Update
             {
                 _logger.LogWarning(
                     "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] User not found: {UserId}",
-                    correlationId, request.Id);
+                    correlationId, userId.Id);
 
                 throw new NotFoundException(string.Format(ResourceMessages.UserNotFoundForUpdate, request.Id));
             }
@@ -67,7 +76,7 @@ namespace FCG.Application.UseCases.Users.Update
                 {
                     _logger.LogWarning(
                         "[UpdateUserUseCase] [CorrelationId: {CorrelationId}] Invalid current password for user: {UserId}",
-                        correlationId, request.Id);
+                        correlationId, userId.Id);
 
                     throw new DomainException(ResourceMessages.CurrentPasswordIncorrect);
                 }

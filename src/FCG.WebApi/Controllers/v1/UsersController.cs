@@ -1,5 +1,6 @@
 ﻿using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.Application.UseCases.Users.MyGames;
+using FCG.Application.UseCases.Users.MyGames.AddGameToLibrary;
 using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update;
@@ -59,6 +60,19 @@ namespace FCG.WebApi.Controllers.v1
             var result = await _mediator.Send(output);
 
             return Ok(ApiResponse<ICollection<LibraryGameResponse>>.SuccesResponse(result));
+        }
+        [HttpPost("library")]
+        [AuthenticatedUser]
+        [ProducesResponseType(typeof(ApiResponse<LibraryGameResponse>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> AddGameToMyLibrary([FromBody] AddGameToLibraryRequest request)
+        {
+            var result = await _mediator.Send(request);
+
+            return Created(string.Empty, ApiResponse<LibraryGameResponse>.SuccesResponse(result));
         }
     }
 }

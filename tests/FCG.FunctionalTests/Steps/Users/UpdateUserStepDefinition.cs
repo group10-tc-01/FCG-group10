@@ -1,4 +1,6 @@
+using FCG.Application.UseCases.Users.Update;
 using FCG.FunctionalTests.Fixtures;
+using FCG.FunctionalTests.Fixtures.Users;
 using FluentAssertions;
 using Reqnroll;
 
