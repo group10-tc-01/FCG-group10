@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FCG.WebApi.Controllers.v1
 {
+    [Route("api/v1/users")]
+    [ApiController]
     public class UsersController : FcgBaseController
     {
         public UsersController(IMediator mediator) : base(mediator) { }
@@ -22,14 +24,14 @@ namespace FCG.WebApi.Controllers.v1
             return Created(string.Empty, ApiResponse<RegisterUserResponse>.SuccesResponse(output));
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("update-password")]
         [AuthenticatedUser]
         [ProducesResponseType(typeof(ApiResponse<UpdateUserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserBodyRequest bodyRequest)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
         {
-            var request = new UpdateUserRequest(id, bodyRequest);
-            var output = await _mediator.Send(request, CancellationToken.None).ConfigureAwait(false);
+            var output = await _mediator.Send(request, cancellationToken).ConfigureAwait(false);
             return Ok(ApiResponse<UpdateUserResponse>.SuccesResponse(output));
         }
 
