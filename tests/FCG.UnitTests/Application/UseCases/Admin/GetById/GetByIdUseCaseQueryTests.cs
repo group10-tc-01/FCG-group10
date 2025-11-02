@@ -1,7 +1,7 @@
-using FCG.Application.UseCases.Admin.GetById;
+using FCG.Application.UseCases.Admin.GetUserById;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
+namespace FCG.UnitTests.Application.UseCases.Admin.GetById
 {
     public class GetByIdUseCaseQueryTests
     {

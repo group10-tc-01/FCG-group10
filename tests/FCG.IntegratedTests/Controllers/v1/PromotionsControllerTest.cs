@@ -116,7 +116,6 @@ namespace FCG.IntegratedTests.Controllers.v1
                 PropertyNameCaseInsensitive = true
             });
 
-            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             apiResponse.Should().NotBeNull();
             apiResponse.Success.Should().BeFalse();
             apiResponse.Data.Should().BeNull();

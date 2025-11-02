@@ -1,7 +1,7 @@
-using FCG.Application.UseCases.Admin.GetById;
+using FCG.Application.UseCases.Admin.GetUserById;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById.GetUserDTO
+namespace FCG.UnitTests.Application.UseCases.Admin.GetById.GetUserDTO
 {
     public class UserDetailResponseTests
     {

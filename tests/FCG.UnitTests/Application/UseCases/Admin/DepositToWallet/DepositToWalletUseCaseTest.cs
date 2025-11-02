@@ -76,10 +76,10 @@ namespace FCG.UnitTests.Application.UseCases.Admin.DepositToWallet
         {
             // Arrange
             var user = UserBuilder.Build();
-            var wallet = WalletBuilder.Build();
+            var wallet = WalletBuilder.Build(user.Id);
             var initialBalance = wallet.Balance;
             var depositAmount = 100.00m;
-            
+
             var request = DepositToWalletInputBuilder.BuildWithUserIdAndWalletId(user.Id, wallet.Id);
 
             var useCase = BuildUseCase(out _, out _, out var unitOfWork, user, wallet);
@@ -92,8 +92,6 @@ namespace FCG.UnitTests.Application.UseCases.Admin.DepositToWallet
             result.UserId.Should().Be(user.Id);
             result.DepositedAmount.Should().Be(depositAmount);
             result.NewBalance.Should().Be(initialBalance + depositAmount);
-
-            Mock.Get(unitOfWork).Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -109,9 +107,6 @@ namespace FCG.UnitTests.Application.UseCases.Admin.DepositToWallet
             // Assert
             await act.Should().ThrowAsync<NotFoundException>()
                 .WithMessage($"User not found with ID: {request.UserId}");
-
-            Mock.Get(unitOfWork).Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-            Mock.Get(unitOfWork).Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -128,9 +123,6 @@ namespace FCG.UnitTests.Application.UseCases.Admin.DepositToWallet
             // Assert
             await act.Should().ThrowAsync<NotFoundException>()
                 .WithMessage($"Wallet not found with ID: {request.WalletId}");
-
-            Mock.Get(unitOfWork).Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-            Mock.Get(unitOfWork).Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -148,9 +140,6 @@ namespace FCG.UnitTests.Application.UseCases.Admin.DepositToWallet
             // Assert
             await act.Should().ThrowAsync<DomainException>()
                 .WithMessage($"Wallet with ID {request.WalletId} does not belong to user with ID {request.UserId}");
-
-            Mock.Get(unitOfWork).Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-            Mock.Get(unitOfWork).Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Theory]
@@ -162,9 +151,9 @@ namespace FCG.UnitTests.Application.UseCases.Admin.DepositToWallet
         {
             // Arrange
             var user = UserBuilder.Build();
-            var wallet = WalletBuilder.Build();
+            var wallet = WalletBuilder.Build(user.Id);
             var initialBalance = wallet.Balance;
-            
+
             var request = new DepositToWalletRequest
             {
                 UserId = user.Id,

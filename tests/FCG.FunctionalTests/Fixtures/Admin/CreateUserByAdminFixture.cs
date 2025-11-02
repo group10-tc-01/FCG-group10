@@ -26,7 +26,7 @@ namespace FCG.FunctionalTests.Fixtures.Admin
             var correlationIdProvider = CorrelationIdProviderBuilder.Build();
 
             CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
-            PasswordEncrypterServiceBuilder.SetupEncrypt("hashedPassword123");
+            PasswordEncrypterServiceBuilder.SetupEncrypt("ValidP@ssw0rd!123");
 
             SetupForNewUser();
 

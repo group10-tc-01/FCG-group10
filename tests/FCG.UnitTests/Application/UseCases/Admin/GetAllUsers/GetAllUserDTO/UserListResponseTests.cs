@@ -1,7 +1,7 @@
 using FCG.Application.UseCases.Admin.GetAllUsers;
 using FluentAssertions;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers.GetAllUserDTO
+namespace FCG.UnitTests.Application.UseCases.Admin.GetAllUsers.GetAllUserDTO
 {
     public class UserListResponseTests
     {

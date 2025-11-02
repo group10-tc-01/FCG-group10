@@ -1,4 +1,3 @@
-using FCG.Application.UseCases.Admin.GetById;
 using FCG.Application.UseCases.Admin.GetUserById;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Services;
@@ -10,7 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetById
+namespace FCG.UnitTests.Application.UseCases.Admin.GetById
 {
     public class GetByIdUserUseCaseTests
     {

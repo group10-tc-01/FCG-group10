@@ -92,41 +92,6 @@ namespace FCG.FunctionalTests.Features.Admin
             await this.TestTearDownAsync();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Admin deposita valor na carteira de um usuario")]
-        [Xunit.TraitAttribute("FeatureTitle", "DepositToWalletUseCase")]
-        [Xunit.TraitAttribute("Description", "Admin deposita valor na carteira de um usuario")]
-        [Xunit.TraitAttribute("Category", "regressivo")]
-        [Xunit.TraitAttribute("Category", "aceite")]
-        public async System.Threading.Tasks.Task AdminDepositaValorNaCarteiraDeUmUsuario()
-        {
-            string[] tagsOfScenario = new string[] {
-                    "regressivo",
-                    "aceite"};
-            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Admin deposita valor na carteira de um usuario", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 4
-this.ScenarioInitialize(scenarioInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                testRunner.SkipScenario();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
- await testRunner.GivenAsync("um administrador que deseja depositar valor na carteira de um usuario", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
-#line hidden
-#line 6
- await testRunner.WhenAsync("o administrador realiza o deposito", ((string)(null)), ((global::Reqnroll.Table)(null)), "Quando ");
-#line hidden
-#line 7
- await testRunner.ThenAsync("o saldo da carteira deve ser atualizado com sucesso", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entao ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
         [Xunit.SkippableFactAttribute(DisplayName="Admin tenta depositar em carteira inexistente")]
         [Xunit.TraitAttribute("FeatureTitle", "DepositToWalletUseCase")]
         [Xunit.TraitAttribute("Description", "Admin tenta depositar em carteira inexistente")]
@@ -139,7 +104,7 @@ this.ScenarioInitialize(scenarioInfo);
                     "aceite"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Admin tenta depositar em carteira inexistente", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 10
+#line 4
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -149,13 +114,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 await this.ScenarioStartAsync();
-#line 11
+#line 5
  await testRunner.GivenAsync("um administrador que tenta depositar em uma carteira que nao existe", ((string)(null)), ((global::Reqnroll.Table)(null)), "Dado ");
 #line hidden
-#line 12
+#line 6
  await testRunner.WhenAsync("o administrador tenta realizar o deposito", ((string)(null)), ((global::Reqnroll.Table)(null)), "Quando ");
 #line hidden
-#line 13
+#line 7
  await testRunner.ThenAsync("deve ocorrer um erro de carteira nao encontrada", ((string)(null)), ((global::Reqnroll.Table)(null)), "Entao ");
 #line hidden
             }

@@ -27,7 +27,7 @@ namespace FCG.Infrastructure.Services
             var hasAnyAdmin = await _readOnlyUserRepository.AnyAdminAsync(cancellationToken);
             if (!hasAnyAdmin)
             {
-                var password = _passwordEncrypter.Encrypt("admin@123");
+                var password = _passwordEncrypter.Encrypt("Admin@123");
                 var admin = User.Create("admin", "admin@mail.com", password, Role.Admin);
                 var wallet = Wallet.Create(admin.Id);
                 await _writeOnlyUserRepository.AddAsync(admin);

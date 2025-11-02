@@ -15,27 +15,27 @@ namespace FCG.FunctionalTests.Fixtures.Users
             var passwordEncrypter = PasswordEncrypterServiceBuilder.Build();
             var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<UpdateUserUseCase>();
             var correlationIdProvider = CorrelationIdProviderBuilder.Build();
+            var loggedUser = LoggedUserServiceBuilder.Build();
             CorrelationIdProviderBuilder.SetupGetCorrelationId("test-correlation-id");
 
             var testUser = UserBuilder.Build();
             Setup(testUser);
+            LoggedUserServiceBuilder.SetupGetLoggedUserAsync(testUser);
 
             UpdateUserUseCase = new UpdateUserUseCase(
                 readOnlyUserRepository,
                 unitOfWork,
                 passwordEncrypter,
                 logger,
-                correlationIdProvider
+                correlationIdProvider,
+                loggedUser
             );
 
-            UpdateUserRequest = new UpdateUserRequest(
-                testUser.Id,
-                new UpdateUserBodyRequest
-                {
-                    CurrentPassword = "OldPassword@123",
-                    NewPassword = "NewPassword@123"
-                }
-            );
+            UpdateUserRequest = new UpdateUserRequest
+            {
+                CurrentPassword = "OldPassword@123",
+                NewPassword = "NewPassword@123"
+            };
         }
 
         public UpdateUserUseCase UpdateUserUseCase { get; }

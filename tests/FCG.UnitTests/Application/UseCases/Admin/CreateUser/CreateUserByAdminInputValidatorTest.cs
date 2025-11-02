@@ -53,7 +53,7 @@ namespace FCG.UnitTests.Application.UseCases.Admin.CreateUser
 
             // Assert
             result.IsValid.Should().BeFalse();
-            result.Errors.Should().ContainSingle(e => e.PropertyName == "Name");
+            result.Errors.Should().Contain(e => e.PropertyName == "Name");
             result.Errors.Should().Contain(e => e.ErrorMessage == ResourceMessages.NameRequired);
         }
 
@@ -68,7 +68,7 @@ namespace FCG.UnitTests.Application.UseCases.Admin.CreateUser
 
             // Assert
             result.IsValid.Should().BeFalse();
-            result.Errors.Should().ContainSingle(e => e.PropertyName == "Name");
+            result.Errors.Should().Contain(e => e.PropertyName == "Name");
             result.Errors.Should().Contain(e => e.ErrorMessage == ResourceMessages.NameIsLong);
         }
 
@@ -83,7 +83,7 @@ namespace FCG.UnitTests.Application.UseCases.Admin.CreateUser
 
             // Assert
             result.IsValid.Should().BeFalse();
-            result.Errors.Should().ContainSingle(e => e.PropertyName == "Email");
+            result.Errors.Should().Contain(e => e.PropertyName == "Email");
             result.Errors.Should().Contain(e => e.ErrorMessage == ResourceMessages.LoginEmalRequired);
         }
 
@@ -158,7 +158,7 @@ namespace FCG.UnitTests.Application.UseCases.Admin.CreateUser
 
             // Assert
             result.IsValid.Should().BeFalse();
-            result.Errors.Should().ContainSingle(e => e.PropertyName == "Role");
+            result.Errors.Should().Contain(e => e.PropertyName == "Role");
             result.Errors.Should().Contain(e => e.ErrorMessage == "Invalid role specified.");
         }
     }

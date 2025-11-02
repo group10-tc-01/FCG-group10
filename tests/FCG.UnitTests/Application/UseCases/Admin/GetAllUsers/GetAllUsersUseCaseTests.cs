@@ -9,7 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace FCG.UnitTests.Application.UseCases.AdminUsers.GetAllUsers
+namespace FCG.UnitTests.Application.UseCases.Admin.GetAllUsers
 {
     public class GetAllUsersUseCaseTests
     {

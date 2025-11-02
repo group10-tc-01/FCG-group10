@@ -2,6 +2,7 @@ using FCG.Application.UseCases.Admin.DepositToWallet;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
+using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Repositories.WalletRepository;
 using Moq;
 using UoWBuilder = FCG.CommomTestsUtilities.Builders.Repositories.UnitOfWorkBuilder;
@@ -11,12 +12,14 @@ namespace FCG.FunctionalTests.Fixtures.Admin
     public class DepositToWalletFixture
     {
         private Wallet? _wallet;
+        private User? _user;
 
         public DepositToWalletFixture()
         {
             var readOnlyWalletRepositoryMock = new Mock<IReadOnlyWalletRepository>();
             ReadOnlyWalletRepository = readOnlyWalletRepositoryMock.Object;
 
+            ReadOnlyUserRepository = CommomTestsUtilities.Builders.Repositories.UserRepository.ReadOnlyUserRepositoryBuilder.Build();
             var unitOfWork = UoWBuilder.Build();
             var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<DepositToWalletUseCase>();
             var correlationIdProvider = CorrelationIdProviderBuilder.Build();
@@ -27,17 +30,21 @@ namespace FCG.FunctionalTests.Fixtures.Admin
             UoWBuilder.SetupRollbackAsync();
 
             DepositToWalletUseCase = new DepositToWalletUseCase(
+                ReadOnlyUserRepository,
                 ReadOnlyWalletRepository,
                 unitOfWork,
                 logger,
                 correlationIdProvider
             );
 
+            _user = UserBuilder.Build();
             _wallet = WalletBuilder.Build();
+            _wallet.GetType().GetProperty("UserId")?.SetValue(_wallet, _user.Id);
 
             DepositRequest = new DepositToWalletRequest
             {
-                UserId = _wallet.UserId,
+                UserId = _user.Id,
+                WalletId = _wallet.Id,
                 Amount = 100.00m
             };
         }
@@ -45,9 +52,13 @@ namespace FCG.FunctionalTests.Fixtures.Admin
         public DepositToWalletUseCase DepositToWalletUseCase { get; }
         public DepositToWalletRequest DepositRequest { get; }
         public IReadOnlyWalletRepository ReadOnlyWalletRepository { get; }
+        public IReadOnlyUserRepository ReadOnlyUserRepository { get; }
 
         public void SetupForExistingWallet()
         {
+            CommomTestsUtilities.Builders.Repositories.UserRepository.ReadOnlyUserRepositoryBuilder
+                .SetupGetByIdAsync(_user!);
+            
             Mock.Get(ReadOnlyWalletRepository)
                 .Setup(x => x.GetByUserIdAsync(_wallet!.UserId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_wallet);
