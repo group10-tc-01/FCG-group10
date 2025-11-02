@@ -79,7 +79,6 @@ namespace FCG.WebApi
             var seeds = scope.ServiceProvider.GetServices<IAdminSeedService>();
 
             await dbContext.Database.MigrateAsync();
-
             foreach (var seed in seeds)
             {
                 await seed.SeedAsync();
