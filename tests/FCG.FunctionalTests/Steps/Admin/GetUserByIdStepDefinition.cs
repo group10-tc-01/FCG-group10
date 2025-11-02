@@ -1,4 +1,4 @@
-using FCG.Application.UseCases.Admin.GetById;
+using FCG.Application.UseCases.Admin.GetUserById;
 using FCG.FunctionalTests.Fixtures;
 using FluentAssertions;
 using Reqnroll;

@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Entities;
+using FCG.Domain.Enum;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories;
 using FCG.Domain.Repositories.GamesRepository;
@@ -40,7 +41,8 @@ namespace FCG.Application.UseCases.Games.Register
 
             await ValidateIfGameAlreadyExistsAsync(request.Name, correlationId);
 
-            var game = Game.Create(request.Name, request.Description, request.Price, request.Category);
+            var category = Enum.Parse<GameCategory>(request.Category, true);
+            var game = Game.Create(request.Name, request.Description, request.Price, category);
             await _writeOnlyGameRepository.AddAsync(game);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

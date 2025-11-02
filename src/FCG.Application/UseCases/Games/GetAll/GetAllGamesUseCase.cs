@@ -83,7 +83,7 @@ namespace FCG.Application.UseCases.Games.GetAll
                 return new GetAllGamesOutput
                 {
                     Id = x.Id,
-                    Category = x.Category,
+                    Category = x.Category.ToString(),
                     Description = x.Description,
                     Name = x.Name.Value,
                     Price = originalPrice,

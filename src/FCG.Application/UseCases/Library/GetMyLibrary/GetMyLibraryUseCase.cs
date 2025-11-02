@@ -42,7 +42,7 @@ namespace FCG.Application.UseCases.Library.GetMyLibrary
             {
                 LibraryId = library.Id,
                 UserId = library.UserId,
-                Games = library.LibraryGames.Select(lg => new LibraryGameDto
+                Games = library.LibraryGames.Select(lg => new MyLibraryGameDto
                 {
                     GameId = lg.GameId,
                     Name = lg.Game!.Name.Value,

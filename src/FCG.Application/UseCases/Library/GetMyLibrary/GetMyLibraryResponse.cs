@@ -4,10 +4,10 @@ namespace FCG.Application.UseCases.Library.GetMyLibrary
     {
         public Guid LibraryId { get; set; }
         public Guid UserId { get; set; }
-        public List<LibraryGameDto> Games { get; set; } = new();
+        public List<MyLibraryGameDto> Games { get; set; } = new();
     }
 
-    public class LibraryGameDto
+    public class MyLibraryGameDto
     {
         public Guid GameId { get; set; }
         public string Name { get; set; } = string.Empty;

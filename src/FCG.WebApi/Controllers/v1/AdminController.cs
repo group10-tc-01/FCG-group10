@@ -1,7 +1,7 @@
 ﻿using FCG.Application.UseCases.Admin.CreateUser;
 using FCG.Application.UseCases.Admin.DepositToWallet;
 using FCG.Application.UseCases.Admin.GetAllUsers;
-using FCG.Application.UseCases.Admin.GetById;
+using FCG.Application.UseCases.Admin.GetUserById;
 using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.Domain.Models.Pagination;
 using FCG.WebApi.Attributes;

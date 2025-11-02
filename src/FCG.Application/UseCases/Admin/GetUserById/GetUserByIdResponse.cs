@@ -1,4 +1,4 @@
-﻿namespace FCG.Application.UseCases.Admin.GetById
+﻿namespace FCG.Application.UseCases.Admin.GetUserById
 {
     public class GetUserByIdResponse
     {

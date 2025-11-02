@@ -25,7 +25,9 @@ namespace FCG.Application.UseCases.Games.Register
                 .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
 
             RuleFor(x => x.Category)
-                .Must(category => Enum.IsDefined(typeof(GameCategory), category))
+                .NotEmpty()
+                .WithMessage(ResourceMessages.GameCategoryIsRequired)
+                .Must(category => Enum.TryParse<GameCategory>(category, true, out _))
                 .WithMessage(ResourceMessages.GameCategoryIsRequired);
         }
     }

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace FCG.Application.UseCases.Admin.GetById
+namespace FCG.Application.UseCases.Admin.GetUserById
 {
     public class GetUserByIdRequest : IRequest<GetUserByIdResponse>
     {

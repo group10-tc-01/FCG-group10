@@ -4,7 +4,7 @@ using FCG.Domain.Repositories.UserRepository;
 using FCG.Domain.Services;
 using Microsoft.Extensions.Logging;
 
-namespace FCG.Application.UseCases.Admin.GetById
+namespace FCG.Application.UseCases.Admin.GetUserById
 {
     public class GetUserByIdUseCase : IGetUserByIdUseCase
     {
@@ -61,7 +61,16 @@ namespace FCG.Application.UseCases.Admin.GetById
             var libraryDto = user.Library == null ? null : new LibraryDto
             {
                 Id = user.Library.Id,
-                CreatedAt = user.Library.CreatedAt
+                CreatedAt = user.Library.CreatedAt,
+                Games = user.Library.LibraryGames.Select(lg => new LibraryGameDto
+                {
+                    GameId = lg.GameId,
+                    Name = lg.Game?.Name.Value ?? string.Empty,
+                    Description = lg.Game?.Description ?? string.Empty,
+                    Category = lg.Game?.Category.ToString() ?? string.Empty,
+                    PurchasePrice = lg.PurchasePrice.Value,
+                    PurchaseDate = lg.PurchaseDate
+                }).ToList()
             };
 
             return new GetUserByIdResponse
