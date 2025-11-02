@@ -64,7 +64,6 @@ namespace FCG.Application.UseCases.Games.Purchase
 
                 var promotions = await _readOnlyPromotionRepository.GetByGameIdAsync(game.Id, cancellationToken);
 
-                //TODO: Ajustar para trazer do repository apenas a promoção ativa
                 var activePromotion = promotions?.FirstOrDefault(p => p.StartDate <= DateTime.UtcNow && p.EndDate >= DateTime.UtcNow);
 
                 var finalPrice = game.Price;
@@ -99,10 +98,7 @@ namespace FCG.Application.UseCases.Games.Purchase
                     activePromotion != null,
                     _correlationIdProvider.GetCorrelationId());
 
-                return new PurchaseGameOutput
-                {
-
-                };
+                return new PurchaseGameOutput(game.Name, Math.Round(game.Price, 2), Math.Round(finalPrice, 2));
             }
             catch (Exception ex)
             {

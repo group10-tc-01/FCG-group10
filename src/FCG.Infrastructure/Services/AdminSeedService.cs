@@ -11,12 +11,15 @@ namespace FCG.Infrastructure.Services
         private readonly IReadOnlyUserRepository _readOnlyUserRepository;
         private readonly IWriteOnlyUserRepository _writeOnlyUserRepository;
         private readonly IUnitOfWork _uow;
+        private readonly IPasswordEncrypter _passwordEncrypter;
 
-        public AdminSeedService(IUnitOfWork uow, IWriteOnlyUserRepository writeOnlyUserRepository, IReadOnlyUserRepository readOnlyUserRepository)
+        public AdminSeedService(IUnitOfWork uow,
+            IWriteOnlyUserRepository writeOnlyUserRepository, IReadOnlyUserRepository readOnlyUserRepository, IPasswordEncrypter passwordEncrypter)
         {
             _uow = uow;
             _writeOnlyUserRepository = writeOnlyUserRepository;
             _readOnlyUserRepository = readOnlyUserRepository;
+            _passwordEncrypter = passwordEncrypter;
         }
 
         public async Task SeedAsync(CancellationToken cancellationToken = default)
@@ -24,7 +27,8 @@ namespace FCG.Infrastructure.Services
             var hasAnyAdmin = await _readOnlyUserRepository.AnyAdminAsync(cancellationToken);
             if (!hasAnyAdmin)
             {
-                var admin = User.Create("admin", "admin@mail.com", "admin@123", Role.Admin);
+                var password = _passwordEncrypter.Encrypt("admin@123");
+                var admin = User.Create("admin", "admin@mail.com", password, Role.Admin);
                 var wallet = Wallet.Create(admin.Id);
                 await _writeOnlyUserRepository.AddAsync(admin);
                 await _uow.SaveChangesAsync(cancellationToken);

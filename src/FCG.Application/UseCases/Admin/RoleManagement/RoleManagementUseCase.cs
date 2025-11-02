@@ -15,7 +15,7 @@ namespace FCG.Application.UseCases.Admin.RoleManagement
         private readonly ICorrelationIdProvider _correlationIdProvider;
 
         public RoleManagementUseCase(
-            IReadOnlyUserRepository readOnlyUserRepository, 
+            IReadOnlyUserRepository readOnlyUserRepository,
             IUnitOfWork unitOfWork,
             ILogger<RoleManagementUseCase> logger,
             ICorrelationIdProvider correlationIdProvider)

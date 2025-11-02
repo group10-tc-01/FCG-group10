@@ -61,7 +61,88 @@ namespace FCG.Messages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The game category is required..
+        ///   Looks up a localized string similar to Balance cannot be negative..
+        /// </summary>
+        public static string BalanceCannotBeNegative {
+            get {
+                return ResourceManager.GetString("BalanceCannotBeNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category cannot be null or empty..
+        /// </summary>
+        public static string CategoryCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("CategoryCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current password is incorrect..
+        /// </summary>
+        public static string CurrentPasswordIncorrect {
+            get {
+                return ResourceManager.GetString("CurrentPasswordIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current password is required to change password..
+        /// </summary>
+        public static string CurrentPasswordRequired {
+            get {
+                return ResourceManager.GetString("CurrentPasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description cannot be null or empty..
+        /// </summary>
+        public static string DescriptionCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("DescriptionCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discount must be between 0 and 100..
+        /// </summary>
+        public static string DiscountMustBeBetweenZeroAndHundred {
+            get {
+                return ResourceManager.GetString("DiscountMustBeBetweenZeroAndHundred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email is already in use..
+        /// </summary>
+        public static string EmailAlreadyInUse {
+            get {
+                return ResourceManager.GetString("EmailAlreadyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email cannot be null or empty..
+        /// </summary>
+        public static string EmailCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("EmailCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email cannot be longer than 255 characters..
+        /// </summary>
+        public static string EmailCannotExceed255Characters {
+            get {
+                return ResourceManager.GetString("EmailCannotExceed255Characters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The game category type is invalid..
         /// </summary>
         public static string GameCategoryIsRequired {
             get {
@@ -151,6 +232,15 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid email format..
+        /// </summary>
+        public static string InvalidEmailFormat {
+            get {
+                return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid email or password..
         /// </summary>
         public static string InvalidEmailOrPassword {
@@ -232,11 +322,38 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Name cannot be null or empty..
+        /// </summary>
+        public static string NameCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("NameCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name cannot exceed 255 characters..
+        /// </summary>
+        public static string NameCannotExceed255Characters {
+            get {
+                return ResourceManager.GetString("NameCannotExceed255Characters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name cannot exceed 100 characters.
         /// </summary>
         public static string NameIsLong {
             get {
                 return ResourceManager.GetString("NameIsLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name must be at least 2 characters long..
+        /// </summary>
+        public static string NameMinimumLength {
+            get {
+                return ResourceManager.GetString("NameMinimumLength", resourceCulture);
             }
         }
         
@@ -250,11 +367,101 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New password must be different from current password..
+        /// </summary>
+        public static string NewPasswordMustBeDifferent {
+            get {
+                return ResourceManager.GetString("NewPasswordMustBeDifferent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The password does not meet the strength requirements (minimum 8 characters, number, and special character)..
         /// </summary>
         public static string Password {
             get {
                 return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password cannot be null or empty..
+        /// </summary>
+        public static string PasswordCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("PasswordCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must be at least 8 characters long..
+        /// </summary>
+        public static string PasswordMinimumLength {
+            get {
+                return ResourceManager.GetString("PasswordMinimumLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must contain at least one letter..
+        /// </summary>
+        public static string PasswordMustContainLetter {
+            get {
+                return ResourceManager.GetString("PasswordMustContainLetter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must contain at least one number..
+        /// </summary>
+        public static string PasswordMustContainNumber {
+            get {
+                return ResourceManager.GetString("PasswordMustContainNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must contain at least one special character..
+        /// </summary>
+        public static string PasswordMustContainSpecialCharacter {
+            get {
+                return ResourceManager.GetString("PasswordMustContainSpecialCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please contact support..
+        /// </summary>
+        public static string PleaseContactSupport {
+            get {
+                return ResourceManager.GetString("PleaseContactSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The price cannot be a negative value..
+        /// </summary>
+        public static string PriceCannotBeNegative {
+            get {
+                return ResourceManager.GetString("PriceCannotBeNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The price must be greater than zero..
+        /// </summary>
+        public static string PriceMustBeGreaterThanZero {
+            get {
+                return ResourceManager.GetString("PriceMustBeGreaterThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End date must be on or after the start date..
+        /// </summary>
+        public static string PromotionEndDateMustBeAfterStartDate {
+            get {
+                return ResourceManager.GetString("PromotionEndDateMustBeAfterStartDate", resourceCulture);
             }
         }
         
@@ -268,6 +475,42 @@ namespace FCG.Messages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stored hash value cannot be null or empty..
+        /// </summary>
+        public static string StoredHashCannotBeNullOrEmpty {
+            get {
+                return ResourceManager.GetString("StoredHashCannotBeNullOrEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error occurred!.
+        /// </summary>
+        public static string UnexpectedErrorOccurred {
+            get {
+                return ResourceManager.GetString("UnexpectedErrorOccurred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User is already an Admin..
+        /// </summary>
+        public static string UserAlreadyAdmin {
+            get {
+                return ResourceManager.GetString("UserAlreadyAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User is already a User..
+        /// </summary>
+        public static string UserAlreadyUser {
+            get {
+                return ResourceManager.GetString("UserAlreadyUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Id cannot be null or empty..
         /// </summary>
         public static string UserIdRequired {
@@ -275,236 +518,22 @@ namespace FCG.Messages {
                 return ResourceManager.GetString("UserIdRequired", resourceCulture);
             }
         }
-
-        public static string BalanceCannotBeNegative
-        {
-            get
-            {
-                return ResourceManager.GetString("BalanceCannotBeNegative", resourceCulture);
-            }
-        }
-
-        public static string DiscountMustBeBetweenZeroAndHundred
-        {
-            get
-            {
-                return ResourceManager.GetString("DiscountMustBeBetweenZeroAndHundred", resourceCulture);
-            }
-        }
-
-        public static string EmailCannotBeNullOrEmpty
-        {
-            get
-            {
-                return ResourceManager.GetString("EmailCannotBeNullOrEmpty", resourceCulture);
-            }
-        }
-
-        public static string EmailCannotExceed255Characters
-        {
-            get
-            {
-                return ResourceManager.GetString("EmailCannotExceed255Characters", resourceCulture);
-            }
-        }
-
-        public static string InvalidEmailFormat
-        {
-            get
-            {
-                return ResourceManager.GetString("InvalidEmailFormat", resourceCulture);
-            }
-        }
-
-        public static string NameCannotBeNullOrEmpty
-        {
-            get
-            {
-                return ResourceManager.GetString("NameCannotBeNullOrEmpty", resourceCulture);
-            }
-        }
-
-        public static string NameMinimumLength
-        {
-            get
-            {
-                return ResourceManager.GetString("NameMinimumLength", resourceCulture);
-            }
-        }
-
-        public static string NameCannotExceed255Characters
-        {
-            get
-            {
-                return ResourceManager.GetString("NameCannotExceed255Characters", resourceCulture);
-            }
-        }
-
-        public static string PasswordCannotBeNullOrEmpty
-        {
-            get
-            {
-                return ResourceManager.GetString("PasswordCannotBeNullOrEmpty", resourceCulture);
-            }
-        }
-
-        public static string PasswordMinimumLength
-        {
-            get
-            {
-                return ResourceManager.GetString("PasswordMinimumLength", resourceCulture);
-            }
-        }
-
-        public static string PasswordMustContainLetter
-        {
-            get
-            {
-                return ResourceManager.GetString("PasswordMustContainLetter", resourceCulture);
-            }
-        }
-
-        public static string PasswordMustContainNumber
-        {
-            get
-            {
-                return ResourceManager.GetString("PasswordMustContainNumber", resourceCulture);
-            }
-        }
-
-        public static string PasswordMustContainSpecialCharacter
-        {
-            get
-            {
-                return ResourceManager.GetString("PasswordMustContainSpecialCharacter", resourceCulture);
-            }
-        }
-
-        public static string StoredHashCannotBeNullOrEmpty
-        {
-            get
-            {
-                return ResourceManager.GetString("StoredHashCannotBeNullOrEmpty", resourceCulture);
-            }
-        }
-
-        public static string PriceCannotBeNegative
-        {
-            get
-            {
-                return ResourceManager.GetString("PriceCannotBeNegative", resourceCulture);
-            }
-        }
-
-        public static string PriceMustBeGreaterThanZero
-        {
-            get
-            {
-                return ResourceManager.GetString("PriceMustBeGreaterThanZero", resourceCulture);
-            }
-        }
-
-        public static string DescriptionCannotBeNullOrEmpty
-        {
-            get
-            {
-                return ResourceManager.GetString("DescriptionCannotBeNullOrEmpty", resourceCulture);
-            }
-        }
-
-        public static string CategoryCannotBeNullOrEmpty
-        {
-            get
-            {
-                return ResourceManager.GetString("CategoryCannotBeNullOrEmpty", resourceCulture);
-            }
-        }
-
-        public static string PromotionEndDateMustBeAfterStartDate
-        {
-            get
-            {
-                return ResourceManager.GetString("PromotionEndDateMustBeAfterStartDate", resourceCulture);
-            }
-        }
-
-        public static string UserAlreadyAdmin
-        {
-            get
-            {
-                return ResourceManager.GetString("UserAlreadyAdmin", resourceCulture);
-            }
-        }
-
-        public static string UserAlreadyUser
-        {
-            get
-            {
-                return ResourceManager.GetString("UserAlreadyUser", resourceCulture);
-            }
-        }
-
-        public static string UserNotFoundForUpdate
-        {
-            get
-            {
-                return ResourceManager.GetString("UserNotFoundForUpdate", resourceCulture);
-            }
-        }
-
-        public static string CurrentPasswordRequired
-        {
-            get
-            {
-                return ResourceManager.GetString("CurrentPasswordRequired", resourceCulture);
-            }
-        }
-
-        public static string CurrentPasswordIncorrect
-        {
-            get
-            {
-                return ResourceManager.GetString("CurrentPasswordIncorrect", resourceCulture);
-            }
-        }
-
-        public static string NewPasswordMustBeDifferent
-        {
-            get
-            {
-                return ResourceManager.GetString("NewPasswordMustBeDifferent", resourceCulture);
-            }
-        }
-
-        public static string EmailAlreadyInUse
-        {
-            get
-            {
-                return ResourceManager.GetString("EmailAlreadyInUse", resourceCulture);
-            }
-        }
-
-        public static string UnexpectedErrorOccurred
-        {
-            get
-            {
-                return ResourceManager.GetString("UnexpectedErrorOccurred", resourceCulture);
-            }
-        }
-
-        public static string PleaseContactSupport
-        {
-            get
-            {
-                return ResourceManager.GetString("PleaseContactSupport", resourceCulture);
-            }
-        }
-
-        public static string UserNotFound
-        {
-            get
-            {
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User with Id: {0} was not found..
+        /// </summary>
+        public static string UserNotFound {
+            get {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User with ID {0} not found for update..
+        /// </summary>
+        public static string UserNotFoundForUpdate {
+            get {
+                return ResourceManager.GetString("UserNotFoundForUpdate", resourceCulture);
             }
         }
     }

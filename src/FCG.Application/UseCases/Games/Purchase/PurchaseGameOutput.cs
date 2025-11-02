@@ -1,6 +1,4 @@
 ﻿namespace FCG.Application.UseCases.Games.Purchase
 {
-    public class PurchaseGameOutput
-    {
-    }
+    public record PurchaseGameOutput(string GameName, decimal OriginalPrice, decimal FinalPrice);
 }

@@ -14,10 +14,13 @@ namespace FCG.Infrastructure.Persistance.Configuration
 
             builder.ToTable("Libraries");
 
-            builder.HasKey(e => e.UserId);
-            builder.HasOne(e => e.User)
+            builder.Property(l => l.UserId)
+                .IsRequired();
+
+            builder.HasOne(l => l.User)
                 .WithOne(u => u.Library)
-                .HasForeignKey<Library>(e => e.UserId);
+                .HasForeignKey<Library>(l => l.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

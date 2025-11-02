@@ -1,5 +1,4 @@
-﻿using FCG.Application.UseCases.Admin.RoleManagement;
-using FCG.Application.UseCases.Users.Register;
+﻿using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update;
 using FCG.WebApi.Attributes;
@@ -32,16 +31,6 @@ namespace FCG.WebApi.Controllers.v1
             var request = new UpdateUserRequest(id, bodyRequest);
             var output = await _mediator.Send(request, CancellationToken.None).ConfigureAwait(false);
             return Ok(ApiResponse<UpdateUserResponse>.SuccesResponse(output));
-        }
-
-        [HttpPatch("admin/update-role")]
-        [AuthenticatedAdmin]
-        [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<RoleManagementResponse>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateUserRole([FromBody] RoleManagementRequest input, CancellationToken cancellationToken)
-        {
-            var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
-            return Ok(ApiResponse<RoleManagementResponse>.SuccesResponse(output));
         }
 
     }
