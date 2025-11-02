@@ -1,0 +1,74 @@
+using FCG.Domain.Entities;
+using FCG.Domain.Enum;
+using FCG.Domain.Repositories.GamesRepository;
+using Moq;
+
+namespace FCG.CommomTestsUtilities.Builders.Repositories.GameRepository
+{
+    public static class ReadOnlyGameRepositoryBuilder
+    {
+        private static readonly Mock<IReadOnlyGameRepository> _mock = new Mock<IReadOnlyGameRepository>();
+
+        public static IReadOnlyGameRepository Build() => _mock.Object;
+
+        public static void SetupGetByNameAsync(Game? game)
+        {
+            _mock.Setup(repo => repo.GetByNameAsync(It.IsAny<string>())).ReturnsAsync(game);
+        }
+
+        public static void SetupGetByNameAsyncWithSpecificName(string name, Game? game)
+        {
+            _mock.Setup(repo => repo.GetByNameAsync(name)).ReturnsAsync(game);
+        }
+
+        public static void VerifyGetByNameAsyncWasCalled()
+        {
+            _mock.Verify(repo => repo.GetByNameAsync(It.IsAny<string>()), Times.AtLeastOnce);
+        }
+
+        public static void VerifyGetByNameAsyncWasCalledWith(string name)
+        {
+            _mock.Verify(repo => repo.GetByNameAsync(name), Times.AtLeastOnce);
+        }
+
+        public static void SetupExistsAsync(bool exists)
+        {
+            _mock.Setup(repo => repo.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(exists);
+        }
+
+        public static void SetupGetByIdAsync(Game? game)
+        {
+            _mock.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(game);
+        }
+
+        public static void VerifyExistsAsyncWasCalled()
+        {
+            _mock.Verify(repo => repo.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+        }
+
+        public static void SetupGetAllWithFilters(IQueryable<Game?> queryable)
+        {
+            _mock.Setup(repo => repo.GetAllWithFilters(
+                It.IsAny<string>(),
+                It.IsAny<GameCategory?>(),
+                It.IsAny<decimal?>(),
+                It.IsAny<decimal?>()
+            )).Returns(queryable);
+        }
+
+        public static void VerifyGetAllWithFiltersWasCalled()
+        {
+            _mock.Verify(repo => repo.GetAllWithFilters(
+                It.IsAny<string>(),
+                It.IsAny<GameCategory?>(),
+                It.IsAny<decimal?>(),
+                It.IsAny<decimal?>()
+            ), Times.AtLeastOnce);
+        }
+
+        public static void Reset()
+        {
+            _mock.Reset();
+        }
+    }
+}

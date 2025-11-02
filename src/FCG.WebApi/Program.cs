@@ -1,5 +1,12 @@
+using FCG.Application.DependencyInjection;
+using FCG.Domain.Services;
+using FCG.Infrastructure.DependencyInjection;
+using FCG.Infrastructure.Persistance;
 using FCG.WebApi.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using FCG.WebApi.Middlewares;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FCG.WebApi
@@ -9,27 +16,46 @@ namespace FCG.WebApi
     {
         protected Program() { }
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FCG - V1", Version = "v1.0" });
-                c.SwaggerDoc("v2", new OpenApiInfo { Title = "FCG - V2", Version = "v2.0" });
-            });
-            builder.Services.AddWebApi();
+
+            builder.Services.AddWebApi(builder.Configuration);
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
 
-            app.MapHealthChecks("/health");
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FCG API v1");
+                    c.EnablePersistAuthorization();
+                });
+            }
+
+            app.UseMiddleware<CorrelationIdMiddleware>();
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                AllowCachingResponses = false,
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+                }
+
+            });
 
             if (app.Environment.IsDevelopment())
             {
-
+                await RunMigrationsAsync(app);
             }
 
             app.UseSwagger();
@@ -37,12 +63,27 @@ namespace FCG.WebApi
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.MapControllers();
 
             app.Run();
+        }
 
+        private static async Task RunMigrationsAsync(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<FcgDbContext>();
+            var seeds = scope.ServiceProvider.GetServices<IAdminSeedService>();
+
+            await dbContext.Database.MigrateAsync();
+
+            foreach (var seed in seeds)
+            {
+                await seed.SeedAsync();
+            }
         }
     }
 }

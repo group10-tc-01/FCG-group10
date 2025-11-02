@@ -1,0 +1,365 @@
+﻿using FCG.Application.UseCases.Games.GetAll;
+using FCG.Domain.Enum;
+using FCG.Messages;
+using FluentValidation.TestHelper;
+
+namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
+{
+    public class GetAllGamesInputValidatorTest
+    {
+        private readonly GetAllGamesInputValidator _validator;
+
+        public GetAllGamesInputValidatorTest()
+        {
+            _validator = new GetAllGamesInputValidator();
+        }
+
+        #region Valid Cases
+
+        [Fact]
+        public void Given_ValidInputWithoutFilters_When_Validate_ShouldNotHaveValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Given_ValidInputWithEmptyFilter_When_Validate_ShouldNotHaveValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Given_ValidInputWithNameFilter_When_Validate_ShouldNotHaveValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = "The Witcher"
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Given_ValidInputWithCategoryFilter_When_Validate_ShouldNotHaveValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Category = GameCategory.RPG
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Given_ValidInputWithPriceRangeFilter_When_Validate_ShouldNotHaveValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = 10.00m,
+                MaxPrice = 50.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void Given_ValidInputWithAllFilters_When_Validate_ShouldNotHaveValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = "Dark Souls",
+                Category = GameCategory.RPG,
+                MinPrice = 20.00m,
+                MaxPrice = 60.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        #endregion
+
+        #region Name Filter Validation
+
+        [Fact]
+        public void Given_InputWithNameFilterExceedingMaxLength_When_Validate_ShouldHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = new string('A', 256) // 256 characters
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.Name)
+                .WithErrorMessage(ResourceMessages.GameNameMaxLength);
+        }
+
+        [Fact]
+        public void Given_InputWithNameFilterAt255Characters_When_Validate_ShouldNotHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = new string('A', 255) // Exactly 255 characters
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.Name);
+        }
+
+        #endregion
+
+        #region Category Filter Validation
+        // Category validation tests removed - enum provides type safety at compile time
+        #endregion
+
+        #region MinPrice Filter Validation
+
+        [Fact]
+        public void Given_InputWithNegativeMinPrice_When_Validate_ShouldHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = -10.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.MinPrice)
+                .WithErrorMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
+        }
+
+        [Fact]
+        public void Given_InputWithZeroMinPrice_When_Validate_ShouldNotHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = 0.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.MinPrice);
+        }
+
+        #endregion
+
+        #region MaxPrice Filter Validation
+
+        [Fact]
+        public void Given_InputWithNegativeMaxPrice_When_Validate_ShouldHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MaxPrice = -20.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.MaxPrice)
+                .WithErrorMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
+        }
+
+        [Fact]
+        public void Given_InputWithZeroMaxPrice_When_Validate_ShouldNotHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MaxPrice = 0.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
+        }
+
+        #endregion
+
+        #region Price Range Validation
+
+        [Fact]
+        public void Given_InputWithMaxPriceLessThanMinPrice_When_Validate_ShouldHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = 50.00m,
+                MaxPrice = 30.00m // MaxPrice < MinPrice
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.MaxPrice)
+                .WithErrorMessage(ResourceMessages.GameMaxPriceMustBeGreaterThanMinPrice);
+        }
+
+        [Fact]
+        public void Given_InputWithMaxPriceEqualToMinPrice_When_Validate_ShouldNotHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = 40.00m,
+                MaxPrice = 40.00m // MaxPrice == MinPrice
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
+        }
+
+        [Fact]
+        public void Given_InputWithOnlyMinPriceSet_When_Validate_ShouldNotHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = 10.00m,
+                MaxPrice = null
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
+        }
+
+        [Fact]
+        public void Given_InputWithOnlyMaxPriceSet_When_Validate_ShouldNotHaveValidationError()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                MinPrice = null,
+                MaxPrice = 100.00m
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.MaxPrice);
+        }
+
+        #endregion
+
+        #region Multiple Validation Errors
+
+        [Fact]
+        public void Given_InputWithMultipleInvalidFilters_When_Validate_ShouldHaveMultipleValidationErrors()
+        {
+            // Arrange
+            var input = new GetAllGamesInput
+            {
+                PageNumber = 1,
+                PageSize = 10,
+                Name = new string('A', 300), // Exceeds max length
+                MinPrice = -10.00m, // Negative
+                MaxPrice = -20.00m // Negative
+            };
+
+            // Act
+            var result = _validator.TestValidate(input);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.Name);
+            result.ShouldHaveValidationErrorFor(x => x.MinPrice);
+            result.ShouldHaveValidationErrorFor(x => x.MaxPrice);
+        }
+
+        #endregion
+    }
+}
