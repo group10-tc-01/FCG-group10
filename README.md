@@ -694,8 +694,8 @@ FCG-group10/
 | Nome | Discord Username | GitHub | Role |
 |------|-----------------|--------|------|
 | **Flávio José da Costa Filho** | @flaviojcf | [@flaviojcf](https://github.com/flaviojcf) | Developer |
-| **Participante 2** | @username2 | [@username2](https://github.com/username2) | Developer |
-| **Participante 3** | @username3 | [@username3](https://github.com/username3) | Developer |
+| **Rhuan Marques De Araújo** | @rhuanmarques | [@Rhuaannn](https://github.com/rhuaannn) | Developer |
+| **Lohhan Guilherme Bibiano da Silva** | @_bibiano | [@lohhan](https://github.com/lohhan) | Developer |
 
 ### Links do Projeto
 
