@@ -2,6 +2,7 @@
 using FCG.FunctionalTests.Fixtures.Admin;
 using FCG.FunctionalTests.Fixtures.Authentication;
 using FCG.FunctionalTests.Fixtures.Games;
+using FCG.FunctionalTests.Fixtures.Library;
 using FCG.FunctionalTests.Fixtures.Promotions;
 using FCG.FunctionalTests.Fixtures.Users;
 using Reqnroll;
@@ -28,6 +29,9 @@ namespace FCG.FunctionalTests.Fixtures
         public GetAllGamesFixture GetAllGames => GetOrCreateFixture<GetAllGamesFixture>();
         public GetUserByIdFixture GetUserById => GetOrCreateFixture<GetUserByIdFixture>();
         public RoleManagementFixture RoleManagement => GetOrCreateFixture<RoleManagementFixture>();
+        public CreateUserByAdminFixture CreateUserByAdmin => GetOrCreateFixture<CreateUserByAdminFixture>();
+        public DepositToWalletFixture DepositToWallet => GetOrCreateFixture<DepositToWalletFixture>();
+        public GetMyLibraryFixture GetMyLibrary => GetOrCreateFixture<GetMyLibraryFixture>();
 
         private T GetOrCreateFixture<T>() where T : new()
         {

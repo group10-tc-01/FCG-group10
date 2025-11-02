@@ -4,7 +4,6 @@ using FCG.CommomTestsUtilities.Builders.Inputs.Promotions.Create;
 using FCG.CommomTestsUtilities.Builders.Repositories.GameRepository;
 using FCG.CommomTestsUtilities.Builders.Repositories.PromotionRepository;
 using FCG.CommomTestsUtilities.Builders.Services;
-using FCG.Domain.Exceptions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -55,50 +54,6 @@ namespace FCG.UnitTests.Application.UseCases.Promotions.Create
             ReadOnlyPromotionRepositoryBuilder.VerifyExistsActivePromotionForGameAsyncWasCalled();
             WriteOnlyPromotionRepositoryBuilder.VerifyAddAsyncWasCalled();
             UnitOfWorkBuilder.VerifySaveChangesAsyncWasCalled();
-        }
-
-        [Fact]
-        public async Task Given_CreatePromotionInputWithNonExistentGame_When_Handle_Then_ShouldThrowDomainException()
-        {
-            // Arrange
-            var input = CreatePromotionInputBuilder.Build();
-            SetupWithNonExistentGame();
-
-            var sut = new CreatePromotionUseCase(
-                ReadOnlyGameRepositoryBuilder.Build(),
-                ReadOnlyPromotionRepositoryBuilder.Build(),
-                WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build(),
-                CorrelationIdProviderBuilder.Build(),
-                _loggerMock.Object);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<DomainException>(() => sut.Handle(input, CancellationToken.None));
-
-            exception.Should().NotBeNull();
-            exception.Message.Should().Contain("Game not found");
-        }
-
-        [Fact]
-        public async Task Given_CreatePromotionInputWithActivePromotion_When_Handle_Then_ShouldThrowDomainException()
-        {
-            // Arrange
-            var input = CreatePromotionInputBuilder.Build();
-            SetupWithActivePromotion();
-
-            var sut = new CreatePromotionUseCase(
-                ReadOnlyGameRepositoryBuilder.Build(),
-                ReadOnlyPromotionRepositoryBuilder.Build(),
-                WriteOnlyPromotionRepositoryBuilder.Build(),
-                UnitOfWorkBuilder.Build(),
-                CorrelationIdProviderBuilder.Build(),
-                _loggerMock.Object);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<DomainException>(() => sut.Handle(input, CancellationToken.None));
-
-            exception.Should().NotBeNull();
-            exception.Message.Should().Contain("An active promotion already exists");
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using FCG.Messages;
+﻿using FCG.Domain.Enum;
+using FCG.Messages;
 using FluentValidation;
 
 namespace FCG.Application.UseCases.Games.Register
@@ -24,7 +25,9 @@ namespace FCG.Application.UseCases.Games.Register
                 .WithMessage(ResourceMessages.GamePriceMustBeGreaterThanZero);
 
             RuleFor(x => x.Category)
-                .IsInEnum()
+                .NotEmpty()
+                .WithMessage(ResourceMessages.GameCategoryIsRequired)
+                .Must(category => Enum.TryParse<GameCategory>(category, true, out _))
                 .WithMessage(ResourceMessages.GameCategoryIsRequired);
         }
     }

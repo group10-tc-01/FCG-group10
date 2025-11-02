@@ -8,7 +8,6 @@ using FCG.Domain.Repositories.WalletRepository;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Persistance;
 using FCG.Infrastructure.Persistance.Repositories;
-using FCG.Infrastructure.Persistance.Repositories.PromotionRepository;
 using FCG.Infrastructure.Services;
 using FCG.Infrastructure.Services.Authentication;
 using FCG.Infrastructure.Services.CorrelationId;
@@ -54,15 +53,20 @@ namespace FCG.Infrastructure.DependencyInjection
 
             services.AddScoped<IWriteOnlyGameRepository, GameRepository>();
             services.AddScoped<IReadOnlyGameRepository, GameRepository>();
+
             services.AddScoped<IReadOnlyPromotionRepository, PromotionRepository>();
             services.AddScoped<IWriteOnlyPromotionRepository, PromotionRepository>();
 
+            services.AddScoped<IReadOnlyLibraryRepository, LibraryRepository>();
             services.AddScoped<IWriteOnlyLibraryRepository, LibraryRepository>();
+
+            services.AddScoped<IReadOnlyWalletRepository, WalletRepository>();
             services.AddScoped<IWriteOnlyWalletRepository, WalletRepository>();
         }
 
         private static void AddServices(this IServiceCollection services)
         {
+            services.AddScoped<ILoggedUser, LoggedUser>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordEncrypter, PasswordEncrypterService>();
             services.AddScoped<IAdminSeedService, AdminSeedService>();

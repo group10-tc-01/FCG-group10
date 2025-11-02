@@ -71,7 +71,7 @@ namespace FCG.Application.UseCases.Users.Register
                 var user = User.Create(request.Name, request.Email, hashedPassword, Role.User);
 
                 var wallet = Wallet.Create(user.Id);
-                var library = Library.Create(user.Id);
+                var library = Domain.Entities.Library.Create(user.Id);
 
                 await PersistEntitiesAsync(user, wallet, library, cancellationToken);
 
@@ -95,7 +95,7 @@ namespace FCG.Application.UseCases.Users.Register
             }
         }
 
-        private async Task PersistEntitiesAsync(User user, Wallet wallet, Library library, CancellationToken cancellationToken)
+        private async Task PersistEntitiesAsync(User user, Wallet wallet, Domain.Entities.Library library, CancellationToken cancellationToken)
         {
             await _writeOnlyUserRepository.AddAsync(user);
             await _writeOnlyWalletRepository.AddAsync(wallet);

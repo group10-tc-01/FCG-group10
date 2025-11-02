@@ -1,4 +1,4 @@
-﻿using FCG.Application.UseCases.Admin.GetById;
+﻿using FCG.Application.UseCases.Admin.GetUserById;
 using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;

@@ -51,20 +51,50 @@ namespace FCG.Application.UseCases.Games.GetAll
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize);
 
-            var items = await pagedQuery
-                .Select(x => new GetAllGamesOutput
+            var games = await pagedQuery.ToListAsync(cancellationToken);
+
+            var items = games.Select(x =>
+            {
+                var now = DateTime.UtcNow;
+                var activePromotion = x!.Promotions?
+                    .Where(p => p.StartDate <= now && p.EndDate >= now && p.IsActive)
+                    .OrderByDescending(p => p.Discount.Value)
+                    .FirstOrDefault();
+
+                var originalPrice = x.Price.Value;
+                var finalPrice = originalPrice;
+
+                ActivePromotionDto? promotionDto = null;
+
+                if (activePromotion != null)
                 {
-                    Id = x!.Id,
-                    Category = x.Category,
+                    var discountAmount = originalPrice * (activePromotion.Discount.Value / 100);
+                    finalPrice = originalPrice - discountAmount;
+
+                    promotionDto = new ActivePromotionDto
+                    {
+                        PromotionId = activePromotion.Id,
+                        DiscountPercentage = activePromotion.Discount.Value,
+                        StartDate = activePromotion.StartDate,
+                        EndDate = activePromotion.EndDate
+                    };
+                }
+
+                return new GetAllGamesOutput
+                {
+                    Id = x.Id,
+                    Category = x.Category.ToString(),
                     Description = x.Description,
-                    Name = x.Name,
-                    Price = x.Price
-                })
-                .ToListAsync(cancellationToken);
+                    Name = x.Name.Value,
+                    Price = originalPrice,
+                    FinalPrice = finalPrice,
+                    ActivePromotion = promotionDto
+                };
+            }).ToList();
 
             _logger.LogInformation(
-                "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Successfully retrieved {ItemCount} games out of {TotalCount} total. PageNumber={PageNumber}, PageSize={PageSize}",
-                correlationId, items.Count, totalCount, request.PageNumber, request.PageSize);
+                "[GetAllGamesHandler] [CorrelationId: {CorrelationId}] Successfully retrieved {ItemCount} games out of {TotalCount} total. Games with active promotions: {PromotionCount}. PageNumber={PageNumber}, PageSize={PageSize}",
+                correlationId, items.Count, totalCount, items.Count(x => x.ActivePromotion != null), request.PageNumber, request.PageSize);
 
             return new PagedListResponse<GetAllGamesOutput>(items, totalCount, request.PageNumber, request.PageSize);
         }

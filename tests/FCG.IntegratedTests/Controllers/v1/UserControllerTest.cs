@@ -1,14 +1,11 @@
-using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.Application.UseCases.Authentication.Login;
 using FCG.Application.UseCases.Users.Register;
 using FCG.Application.UseCases.Users.Register.UsersDTO.FCG.Application.UseCases.Users.Register.UsersDTO;
 using FCG.Application.UseCases.Users.Update;
-using FCG.CommomTestsUtilities.Builders.Entities;
 using FCG.CommomTestsUtilities.Builders.Inputs;
 using FCG.CommomTestsUtilities.Builders.Inputs.Authentication.Login;
 using FCG.CommomTestsUtilities.Builders.Services;
 using FCG.Domain.Entities;
-using FCG.Domain.Enum;
 using FCG.Infrastructure.Persistance;
 using FCG.IntegratedTests.Configurations;
 using FCG.WebApi.Models;
@@ -25,7 +22,7 @@ namespace FCG.IntegratedTests.Controllers.v1
     public class UserControllerTest : FcgFixture
     {
         private readonly CustomWebApplicationFactory _factory;
-        private const string RegisterUrl = "/api/v1/users/register";
+        private const string RegisterUrl = "/api/v1/users";
         private const string UpdateRoleUrl = "/api/v1/users/admin/update-role";
         private const string LoginUrl = "/api/v1/auth/login";
 
@@ -65,15 +62,14 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             var userToken = GenerateToken(userToUpdate.Id, "User");
 
-            var bodyRequest = new UpdateUserBodyRequest
+            var request = new UpdateUserRequest
             {
                 CurrentPassword = "OriginalPass!1",
                 NewPassword = "UpdatedPass!2"
             };
-            var request = new UpdateUserRequest(userToUpdate.Id, bodyRequest);
 
             // Act
-            var response = await DoAuthenticatedPut($"/api/v1/users/{userToUpdate.Id}", request, userToken);
+            var response = await DoAuthenticatedPatch($"/api/v1/users/update-password", request, userToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -199,85 +195,11 @@ namespace FCG.IntegratedTests.Controllers.v1
             var jsonContent = new StringContent("{ \"Nome\": 123 }", Encoding.UTF8, "application/json");
 
             // Act
-            var response = await DoPost("/api/v1/users/register", jsonContent);
+            var response = await DoPost("/api/v1/users", jsonContent);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
-
-        #region RoleManagement
-
-        [Fact]
-        public async Task PATCH_UpdateUserRole_AsAdmin_ShouldReturnOk()
-        {
-            // Arrange
-            var admin = UserBuilder.BuildAdmin();
-            var userToPromote = UserBuilder.BuildRegularUser();
-
-            await PersistUserAsync(admin);
-            await PersistUserAsync(userToPromote);
-
-            var adminToken = await LoginAndGetJwtAsync(admin);
-
-            var request = new RoleManagementRequest(userToPromote.Id, Role.Admin);
-
-            // Act
-            var result = await DoAuthenticatedPatch(UpdateRoleUrl, request, adminToken);
-
-            // Assert
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var responseContent = await result.Content.ReadAsStringAsync();
-            var apiResponse = JsonSerializer.Deserialize<ApiResponse<RoleManagementResponse>>(responseContent,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            apiResponse!.Success.Should().BeTrue();
-            apiResponse.Data.UserId.Should().Be(userToPromote.Id);
-            apiResponse.Data.Role.Should().Be(Role.Admin);
-        }
-
-        [Fact]
-        public async Task PATCH_UpdateUserRole_AsNonAdmin_ShouldReturnForbidden()
-        {
-            // Arrange
-            var normalUser = UserBuilder.BuildRegularUser();
-            var userToPromote = UserBuilder.BuildRegularUser();
-
-            // Persistir usuários
-            await PersistUserAsync(normalUser);
-            await PersistUserAsync(userToPromote);
-
-            var userToken = await LoginAndGetJwtAsync(normalUser);
-
-            var request = new RoleManagementRequest(userToPromote.Id, Role.Admin);
-
-            // Act
-            var result = await DoAuthenticatedPatch(UpdateRoleUrl, request, userToken);
-
-            // Assert
-            result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
-
-        [Fact]
-        public async Task PATCH_UpdateUserRole_InvalidInput_ShouldReturnBadRequest()
-        {
-            // Arrange
-            var admin = UserBuilder.BuildAdmin();
-            await PersistUserAsync(admin);
-
-            var adminToken = await LoginAndGetJwtAsync(admin);
-
-            var request = new RoleManagementRequest(Guid.Empty, (Role)999);
-
-            // Act
-            var result = await DoAuthenticatedPatch(UpdateRoleUrl, request, adminToken);
-
-            // Assert
-            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-
-        #endregion
 
         #region Helpers
 

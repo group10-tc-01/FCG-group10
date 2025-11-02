@@ -12,7 +12,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -22,7 +22,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, string.Empty)
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -32,7 +32,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, string.Empty)
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -42,7 +42,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, 0)
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -52,7 +52,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(-100, -1))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -62,7 +62,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, (GameCategory)999) // Invalid enum value
+                .RuleFor(input => input.Category, "InvalidCategory")
                 .Generate();
         }
 
@@ -72,7 +72,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Lorem.Letter(256))
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -82,7 +82,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(input => input.Description, faker => faker.Lorem.Letter(501))
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -93,7 +93,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
                 .RuleFor(input => input.Name, name)
                 .RuleFor(input => input.Description, faker => faker.Commerce.ProductDescription())
                 .RuleFor(input => input.Price, faker => faker.Random.Decimal(1, 1000))
-                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>())
+                .RuleFor(input => input.Category, faker => faker.PickRandom<GameCategory>().ToString())
                 .Generate();
         }
 
@@ -102,7 +102,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
             return new RegisterGameInput
             {
                 Name = name,
-                Category = category,
+                Category = category.ToString(),
                 Description = "Test game description",
                 Price = 49.99m
             };
@@ -113,7 +113,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
             return new RegisterGameInput
             {
                 Name = name,
-                Category = GameCategory.Action,
+                Category = GameCategory.Action.ToString(),
                 Description = "Test game description",
                 Price = price
             };
@@ -124,7 +124,7 @@ namespace FCG.CommomTestsUtilities.Builders.Inputs.Games.Register
             return new RegisterGameInput
             {
                 Name = name,
-                Category = category,
+                Category = category.ToString(),
                 Description = "Test game description",
                 Price = price
             };

@@ -104,7 +104,7 @@ namespace FCG.UnitTests.Application.UseCases.Games.GetAllGames
 
             // Assert
             result.Items.Should().HaveCount(2);
-            result.Items.All(x => x.Category == GameCategory.Action).Should().BeTrue();
+            result.Items.All(x => x.Category == GameCategory.Action.ToString()).Should().BeTrue();
         }
 
         [Fact(DisplayName = "Deve aplicar filtro por preço mínimo corretamente")]

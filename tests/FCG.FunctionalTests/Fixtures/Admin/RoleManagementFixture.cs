@@ -25,7 +25,6 @@ namespace FCG.FunctionalTests.Fixtures.Admin
 
         public RoleManagementUseCase RoleManagementUseCase { get; }
         public RoleManagementRequest RoleManagementRequest { get; }
-
         private static void Setup(FCG.Domain.Entities.User user)
         {
             ReadOnlyUserRepositoryBuilder.SetupGetByIdAsync(user);

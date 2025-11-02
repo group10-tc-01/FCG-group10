@@ -1,6 +1,5 @@
-using FCG.Application.UseCases.Admin.GetById;
+using FCG.Application.UseCases.Admin.GetUserById;
 using FCG.CommomTestsUtilities.Builders.Services;
-using FCG.Domain.Exceptions;
 using FCG.Domain.Repositories.UserRepository;
 using FCG.Infrastructure.Persistance;
 using FCG.IntegratedTests.Configurations;
@@ -9,12 +8,9 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Moq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace FCG.IntegratedTests.Controllers.v1
 {
@@ -71,17 +67,17 @@ namespace FCG.IntegratedTests.Controllers.v1
         [Fact]
         public async Task Given_AdminToken_When_FilteringByEmail_Then_ShouldReturnFilteredResults()
         {
-            // Given
+            // Arrange
             var existingUser = Factory.CreatedUsers.First();
             var adminUser = Factory.CreatedAdminUsers.First();
             var adminToken = GenerateToken(adminUser.Id, "Admin");
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", adminToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync($"/api/v1/admin/users?emailFilter={existingUser.Email.Value}");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var content = await response.Content.ReadAsStringAsync();
@@ -92,16 +88,16 @@ namespace FCG.IntegratedTests.Controllers.v1
         [Fact]
         public async Task Given_AdminToken_When_FilteringByRole_Then_ShouldReturnFilteredResults()
         {
-            // Given
+            // Arrange
             var adminUser = Factory.CreatedAdminUsers.First();
             var adminToken = GenerateToken(adminUser.Id, "Admin");
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", adminToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync("/api/v1/admin/users?roleFilter=User");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var content = await response.Content.ReadAsStringAsync();
@@ -111,36 +107,36 @@ namespace FCG.IntegratedTests.Controllers.v1
         [Fact]
         public async Task Given_CommonUserToken_When_GettingUsersList_Then_ShouldReturn403Forbidden()
         {
-            // Given
+            // Arrange
             var regularUser = Factory.CreatedUsers.First();
             var userToken = GenerateToken(regularUser.Id, "User");
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", userToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync("/api/v1/admin/users");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]
         public async Task Given_NoToken_When_GettingUsersList_Then_ShouldReturn401Unauthorized()
         {
-            // Given
+            // Arrange
             _httpClient.DefaultRequestHeaders.Authorization = null;
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync("/api/v1/admin/users");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         [Fact]
         public async Task Given_InvalidToken_When_GettingUsersList_Then_ShouldReturn401Unauthorized()
         {
-            // Given - Generate a token with wrong secret key
+            // Arrange - Generate a token with wrong secret key
             var invalidConfiguration = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
@@ -150,48 +146,48 @@ namespace FCG.IntegratedTests.Controllers.v1
                     {"JwtSettings:AccessTokenExpirationMinutes", "60"}
                 }!)
                 .Build();
-            
+
             var adminUser = Factory.CreatedAdminUsers.First();
             var invalidToken = TokenServiceBuilder.GenerateToken(invalidConfiguration, adminUser.Id, "Admin");
-            
+
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", invalidToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync("/api/v1/admin/users");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         [Fact]
         public async Task Given_AdminTokenAndNonExistentUserId_When_GettingUserDetails_Then_ShouldReturn404NotFound()
         {
-            // Given
+            // Arrange
             var nonExistentId = Guid.NewGuid();
             var adminUser = Factory.CreatedAdminUsers.First();
             var adminToken = GenerateToken(adminUser.Id, "Admin");
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", adminToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync($"/api/v1/admin/users/{nonExistentId}");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
         public async Task Given_NoToken_When_GettingUserDetails_Then_ShouldReturn401Unauthorized()
         {
-            // Given
+            // Arrange
             var existingUser = Factory.CreatedUsers.First();
             _httpClient.DefaultRequestHeaders.Authorization = null;
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync($"/api/v1/admin/users/{existingUser.Id}");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
@@ -199,33 +195,33 @@ namespace FCG.IntegratedTests.Controllers.v1
         [Fact]
         public async Task Given_CommonUserToken_When_GettingUserDetails_Then_ShouldReturn403Forbidden()
         {
-            // Given
+            // Arrange
             var existingUser = Factory.CreatedUsers.First();
             var regularUser = Factory.CreatedUsers.First();
             var userToken = GenerateToken(regularUser.Id, "User"); // Token de usu�rio comum
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", userToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync($"/api/v1/admin/users/{existingUser.Id}");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]
         public async Task Given_InvalidUserId_When_GettingUserDetails_Then_ShouldReturn400BadRequest()
         {
-            // Given
+            // Arrange
             var adminUser = Factory.CreatedAdminUsers.First();
             var adminToken = GenerateToken(adminUser.Id, "Admin");
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", adminToken);
 
-            // When
+            // Act
             var response = await _httpClient.GetAsync("/api/v1/admin/users/invalid-guid");
 
-            // Then
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
@@ -273,12 +269,192 @@ namespace FCG.IntegratedTests.Controllers.v1
 
             var userRepository = scope.ServiceProvider.GetRequiredService<IReadOnlyUserRepository>();
 
-            // When
+            // Act
             var result = await userRepository.AnyAdminAsync();
 
-            // Then
+            // Assert
             result.Should().BeFalse("o banco de dados n�o deve conter nenhum administrador.");
         }
 
+        [Fact]
+        public async Task Given_NoToken_When_CreatingUser_Then_ShouldReturn401Unauthorized()
+        {
+            // Arrange
+            var request = new
+            {
+                Name = "Test User",
+                Email = "test@test.com",
+                Password = "ValidP@ssw0rd!123",
+                Role = 1
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/admin/users", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task Given_RegularUserToken_When_CreatingUser_Then_ShouldReturn403Forbidden()
+        {
+            // Arrange
+            var regularUser = Factory.CreatedUsers.First();
+            var userToken = GenerateToken(regularUser.Id, "User");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userToken);
+
+            var request = new
+            {
+                Name = "Test User",
+                Email = "test@test.com",
+                Password = "ValidP@ssw0rd!123",
+                Role = 1
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/admin/users", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_CreatingUserWithDuplicateEmail_Then_ShouldReturn400BadRequest()
+        {
+            // Arrange
+            var existingUser = Factory.CreatedUsers.First();
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Name = "Duplicate Email User",
+                Email = existingUser.Email.Value,
+                Password = "ValidP@ssw0rd!123",
+                Role = 1
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/admin/users", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_CreatingUserWithInvalidEmail_Then_ShouldReturn400BadRequest()
+        {
+            // Arrange
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Name = "Test User",
+                Email = "invalid-email",
+                Password = "ValidP@ssw0rd!123",
+                Role = 1
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/admin/users", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_CreatingUserWithEmptyName_Then_ShouldReturn400BadRequest()
+        {
+            // Arrange
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Name = "",
+                Email = "test@test.com",
+                Password = "ValidP@ssw0rd!123",
+                Role = 1
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/admin/users", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_CreatingUserWithWeakPassword_Then_ShouldReturn400BadRequest()
+        {
+            // Arrange
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Name = "Test User",
+                Email = "test@test.com",
+                Password = "weak",
+                Role = 1
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/v1/admin/users", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Given_NoToken_When_DepositingToWallet_Then_ShouldReturn401Unauthorized()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var walletId = Guid.NewGuid();
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{userId}/wallet/{walletId}/deposit", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_DepositingToNonExistentWallet_Then_ShouldReturn404NotFound()
+        {
+            // Arrange
+            var nonExistentUserId = Guid.NewGuid();
+            var nonExistentWalletId = Guid.NewGuid();
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{nonExistentUserId}/wallet/{nonExistentWalletId}/deposit", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }

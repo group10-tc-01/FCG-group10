@@ -135,7 +135,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Should().NotBeNull();
             _getAllGamesResponse!.Items.Should().NotBeNull();
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
-            _getAllGamesResponse.Items.Should().Contain(g => g.Category == GameCategory.RPG);
+            _getAllGamesResponse.Items.Should().Contain(g => g.Category == "RPG");
         }
 
         [Then(@"o sistema deve retornar apenas os jogos dentro da faixa de preco")]
@@ -159,7 +159,7 @@ namespace FCG.FunctionalTests.Steps.Games
             _getAllGamesResponse.Items.Should().HaveCountGreaterThan(0);
             _getAllGamesResponse.Items.Should().Contain(g =>
                 g.Name.Contains("Dark") &&
-                g.Category == GameCategory.RPG &&
+                g.Category == "RPG" &&
                 g.Price >= 30m &&
                 g.Price <= 50m);
         }

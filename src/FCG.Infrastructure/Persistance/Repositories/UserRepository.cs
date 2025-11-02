@@ -52,6 +52,8 @@ namespace FCG.Infrastructure.Persistance.Repositories
                 .AsNoTracking()
                 .Include(u => u.Wallet)
                 .Include(u => u.Library)
+                .ThenInclude(library => library!.LibraryGames)
+                .ThenInclude(lg => lg.Game)
                 .FirstOrDefaultAsync(u => u.IsActive && u.Id == id, cancellationToken);
 
             return user;

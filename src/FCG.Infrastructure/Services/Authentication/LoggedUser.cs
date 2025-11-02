@@ -4,7 +4,6 @@ using FCG.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace FCG.Infrastructure.Services.Authentication
 {
@@ -28,9 +27,9 @@ namespace FCG.Infrastructure.Services.Authentication
 
             var jwtToken = tokenHandler.ReadJwtToken(token);
 
-            var userId = Guid.Parse(jwtToken.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
+            var userId = Guid.Parse(jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid")!.Value);
 
-            return await _fcgDbContext.Users.AsNoTracking().FirstAsync(user => user.Id == userId);
+            return await _fcgDbContext.Users.FirstAsync(user => user.Id == userId);
         }
     }
 }

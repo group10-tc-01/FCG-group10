@@ -334,7 +334,7 @@ namespace FCG.IntegratedTests.Controllers.v1
             apiResponse.Data.Items.Should().HaveCountGreaterOrEqualTo(1);
             apiResponse.Data.Items.Should().OnlyContain(g =>
                 g.Name.Contains("Dark") &&
-                g.Category == GameCategory.RPG &&
+                g.Category == "RPG" &&
                 g.Price >= 30m &&
                 g.Price <= 50m);
         }
