@@ -25,7 +25,7 @@ namespace FCG.IntegratedTests.Controllers.v1
     public class UserControllerTest : FcgFixture
     {
         private readonly CustomWebApplicationFactory _factory;
-        private const string RegisterUrl = "/api/v1/users/register";
+        private const string RegisterUrl = "/api/v1/users";
         private const string UpdateRoleUrl = "/api/v1/users/admin/update-role";
         private const string LoginUrl = "/api/v1/auth/login";
 

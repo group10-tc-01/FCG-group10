@@ -13,7 +13,7 @@ namespace FCG.WebApi.Controllers.v1
     {
         public UsersController(IMediator mediator) : base(mediator) { }
 
-        [HttpPost("register")]
+        [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<RegisterUserResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest input)

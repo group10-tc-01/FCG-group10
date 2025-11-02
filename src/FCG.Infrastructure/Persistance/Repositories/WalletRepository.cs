@@ -21,5 +21,10 @@ namespace FCG.Infrastructure.Persistance.Repositories
         {
             return await _fcgDbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId, cancellationToken);
         }
+
+        public async Task<Wallet?> GetByIdAsync(Guid walletId, CancellationToken cancellationToken)
+        {
+            return await _fcgDbContext.Wallets.FirstOrDefaultAsync(w => w.Id == walletId, cancellationToken);
+        }
     }
 }

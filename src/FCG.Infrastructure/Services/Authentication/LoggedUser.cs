@@ -29,7 +29,7 @@ namespace FCG.Infrastructure.Services.Authentication
 
             var userId = Guid.Parse(jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid")!.Value);
 
-            return await _fcgDbContext.Users.AsNoTracking().FirstAsync(user => user.Id == userId);
+            return await _fcgDbContext.Users.FirstAsync(user => user.Id == userId);
         }
     }
 }

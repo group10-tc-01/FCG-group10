@@ -28,6 +28,16 @@ namespace FCG.Domain.Entities
             Balance -= amount;
         }
 
+        public void Deposit(decimal amount)
+        {
+            if (amount <= 0)
+            {
+                throw new DomainException("Deposit amount must be greater than zero.");
+            }
+
+            Balance += amount;
+        }
+
         public static Wallet Create(Guid userId)
         {
             var wallet = new Wallet(userId);

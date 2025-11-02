@@ -478,5 +478,165 @@ namespace FCG.IntegratedTests.Controllers.v1
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
+        [Fact]
+        public async Task Given_AdminToken_When_DepositingToWallet_Then_ShouldReturn200OK()
+        {
+            // Given
+            var user = Factory.CreatedUsers.First();
+            var walletId = user.Wallet!.Id;
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{user.Id}/wallet/{walletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var content = await response.Content.ReadAsStringAsync();
+            content.Should().Contain("\"success\":true");
+            content.Should().Contain("\"depositedAmount\":100");
+        }
+
+        [Fact]
+        public async Task Given_NoToken_When_DepositingToWallet_Then_ShouldReturn401Unauthorized()
+        {
+            // Given
+            var userId = Guid.NewGuid();
+            var walletId = Guid.NewGuid();
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{userId}/wallet/{walletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task Given_RegularUserToken_When_DepositingToWallet_Then_ShouldReturn403Forbidden()
+        {
+            // Given
+            var regularUser = Factory.CreatedUsers.First();
+            var walletId = regularUser.Wallet!.Id;
+            var userToken = GenerateToken(regularUser.Id, "User");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", userToken);
+
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{regularUser.Id}/wallet/{walletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_DepositingWithInvalidAmount_Then_ShouldReturn400BadRequest()
+        {
+            // Given
+            var user = Factory.CreatedUsers.First();
+            var walletId = user.Wallet!.Id;
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Amount = -50.00m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{user.Id}/wallet/{walletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_DepositingToNonExistentWallet_Then_ShouldReturn404NotFound()
+        {
+            // Given
+            var nonExistentUserId = Guid.NewGuid();
+            var nonExistentWalletId = Guid.NewGuid();
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{nonExistentUserId}/wallet/{nonExistentWalletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_DepositingZeroAmount_Then_ShouldReturn400BadRequest()
+        {
+            // Given
+            var user = Factory.CreatedUsers.First();
+            var walletId = user.Wallet!.Id;
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Amount = 0m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{user.Id}/wallet/{walletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Given_AdminToken_When_DepositingToWalletThatDoesNotBelongToUser_Then_ShouldReturn400BadRequest()
+        {
+            // Given
+            var user1 = Factory.CreatedUsers.First();
+            var user2 = Factory.CreatedUsers.Last();
+            var user2WalletId = user2.Wallet!.Id; // Wallet from different user
+            var adminUser = Factory.CreatedAdminUsers.First();
+            var adminToken = GenerateToken(adminUser.Id, "Admin");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", adminToken);
+
+            var request = new
+            {
+                Amount = 100.00m
+            };
+
+            // When
+            var response = await _httpClient.PostAsJsonAsync($"/api/v1/admin/users/{user1.Id}/wallet/{user2WalletId}/deposit", request);
+
+            // Then
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FCG.Application.UseCases.Admin.CreateUser;
+using FCG.Application.UseCases.Admin.DepositToWallet;
 using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.Application.UseCases.Admin.GetById;
 using FCG.Application.UseCases.Admin.RoleManagement;
@@ -59,6 +60,24 @@ namespace FCG.WebApi.Controllers.v1
         {
             var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
             return Created(string.Empty, ApiResponse<CreateUserByAdminResponse>.SuccesResponse(output));
+        }
+
+        [HttpPost("{id}/wallet/{walletId}/deposit")]
+        [AuthenticatedAdmin]
+        [ProducesResponseType(typeof(ApiResponse<DepositToWalletResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<DepositToWalletResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> DepositToWallet([FromRoute] Guid id, [FromRoute] Guid walletId, [FromBody] DepositToWalletBodyRequest request, CancellationToken cancellationToken)
+        {
+            var input = new DepositToWalletRequest
+            {
+                UserId = id,
+                WalletId = walletId,
+                Amount = request.Amount
+            };
+            var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
+            return Ok(ApiResponse<DepositToWalletResponse>.SuccesResponse(output));
         }
     }
 }
