@@ -21,7 +21,10 @@ namespace FCG.Infrastructure.Persistance.Repositories
 
         public IQueryable<Game?> GetAllWithFilters(string? name = null, GameCategory? category = null, decimal? minPrice = null, decimal? maxPrice = null)
         {
-            var query = _fcgDbContext.Games.AsNoTracking().AsQueryable();
+            var query = _fcgDbContext.Games
+                .Include(g => g!.Promotions)
+                .AsNoTracking()
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(name))
                 query = query.Where(g => g!.Name.Value.Contains(name));
