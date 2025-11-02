@@ -28,6 +28,7 @@ namespace FCG.FunctionalTests.Fixtures
         public GetAllGamesFixture GetAllGames => GetOrCreateFixture<GetAllGamesFixture>();
         public GetUserByIdFixture GetUserById => GetOrCreateFixture<GetUserByIdFixture>();
         public RoleManagementFixture RoleManagement => GetOrCreateFixture<RoleManagementFixture>();
+        public CreateUserByAdminFixture CreateUserByAdmin => GetOrCreateFixture<CreateUserByAdminFixture>();
 
         private T GetOrCreateFixture<T>() where T : new()
         {

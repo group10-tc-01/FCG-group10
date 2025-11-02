@@ -1,4 +1,5 @@
-﻿using FCG.Application.UseCases.Admin.GetAllUsers;
+﻿using FCG.Application.UseCases.Admin.CreateUser;
+using FCG.Application.UseCases.Admin.GetAllUsers;
 using FCG.Application.UseCases.Admin.GetById;
 using FCG.Application.UseCases.Admin.RoleManagement;
 using FCG.Domain.Models.Pagination;
@@ -47,6 +48,17 @@ namespace FCG.WebApi.Controllers.v1
             var input = new RoleManagementRequest(id, request.NewRole);
             var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
             return Ok(ApiResponse<RoleManagementResponse>.SuccesResponse(output));
+        }
+
+        [HttpPost]
+        [AuthenticatedAdmin]
+        [ProducesResponseType(typeof(ApiResponse<CreateUserByAdminResponse>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<CreateUserByAdminResponse>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserByAdminRequest input, CancellationToken cancellationToken)
+        {
+            var output = await _mediator.Send(input, cancellationToken).ConfigureAwait(false);
+            return Created(string.Empty, ApiResponse<CreateUserByAdminResponse>.SuccesResponse(output));
         }
     }
 }
