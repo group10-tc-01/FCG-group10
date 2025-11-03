@@ -1,5 +1,4 @@
 using FluentValidation;
-using FCG.Messages;
 
 namespace FCG.Application.UseCases.Promotions.Create
 {
@@ -12,8 +11,8 @@ namespace FCG.Application.UseCases.Promotions.Create
                 .WithMessage("Game ID is required.");
 
             RuleFor(x => x.DiscountPercentage)
-                .GreaterThanOrEqualTo(0)
-                .WithMessage("Discount percentage must be greater than or equal to 0.")
+                .GreaterThan(0)
+                .WithMessage("Discount percentage must be greater than 0.")
                 .LessThanOrEqualTo(100)
                 .WithMessage("Discount percentage must be less than or equal to 100.");
 
