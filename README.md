@@ -345,7 +345,6 @@ sequenceDiagram
 - **Entity Framework Core** - ORM para acesso a dados
 - **MediatR** - Implementação do padrão Mediator (CQRS)
 - **FluentValidation** - Validação de modelos
-- **AutoMapper** - Mapeamento objeto-objeto
 - **Serilog** - Logging estruturado
 - **Seq** - Agregação e visualização de logs
 
@@ -642,7 +641,6 @@ FCG-group10/
 │   │   │   ├── Admin/                 # Operações administrativas
 │   │   │   └── Library/               # Gestão de biblioteca
 │   │   ├── EventsHandlers/            # Handlers de eventos
-│   │   ├── Behaviors/                 # Behaviors do MediatR
 │   │   └── DependencyInjection/       # Configuração de DI
 │   │
 │   ├── FCG.Infrastructure/            # Camada de Infraestrutura
